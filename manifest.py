@@ -31,8 +31,8 @@ def main(stdscr):
     f = open('./assets/gfx/logo.txt')
     data = f.read()
     pad.addstr(data, r_on_w)
-    stdscr.addstr(0, 35, "[Manifest V0.1]", r_on_w)
-    pad.refresh(0,0,1,5,24,70)
+    stdscr.addstr(0, 30, "[Manifest V0.1]", r_on_w)
+    pad.refresh(0,0,1,7,24,70)
     p_row = 10
 
 

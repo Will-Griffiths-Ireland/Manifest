@@ -11,12 +11,18 @@
     <title>Manifest</title>
     <style>
         body {
-            font-family: Arial;
+            font-family: "DejaVu Sans Mono", "Everson Mono", FreeMono, "Andale Mono", monospace;
         }
 
         /**
         * Default styles for xterm.js
         */
+
+        #terminal {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
         .xterm {
             font-feature-settings: "liga"0;
@@ -88,9 +94,7 @@
         }
 
         .xterm .xterm-screen {
-            display:flex;
-            justify-content: center;
-            align-items: center;
+            display:block;
         }
 
         .xterm .xterm-screen canvas {
