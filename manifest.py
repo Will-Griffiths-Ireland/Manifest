@@ -9,7 +9,7 @@ def main(stdscr):
     MAX_LINE = curses.LINES - 1
     MAX_COL = curses.COLS - 1
     stdscr.leaveok(True)
-    curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
+    curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
     r_on_w = curses.color_pair(1)
     # Clear screen
     stdscr.clear()
@@ -31,6 +31,7 @@ def main(stdscr):
     f = open('./assets/gfx/logo.txt')
     data = f.read()
     pad.addstr(data, r_on_w)
+    stdscr.addstr(0, 35, "[Manifest V0.1]", r_on_w)
     pad.refresh(0,0,1,5,24,70)
     p_row = 10
 
