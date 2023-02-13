@@ -5,11 +5,10 @@
     <script>
         var term = new Terminal({
             cols: 80,
-            rows: 24
+            rows: 50
         });
         term.open(document.getElementById('terminal'));
-        term.writeln('Running startup command: python3 run.py');
-        term.writeln('');
+        term.writeln('Running startup...');
 
         var ws = new WebSocket(location.protocol.replace('http', 'ws') + '//' + location.hostname + (location.port ? (
             ':' + location.port) : '') + '/');
