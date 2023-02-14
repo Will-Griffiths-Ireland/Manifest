@@ -9,8 +9,6 @@ def draw_box(line, col, width, height, style, stdscr):
         Width and height for size and style is curses color pairing.
         Also takes curses screen we need to use
     """
-
-
     l = int(line)
     c = int(col)
     w = int(width)
@@ -40,16 +38,18 @@ def main(stdscr):
     # Clear screen
     stdscr.clear()
     stdscr.refresh()
-    draw_box(0, 0, 39, 49, 1, stdscr)
-    draw_box(0, 40, 39, 49, 1, stdscr)
-    draw_box(20, 5, 5, 5, 1, stdscr)
+    draw_box(0, 0, 79, 49, 256, stdscr)
+    for i in range(39):
+        draw_box(7 , 1 + i, 1+ i, 1 + i, 256, stdscr)
+        time.sleep(.1)
+        stdscr.refresh()
     pad = curses.newpad(6,78)
     f = open('./assets/gfx/logo.txt')
     data = f.read()
     pad.addstr(data, r_on_w)
     stdscr.addstr(0, 30, "[Manifest V0.1]", r_on_w)
-    stdscr.addstr(10, 10, str(curses.color_pair(1)), r_on_w)
-    stdscr.addstr(11, 10, str(curses.color_pair(2)), r_on_w)
+    #stdscr.addstr(10, 10, str(curses.color_pair(1)), r_on_w)
+    #stdscr.addstr(11, 10, str(curses.color_pair(2)), r_on_w)
     pad.refresh(0,0,1,7,24,70)
     p_row = 10
 
