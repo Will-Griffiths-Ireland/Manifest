@@ -10,7 +10,7 @@ def main(stdscr):
     MAX_COL = curses.COLS - 1
     stdscr.leaveok(True)
     curses.use_default_colors()
-    curses.init_pair(1, 2, 2)
+    curses.init_pair(1, 1, 7)
     r_on_w = curses.color_pair(1)
     # Clear screen
     stdscr.clear()
@@ -52,7 +52,7 @@ def main(stdscr):
             pad.erase()
             stdscr.clear()
             for i in range(1, curses.COLORS):
-                curses.init_pair(i , i, i)
+                curses.init_pair(i , 1, i)
                 stdscr.addstr(str(i), curses.color_pair(i))
             #stdscr.refresh()
         elif key == 'q':
