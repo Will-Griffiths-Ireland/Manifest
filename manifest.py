@@ -38,8 +38,8 @@ def main(stdscr):
     # Clear screen
     stdscr.clear()
     stdscr.refresh()
-    draw_box(0, 0, 79, 49, 256, stdscr)
-    for i in range(39):
+    draw_box(0, 0, 78, 48, 256, stdscr)
+    for i in range(38):
         draw_box(7 , 1 + i, 1+ i, 1 + i, 256, stdscr)
         time.sleep(.1)
         stdscr.refresh()
