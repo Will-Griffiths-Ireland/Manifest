@@ -9,7 +9,7 @@ def main(stdscr):
     MAX_LINE = curses.LINES - 1
     MAX_COL = curses.COLS - 1
     stdscr.leaveok(True)
-    curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
+    curses.init_pair(1, 1, 99)
     r_on_w = curses.color_pair(1)
     # Clear screen
     stdscr.clear()
@@ -46,10 +46,14 @@ def main(stdscr):
             stdscr.addstr(24, 10, "YOU PRESSED 'B' WELL DONE MAN",
              curses.A_RIGHT)
             stdscr.refresh()
+        #test all colors curses can produce
         elif key == 'c':
             pad.erase()
             stdscr.clear()
-            stdscr.refresh()
+            for i in range(1, curses.COLORS):
+                curses.init_pair(i + 1, i, i)
+                stdscr.addstr(str(i), curses.color_pair(i))
+            #stdscr.refresh()
         elif key == 'q':
             stdscr.addstr(25, 10, "YOU PRESSED 'B' WELL DONE MAN",
              curses.A_RIGHT)
