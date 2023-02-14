@@ -49,16 +49,16 @@ def main(stdscr):
     stdscr.refresh()
     draw_box(0, 0, 79, 50, True, r_on_b, stdscr)
     for i in range(38):
-        draw_box(7 , 1 + i, 1+ i, 1 + i,False, r_on_b, stdscr)
+        draw_box(8, 1 + i, 1 + i, 1 + i,False, r_on_b, stdscr)
         time.sleep(.1)
         stdscr.refresh()
     for i in range(38):
-        draw_box(44 -i , 1 + i, 1+ i, 1 + i,False, r_on_b, stdscr)
+        draw_box(45 -i , 1 + i, 1 + i, 1 + i, False, r_on_b, stdscr)
         time.sleep(.1)
         stdscr.refresh()
     for i in range(38):
-        draw_box(7 , 38 - i, 1 + i, 1 + i, True, r_on_b, stdscr)
-        draw_box(7 , 77 - i, 1 + i, 1 + i, True, r_on_b, stdscr)
+        draw_box(8, 38 - i, 1 + i, 1 + i, True, r_on_b, stdscr)
+        draw_box(8, 77 - i, 1 + i, 1 + i, True, r_on_b, stdscr)
         time.sleep(.1)
         stdscr.refresh()
     pad = curses.newpad(6,78)
@@ -71,7 +71,7 @@ def main(stdscr):
     stdscr.addstr(11, 3, "SEX: MALE", r_on_b)
     #stdscr.addstr(10, 10, str(curses.color_pair(1)), r_on_w)
     #stdscr.addstr(11, 10, str(curses.color_pair(2)), r_on_w)
-    pad.refresh(0,0,1,7,24,70)
+    pad.refresh(0,0,2,7,24,70)
     p_row = 10
 
 
