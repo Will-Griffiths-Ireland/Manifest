@@ -3,34 +3,53 @@ from curses import wrapper
 import time
 import random
 
+def draw_box(line, col, width, height, style, stdscr):
+    """
+        Draw a window, takes starting position line & col.
+        Width and height for size and style is curses color pairing.
+        Also takes curses screen we need to use
+    """
+
+
+    l = int(line)
+    c = int(col)
+    w = int(width)
+    h = int(height)
+    s = style
+    stdscr.addstr(l, c, "╔", s)
+    for i in range(w - 1):
+        stdscr.addstr(l, c  + 1 + i, "═", s)
+    stdscr.addstr(l, c + w , "╗", s)
+    for i in range(h - 1):
+        stdscr.addstr(l + 1 + i, c, "║", s)
+        stdscr.addstr(l + 1 + i, c + w, "║", s)
+    stdscr.addstr(l + h, c, "╚", s)
+    for i in range(w - 1):
+        stdscr.addstr(l + h, c + 1 + i, "═", s)
+    stdscr.addstr(l + h , c + w , "╝", s)
+    stdscr.refresh()
 
 def main(stdscr):
     #Grab max row and col so we can avoid placing out of bounds
     MAX_LINE = curses.LINES - 1
     MAX_COL = curses.COLS - 1
-    curses.init_pair(1, 4, 0)
+    stdscr.leaveok(0)
+    curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLUE)
+    curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_RED)
     r_on_w = curses.color_pair(1)
     # Clear screen
     stdscr.clear()
     stdscr.refresh()
-    #build box
-    stdscr.addstr(0, 0, "╔", r_on_w)
-    for i in range(78):
-        stdscr.addstr(0, 1 + i, "═", r_on_w)
-    stdscr.addstr(0, 79, "╗", r_on_w)
-    for i in range(22):
-        stdscr.addstr(1+i, 0, "║", r_on_w)
-        stdscr.addstr(1+i, 79, "║", r_on_w)
-    stdscr.addstr(23, 0, "╚", r_on_w)
-    for i in range(78):
-        stdscr.addstr(23, 1 + i, "═", r_on_w)
-    stdscr.addstr(23, 79, "╝", r_on_w)
-    stdscr.refresh()
+    draw_box(0, 0, 39, 49, 1, stdscr)
+    draw_box(0, 40, 39, 49, 1, stdscr)
+    draw_box(20, 5, 5, 5, 1, stdscr)
     pad = curses.newpad(6,78)
     f = open('./assets/gfx/logo.txt')
     data = f.read()
     pad.addstr(data, r_on_w)
     stdscr.addstr(0, 30, "[Manifest V0.1]", r_on_w)
+    stdscr.addstr(10, 10, str(curses.color_pair(1)), r_on_w)
+    stdscr.addstr(11, 10, str(curses.color_pair(2)), r_on_w)
     pad.refresh(0,0,1,7,24,70)
     p_row = 10
 
