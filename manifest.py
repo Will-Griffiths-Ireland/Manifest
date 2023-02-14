@@ -41,9 +41,11 @@ def main(stdscr):
     curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLUE)
     curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)
+    curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_RED)
     w_on_blu = curses.color_pair(1)
     r_on_b = curses.color_pair(2) | curses.A_BOLD
     g_on_b = curses.color_pair(3)
+    r_on_b_2 = curses.color_pair(4) | curses.A_REVERSE | curses.A_BOLD 
     # Clear screen
     stdscr.clear()
     stdscr.refresh()
@@ -69,6 +71,11 @@ def main(stdscr):
     stdscr.addstr(9, 3, "USER: MAX HEADROOM", r_on_b)
     stdscr.addstr(10, 3, "AGE: 49", r_on_b)
     stdscr.addstr(11, 3, "SEX: MALE", r_on_b)
+    stdscr.addstr(13, 3, "THIS IS REVERSE", r_on_b | curses.A_REVERSE)
+    stdscr.addstr(14, 3, "THIS IS BOLD", r_on_b | curses.A_BOLD)
+    stdscr.addstr(15, 3, "THIS IS DIM", r_on_b | curses.A_DIM)
+    stdscr.addstr(16, 3, "THIS IS STANDOUT", r_on_b | curses.A_STANDOUT)
+    stdscr.addstr(18, 3, "THIS IS r_on_b_2", r_on_b_2)
     #stdscr.addstr(10, 10, str(curses.color_pair(1)), r_on_w)
     #stdscr.addstr(11, 10, str(curses.color_pair(2)), r_on_w)
     pad.refresh(0,0,2,7,24,70)
