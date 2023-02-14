@@ -3,9 +3,10 @@ from curses import wrapper
 import time
 import random
 
-def draw_box(line, col, width, height, style, stdscr):
+def draw_box(line, col, width, height, fill, style, stdscr):
     """
         Draw a window, takes starting position line & col.
+        If fill is set True then insert spaces to fill window
         Width and height for size and style is curses color pairing.
         Also takes curses screen we need to use
     """
@@ -14,18 +15,23 @@ def draw_box(line, col, width, height, style, stdscr):
     w = int(width)
     h = int(height)
     s = style
+    f = fill
     stdscr.addstr(l, c, "╔", s)
     for i in range(w - 1):
         stdscr.addstr(l, c  + 1 + i, "═", s)
     stdscr.addstr(l, c + w , "╗", s)
     for i in range(h - 1):
         stdscr.addstr(l + 1 + i, c, "║", s)
+        if(fill):
+            for x in range(w - 1):
+                stdscr.addstr(l + 1 + i, c + 1 + x, " ", s)
         stdscr.addstr(l + 1 + i, c + w, "║", s)
     stdscr.addstr(l + h, c, "╚", s)
     for i in range(w - 1):
         stdscr.addstr(l + h, c + 1 + i, "═", s)
     stdscr.addstr(l + h , c + w , "╝", s)
     stdscr.refresh()
+    
 
 def main(stdscr):
     #Grab max row and col so we can avoid placing out of bounds
@@ -33,21 +39,36 @@ def main(stdscr):
     MAX_COL = curses.COLS - 1
     stdscr.leaveok(0)
     curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLUE)
-    curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_RED)
-    r_on_w = curses.color_pair(1)
+    curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
+    curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)
+    w_on_blu = curses.color_pair(1)
+    r_on_b = curses.color_pair(2)
+    g_on_b = curses.color_pair(3)
     # Clear screen
     stdscr.clear()
     stdscr.refresh()
-    draw_box(0, 0, 78, 48, 256, stdscr)
+    draw_box(0, 0, 79, 50, True, r_on_b, stdscr)
     for i in range(38):
-        draw_box(7 , 1 + i, 1+ i, 1 + i, 256, stdscr)
+        draw_box(7 , 1 + i, 1+ i, 1 + i,False, r_on_b, stdscr)
+        time.sleep(.1)
+        stdscr.refresh()
+    for i in range(38):
+        draw_box(44 -i , 1 + i, 1+ i, 1 + i,False, r_on_b, stdscr)
+        time.sleep(.1)
+        stdscr.refresh()
+    for i in range(38):
+        draw_box(7 , 38 - i, 1 + i, 1 + i, True, r_on_b, stdscr)
+        draw_box(7 , 77 - i, 1 + i, 1 + i, True, r_on_b, stdscr)
         time.sleep(.1)
         stdscr.refresh()
     pad = curses.newpad(6,78)
     f = open('./assets/gfx/logo.txt')
     data = f.read()
-    pad.addstr(data, r_on_w)
-    stdscr.addstr(0, 30, "[Manifest V0.1]", r_on_w)
+    pad.addstr(data, g_on_b)
+    stdscr.addstr(0, 30, "[Manifest V0.1]", r_on_b)
+    stdscr.addstr(9, 3, "USER: MAX HEADROOM", r_on_b)
+    stdscr.addstr(10, 3, "AGE: 49", r_on_b)
+    stdscr.addstr(11, 3, "SEX: MALE", r_on_b)
     #stdscr.addstr(10, 10, str(curses.color_pair(1)), r_on_w)
     #stdscr.addstr(11, 10, str(curses.color_pair(2)), r_on_w)
     pad.refresh(0,0,1,7,24,70)
@@ -106,3 +127,5 @@ def main(stdscr):
                 stdscr.addstr(1, 5, f"p_row : {p_row}", curses.A_ITALIC)
                 pad.refresh(p_row,0 ,10, 10 ,10,20)
 wrapper(main)
+
+
