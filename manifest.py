@@ -38,6 +38,7 @@ def main(stdscr):
     MAX_LINE = curses.LINES - 1
     MAX_COL = curses.COLS - 1
     stdscr.leaveok(0)
+    curses.start_color()
     curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLUE)
     curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)
