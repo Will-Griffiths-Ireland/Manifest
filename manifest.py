@@ -42,7 +42,7 @@ def main(stdscr):
     curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)
     w_on_blu = curses.color_pair(1)
-    r_on_b = curses.color_pair(2)
+    r_on_b = curses.color_pair(2) | curses.A_BOLD
     g_on_b = curses.color_pair(3)
     # Clear screen
     stdscr.clear()
