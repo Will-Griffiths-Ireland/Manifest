@@ -44,7 +44,7 @@ def main(stdscr):
     curses.init_pair(3, curses.COLOR_GREEN, -1)
     curses.init_pair(4, curses.COLOR_BLUE, -1)
     white = curses.color_pair(1)
-    red = curses.color_pair(2)
+    red = curses.color_pair(2) | curses.A_BOLD
     green = curses.color_pair(3)
     blue = curses.color_pair(4)
     # Clear screen
@@ -75,7 +75,7 @@ def main(stdscr):
             pad.addstr(ch, green)
         else:
             pad.addstr(ch, blue)
-    stdscr.addstr(0, 30, "[Manifest V0.1]", red)
+    stdscr.addstr(0, 30, "[Manifest V0.1]", white)
     stdscr.addstr(9, 3, "USER: MAX HEADROOM", red)
     stdscr.addstr(10, 3, "AGE: 49", red)
     stdscr.addstr(11, 3, "SEX: MALE", red)
@@ -105,9 +105,17 @@ def main(stdscr):
             pad.erase()
             stdscr.clear()
             for i in range(1, curses.COLORS):
-                curses.init_pair(i , 1, i)
+                curses.init_pair(i , -1, i)
                 stdscr.addstr(str(i), curses.color_pair(i))
-            stdscr.addstr("\nThese are the available colors")
+            stdscr.addstr("\nThese are the available colors\n")
+            for i in range(1, curses.COLORS):
+                curses.init_pair(i , 1, i)
+                stdscr.addstr(str(i), curses.color_pair(i) | curses.A_BOLD)
+            stdscr.addstr("\nThese are the available colors in BOLD\n")
+            for i in range(1, curses.COLORS):
+                curses.init_pair(i , 1, i)
+                stdscr.addstr(str(i), curses.color_pair(i) | curses.A_DIM)
+            stdscr.addstr("\nThese are the available colors in DIM\n")
             #stdscr.refresh()
         elif key == 'q':
             stdscr.addstr(25, 10, "YOU PRESSED 'B' WELL DONE MAN",
