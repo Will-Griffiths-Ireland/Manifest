@@ -39,7 +39,8 @@ def main(stdscr):
     MAX_COL = curses.COLS - 1
     curses.start_color()
     curses.use_default_colors()
-    curses.curs_set(0)
+    #curses.curs_set(1) (does nto work in xterm.js)
+    stdscr.leaveok(True)
     curses.init_pair(1, curses.COLOR_WHITE , -1)
     curses.init_pair(2, curses.COLOR_RED, -1)
     curses.init_pair(3, curses.COLOR_GREEN, -1)
