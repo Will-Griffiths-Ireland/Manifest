@@ -39,55 +39,61 @@ def main(stdscr):
     MAX_COL = curses.COLS - 1
     curses.start_color()
     curses.use_default_colors()
+    curses.curs_set(0)
     curses.init_pair(1, curses.COLOR_WHITE , -1)
     curses.init_pair(2, curses.COLOR_RED, -1)
     curses.init_pair(3, curses.COLOR_GREEN, -1)
     curses.init_pair(4, curses.COLOR_BLUE, -1)
-    white = curses.color_pair(1)
+    curses.init_pair(5, curses.COLOR_WHITE , curses.COLOR_BLUE)
+    white = curses.color_pair(1) | curses.A_BOLD
     red = curses.color_pair(2) | curses.A_BOLD
-    green = curses.color_pair(3)
-    blue = curses.color_pair(4)
+    green = curses.color_pair(3) | curses.A_BOLD
+    blue = curses.color_pair(4) | curses.A_BOLD
+    w_on_b = curses.color_pair(5) | curses.A_BOLD
     # Clear screen
     stdscr.clear()
     stdscr.refresh()
-    draw_box(0, 0, 79, 50, True, red, stdscr)
+    draw_box(0, 0, 79, 51, True, red, stdscr)
     for i in range(38):
         draw_box(8, 1 + i, 1 + i, 1 + i,False, red, stdscr)
-        time.sleep(.1)
+        time.sleep(.01)
         stdscr.refresh()
     for i in range(38):
-        draw_box(45 -i , 1 + i, 1 + i, 1 + i, False, red, stdscr)
-        time.sleep(.1)
+        draw_box(45 -i , 1 + i, 1 + i, 1 + i, False, green, stdscr)
+        time.sleep(.01)
         stdscr.refresh()
     for i in range(38):
-        draw_box(8, 38 - i, 1 + i, 1 + i, True, red, stdscr)
-        draw_box(8, 77 - i, 1 + i, 1 + i, True, red, stdscr)
-        time.sleep(.1)
+        draw_box(9, 38 - i, 1 + i, 1 + i, True, red, stdscr)
+        draw_box(9, 77 - i, 1 + i, 1 + i, True, red, stdscr)
+        time.sleep(.01)
         stdscr.refresh()
     pad = curses.newpad(6,78)
+    draw_box(1, 1, 77, 7, True, white, stdscr)
+    draw_box(48, 1, 10, 2, True, w_on_b, stdscr)
+    stdscr.addstr(49, 3, "[S]CAN", red)
+    draw_box(48, 12, 10, 2, True, w_on_b, stdscr)
+    stdscr.addstr(49, 14, "[P]ERMIT", red)
+    draw_box(48, 23, 10, 2, True, w_on_b, stdscr)
     f = open('./assets/gfx/logo.txt')
     data = f.read()
-    for ch in data:
-        rc = random.randint(1,3)
-        if rc == 1:
-            pad.addstr(ch, red)
-        elif rc == 2:
-            pad.addstr(ch, green)
-        else:
-            pad.addstr(ch, blue)
-    stdscr.addstr(0, 30, "[Manifest V0.1]", white)
-    stdscr.addstr(9, 3, "USER: MAX HEADROOM", red)
-    stdscr.addstr(10, 3, "AGE: 49", red)
-    stdscr.addstr(11, 3, "SEX: MALE", red)
-    stdscr.addstr(13, 3, "THIS IS REVERSE", red | curses.A_REVERSE)
-    stdscr.addstr(14, 3, "THIS IS BOLD", red | curses.A_BOLD)
-    stdscr.addstr(15, 3, "THIS IS DIM", red | curses.A_DIM)
-    stdscr.addstr(16, 3, "THIS IS STANDOUT", red | curses.A_STANDOUT)
-    stdscr.addstr(18, 3, "THIS IS r_on_b_2", blue)
-    #stdscr.addstr(10, 10, str(curses.color_pair(1)), r_on_w)
-    #stdscr.addstr(11, 10, str(curses.color_pair(2)), r_on_w)
-    pad.refresh(0,0,2,7,24,70)
-    p_row = 10
+    for i in range(30):
+        for ch in data:
+            rc = random.randint(1,32 - i)
+            if rc == 1:
+                pad.addstr(ch, red)
+            elif rc == 2:
+                pad.addstr(ch, green)
+            elif rc == 3:
+                pad.addstr(ch, blue)
+            else:
+                pad.addstr(" ", white)
+        pad.refresh(0, 0, 2, 7, 25,70)
+        time.sleep(.1)
+        pad.clear()
+    stdscr.addstr(0, 30, "[Manifest V0.1]", red)
+    stdscr.addstr(10, 3, "Name: MAX HEADROOM", red)
+    stdscr.addstr(11, 3, "AGE: 49", red)
+    stdscr.addstr(12, 3, "SEX: MALE", red)
 
 
     while True:
