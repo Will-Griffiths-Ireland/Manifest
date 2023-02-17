@@ -32,6 +32,30 @@ def draw_box(line, col, width, height, fill, style, stdscr):
     stdscr.addstr(l + h , c + w , "╝", s)
     stdscr.refresh()
     
+def get_input(echo_style, max_size, stdscr):
+    """
+        Gather inp[ut from the user and echo in selected style
+    """
+    s = echo_style
+    ms = max_size
+    input = ""
+    while True:
+        key = stdscr.getch()
+        #stdscr.addstr("[" + str(key) + "]", s)
+        if key == ord('\n') or key == ord('\r'):
+            return input
+        elif key == 263:
+            if len(input) >= 1:
+                #stdscr.move(0, 1)
+                (y, x) = curses.getsyx()
+                stdscr.move(y, x -1)
+                stdscr.addstr(" ", s)
+                stdscr.move(y, x -1)
+                input = input[:-1]
+            #stdscr.addstr("[" + str(key) + "]", s)
+        else:
+            input += chr(key)
+            stdscr.addstr(chr(key), s)
 
 def main(stdscr):
     #Grab max row and col so we can avoid placing out of bounds
@@ -39,8 +63,6 @@ def main(stdscr):
     MAX_COL = curses.COLS - 1
     curses.start_color()
     curses.use_default_colors()
-    #curses.curs_set(1) (does nto work in xterm.js)
-    stdscr.leaveok(True)
     curses.init_pair(1, curses.COLOR_WHITE , -1)
     curses.init_pair(2, curses.COLOR_RED, -1)
     curses.init_pair(3, curses.COLOR_GREEN, -1)
@@ -77,9 +99,9 @@ def main(stdscr):
     draw_box(48, 23, 10, 2, True, w_on_b, stdscr)
     f = open('./assets/gfx/logo.txt')
     data = f.read()
-    for i in range(30):
+    for i in range(12):
         for ch in data:
-            rc = random.randint(1,32 - i)
+            rc = random.randint(1,14 - i)
             if rc == 1:
                 pad.addstr(ch, red)
             elif rc == 2:
@@ -89,13 +111,16 @@ def main(stdscr):
             else:
                 pad.addstr(" ", white)
         pad.refresh(0, 0, 2, 7, 25,70)
-        time.sleep(.1)
+        time.sleep(.25)
         pad.clear()
     stdscr.addstr(0, 30, "[Manifest V0.1]", red)
     stdscr.addstr(10, 3, "Name: MAX HEADROOM", red)
     stdscr.addstr(11, 3, "AGE: 49", red)
     stdscr.addstr(12, 3, "SEX: MALE", red)
-
+    draw_box(20, 10, 20, 5, False, green, stdscr)
+    stdscr.addstr(22, 12, "USERNAME : ", green)
+    user = get_input(green, 5, stdscr)
+    stdscr.addstr(23, 12, user, green)
 
     while True:
         key = stdscr.getkey()
@@ -125,37 +150,8 @@ def main(stdscr):
             stdscr.addstr("\nThese are the available colors in DIM\n")
             #stdscr.refresh()
         elif key == 'q':
-            stdscr.addstr(25, 10, "YOU PRESSED 'B' WELL DONE MAN",
-             curses.A_RIGHT)
             exit()
-        elif key == 'KEY_UP':
-            if p_row == 1:
-                pass
-            else:
-                stdscr.clear()
-                stdscr.refresh()
-                p_row = p_row - 1
-                stdscr.addstr(1, 5, f"p_row : {p_row}", curses.A_ITALIC)
-                pad.refresh(0,0 ,p_row, 10 ,p_row + 10,20)
-            
-        elif key == 'KEY_DOWN':
-            if p_row == MAX_LINE - 10:
-                pass
-            else:
-                stdscr.clear()
-                stdscr.refresh()
-                p_row = p_row + 1
-                stdscr.addstr(1, 5, f"p_row : {p_row}", curses.A_ITALIC)
-                pad.refresh(0,0 ,p_row, 10 ,p_row + 10,20)
-        elif key == 'KEY_LEFT':
-            if p_row == MAX_LINE - 10:
-                pass
-            else:
-                stdscr.clear()
-                stdscr.refresh()
-                p_row = p_row + 1
-                stdscr.addstr(1, 5, f"p_row : {p_row}", curses.A_ITALIC)
-                pad.refresh(p_row,0 ,10, 10 ,10,20)
+
 wrapper(main)
 
 
