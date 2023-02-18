@@ -104,11 +104,11 @@ def main(stdscr):
     stdscr.refresh()
     draw_box(0, 0, 79, 51, True, red, stdscr)
     for i in range(38):
-        draw_box(8, 1 + i, 1 + i, 1 + i,False, red, stdscr)
+        draw_box(8, 1 + i, 1 + i, 1 + i, False, red, stdscr)
         time.sleep(.01)
         stdscr.refresh()
     for i in range(38):
-        draw_box(45 -i , 1 + i, 1 + i, 1 + i, False, green, stdscr)
+        draw_box(45 - i , 1 + i, 1 + i, 1 + i, False, green, stdscr)
         time.sleep(.01)
         stdscr.refresh()
     for i in range(38):
@@ -140,14 +140,18 @@ def main(stdscr):
             else:
                 pad.addstr(" ", white)
         pad.refresh(0, 0, 2, 7, 25, 70)
-    stdscr.addstr(0, 30, "[Manifest V0.1]", red)
+    stdscr.addstr(0, 30, "[MANIFEST V0.1]", red)
+    stdscr.addstr(8, 5, "[PASSENGER DATA CHIP]", white)
     stdscr.addstr(10, 3, "Name: MAX HEADROOM", red)
     stdscr.addstr(11, 3, "AGE: 49", red)
     stdscr.addstr(12, 3, "SEX: MALE", red)
-    draw_box(20, 10, 20, 5, False, green, stdscr)
-    stdscr.addstr(22, 12, "USERNAME : ", green)
-    user = get_input(green, 5, stdscr)
-    stdscr.addstr(23, 12, user, green)
+    stdscr.addstr(12, 3, "Country: United Kingdom", red)
+    stdscr.addstr(13, 3, "MOOD: 🤨 (PUZZLED)", red) 
+    stdscr.addstr(14, 3, "MOOD: 🤢 (SICK)", red)
+    #draw_box(20, 10, 20, 5, False, green, stdscr)
+    #stdscr.addstr(22, 12, "USERNAME : ", green)
+    #user = get_input(green, 5, stdscr)
+    #stdscr.addstr(23, 12, user, green)
 
     while True:
         key = stdscr.getkey()
