@@ -30,11 +30,11 @@ def draw_box(line, col, width, height, fill, style, stdscr):
     for i in range(w - 1):
         stdscr.addstr(l + h, c + 1 + i, "═", s)
     stdscr.addstr(l + h , c + w , "╝", s)
-    stdscr.refresh()
+    #stdscr.refresh()
     
 def get_input(echo_style, max_size, stdscr):
     """
-        Gather inp[ut from the user and echo in selected style
+        Gather input from the user and echo in selected style
     """
     s = echo_style
     ms = max_size
@@ -46,16 +46,34 @@ def get_input(echo_style, max_size, stdscr):
             return input
         elif key == 263:
             if len(input) >= 1:
-                #stdscr.move(0, 1)
                 (y, x) = curses.getsyx()
                 stdscr.move(y, x -1)
                 stdscr.addstr(" ", s)
                 stdscr.move(y, x -1)
                 input = input[:-1]
-            #stdscr.addstr("[" + str(key) + "]", s)
+        elif len(input) == max_size:
+            warn_msg("Name Too Long", w_on_r , stdscr)
         else:
             input += chr(key)
             stdscr.addstr(chr(key), s)
+
+def warn_msg(msg, style, stdscr):
+    """
+        Display warning to user
+    """
+    box = curses.newpad(6,30)
+    draw_box(0, 0, 28, 4, True, style, box)
+    box.addstr(2, 5, msg, style)
+    box.addstr(0, 10, "[WARNING]", style)
+    stdscr.refresh()
+    box.refresh(0, 0, 25, 25, 29, 53)
+    time.sleep(2)
+    box.erase()
+    del box
+    #box.refresh(0, 0, 23, 15, 29, 43)
+    #stdscr.clear()
+    stdscr.touchwin()
+    stdscr.refresh()
 
 def main(stdscr):
     #Grab max row and col so we can avoid placing out of bounds
@@ -68,11 +86,19 @@ def main(stdscr):
     curses.init_pair(3, curses.COLOR_GREEN, -1)
     curses.init_pair(4, curses.COLOR_BLUE, -1)
     curses.init_pair(5, curses.COLOR_WHITE , curses.COLOR_BLUE)
+    curses.init_pair(6, curses.COLOR_WHITE , curses.COLOR_RED)
+    global white
     white = curses.color_pair(1) | curses.A_BOLD
+    global red
     red = curses.color_pair(2) | curses.A_BOLD
+    global green
     green = curses.color_pair(3) | curses.A_BOLD
+    global blue
     blue = curses.color_pair(4) | curses.A_BOLD
+    global w_on_b
     w_on_b = curses.color_pair(5) | curses.A_BOLD
+    global w_on_r
+    w_on_r = curses.color_pair(6) | curses.A_BOLD
     # Clear screen
     stdscr.clear()
     stdscr.refresh()
@@ -86,12 +112,12 @@ def main(stdscr):
         time.sleep(.01)
         stdscr.refresh()
     for i in range(38):
-        draw_box(9, 38 - i, 1 + i, 1 + i, True, red, stdscr)
-        draw_box(9, 77 - i, 1 + i, 1 + i, True, red, stdscr)
+        draw_box(8, 38 - i, 1 + i, 1 + i, True, red, stdscr)
+        draw_box(8, 77 - i, 1 + i, 1 + i, True, red, stdscr)
         time.sleep(.01)
         stdscr.refresh()
     pad = curses.newpad(6,78)
-    draw_box(1, 1, 77, 7, True, white, stdscr)
+    #draw_box(1, 1, 77, 7, False, white, stdscr)
     draw_box(48, 1, 10, 2, True, w_on_b, stdscr)
     stdscr.addstr(49, 3, "[S]CAN", red)
     draw_box(48, 12, 10, 2, True, w_on_b, stdscr)
@@ -99,7 +125,10 @@ def main(stdscr):
     draw_box(48, 23, 10, 2, True, w_on_b, stdscr)
     f = open('./assets/gfx/logo.txt')
     data = f.read()
+    f.close()
     for i in range(12):
+        pad.clear()
+        time.sleep(.25)
         for ch in data:
             rc = random.randint(1,14 - i)
             if rc == 1:
@@ -110,9 +139,7 @@ def main(stdscr):
                 pad.addstr(ch, blue)
             else:
                 pad.addstr(" ", white)
-        pad.refresh(0, 0, 2, 7, 25,70)
-        time.sleep(.25)
-        pad.clear()
+        pad.refresh(0, 0, 2, 7, 25, 70)
     stdscr.addstr(0, 30, "[Manifest V0.1]", red)
     stdscr.addstr(10, 3, "Name: MAX HEADROOM", red)
     stdscr.addstr(11, 3, "AGE: 49", red)
@@ -125,8 +152,9 @@ def main(stdscr):
     while True:
         key = stdscr.getkey()
         if key == 'a':
-            stdscr.addstr(23, 10, "YOU PRESSED 'A' WELL DONE MAN",
-             curses.A_RIGHT)
+            warn_msg("INVALID INPUT!", w_on_r, stdscr)
+            pad.touchwin()
+            pad.refresh(0, 0, 2, 7, 25, 70)
             stdscr.refresh()
         elif key == 'b':
             stdscr.addstr(24, 10, "YOU PRESSED 'B' WELL DONE MAN",
