@@ -3,6 +3,9 @@ from curses import wrapper
 import time
 import random
 
+global ANI_DLA
+ANI_DLA = 0.0
+
 def draw_box(line, col, width, height, fill, style, stdscr):
     """
         Draw a window, takes starting position line & col.
@@ -75,6 +78,16 @@ def warn_msg(msg, style, stdscr):
     stdscr.touchwin()
     stdscr.refresh()
 
+
+def decrypt_record_game(stdscr):
+    gp = curses.newpad(51, 78)
+    #gp.addnstr("yes we have a problem here commander", blue)
+    #draw_box(0, 0, 77, 49, True, white, gp)
+    for X in range(1,(50 * 78)):
+        gp.addstr(str(chr(random.randint(100, 255))), white)
+    gp.refresh(0, 0, 1, 1, 50, 78)
+
+
 def main(stdscr):
     #Grab max row and col so we can avoid placing out of bounds
     MAX_LINE = curses.LINES - 1
@@ -108,7 +121,7 @@ def main(stdscr):
     f.close()
     for i in range(24):
         pad.clear()
-        time.sleep(.25)
+        time.sleep(ANI_DLA)
         for ch in data:
             rc = random.randint(1,26 - i)
             if rc == 1:
@@ -123,18 +136,18 @@ def main(stdscr):
     draw_box(0, 0, 79, 51, True, green, stdscr)
     for i in range(38):
         draw_box(8, 1 + i, 1 + i, 1 + i, False, red, stdscr)
-        time.sleep(.01)
+        time.sleep(ANI_DLA)
         stdscr.refresh()
         pad.refresh(0, 0, 2, 7, 25, 70)
     for i in range(38):
         draw_box(45 - i , 1 + i, 1 + i, 1 + i, False, green, stdscr)
-        time.sleep(.01)
+        time.sleep(ANI_DLA)
         stdscr.refresh()
         pad.refresh(0, 0, 2, 7, 25, 70)
     for i in range(38):
         draw_box(8, 38 - i, 1 + i, 1 + i, True, green, stdscr)
         draw_box(8, 77 - i, 1 + i, 1 + i, True, green, stdscr)
-        time.sleep(.01)
+        time.sleep(ANI_DLA)
         stdscr.refresh()
         pad.refresh(0, 0, 2, 7, 25, 70)
 
@@ -175,21 +188,7 @@ def main(stdscr):
             stdscr.refresh()
         #test all colors curses can produce
         elif key == 'c':
-            pad.erase()
-            stdscr.clear()
-            for i in range(1, curses.COLORS):
-                curses.init_pair(i , -1, i)
-                stdscr.addstr(str(i), curses.color_pair(i))
-            stdscr.addstr("\nThese are the available colors\n")
-            for i in range(1, curses.COLORS):
-                curses.init_pair(i , 1, i)
-                stdscr.addstr(str(i), curses.color_pair(i) | curses.A_BOLD)
-            stdscr.addstr("\nThese are the available colors in BOLD\n")
-            for i in range(1, curses.COLORS):
-                curses.init_pair(i , 1, i)
-                stdscr.addstr(str(i), curses.color_pair(i) | curses.A_DIM)
-            stdscr.addstr("\nThese are the available colors in DIM\n")
-            #stdscr.refresh()
+            decrypt_record_game(stdscr)
         elif key == 'q':
             exit()
 
