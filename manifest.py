@@ -5,13 +5,15 @@ import random
 
 global ANI_DLA
 ANI_DLA = 0.0
+global DIFFICULTY
+DIFFICULTY = "CHAOS"
 
 def draw_box(line, col, width, height, fill, style, stdscr):
     """
         Draw a window, takes starting position line & col.
         If fill is set True then insert spaces to fill window
         Width and height for size and style is curses color pairing.
-        Also takes curses screen we need to use
+        Also takes curses screen/pad we need to use
     """
     l = int(line)
     c = int(col)
@@ -43,11 +45,12 @@ def get_input(echo_style, max_size, stdscr):
     ms = max_size
     input = ""
     while True:
+        stdscr.refresh()
         key = stdscr.getch()
-        #stdscr.addstr("[" + str(key) + "]", s)
+        #stdscr.addstr(2, 2, "[" + str(key) + "]", s)
         if key == ord('\n') or key == ord('\r'):
             return input
-        elif key == 263:
+        elif key == 127:
             if len(input) >= 1:
                 (y, x) = curses.getsyx()
                 stdscr.move(y, x -1)
@@ -80,12 +83,70 @@ def warn_msg(msg, style, stdscr):
 
 
 def decrypt_record_game(stdscr):
-    gp = curses.newpad(51, 78)
-    #gp.addnstr("yes we have a problem here commander", blue)
-    #draw_box(0, 0, 77, 49, True, white, gp)
-    for X in range(1,(50 * 78)):
-        gp.addstr(str(chr(random.randint(100, 255))), white)
-    gp.refresh(0, 0, 1, 1, 50, 78)
+    """
+        Player gets 5 chances to work out the encryption key
+    """
+    drgwin = curses.newwin(52,81)
+    draw_box(0, 0, 79, 51, True, blue, drgwin)
+    drgwin.addstr(0, 25, "[MANIFEST RECORD DECRIPTION]", blue )
+    drgwin.refresh()
+    #Use alfanum file to create random key based on difficulty setting
+    f = open('./assets/data/alfanum.txt')
+    data = f.read()
+    f.close()
+    ekey = ""
+    if DIFFICULTY == "MINOR":
+        dud_keys = 15
+        for i in range(5):
+            ekey += data[random.randint(0, (len(data) - 1))]
+    if DIFFICULTY == "MAJOR":
+        dud_keys = 25
+        for i in range(8):
+            ekey += data[random.randint(0, (len(data) - 1))]
+    if DIFFICULTY == "CHAOS":
+        dud_keys = 35
+        for i in range(12):
+            ekey += data[random.randint(0, (len(data) - 1))]            
+    gp = curses.newpad(51, 76)
+    junk_data = ["0", "1"]
+    for i in range(40):
+        drgwin.move(4 +i, 2)
+        for i in range(76):
+            drgwin.addstr(str(random.randint(0, 1)), white)
+    line_pos = random.randint(4, 43)
+    row_pos = random.randint(2, (76 - len(ekey)))
+    used_locs = []
+    used_locs.append((line_pos, row_pos))
+    drgwin.addstr(line_pos, row_pos, ekey, blue)
+    #insert the other invalid keys
+    for keys in range(dud_keys):
+        #Create a temp key the same size as the actual ekey
+        t_k = ''
+        for char in range(len(ekey)):
+            t_k += data[random.randint(0, (len(data) - 1))]
+        #find somewhere to insert it that doesn't clash
+        look_for_loc = True
+        while look_for_loc:
+            #create a new random location
+            line_pos = random.randint(4, 43)
+            row_pos = random.randint(2, (76 - len(ekey)))
+            #check if line is empty
+            line_used = False
+            for i in range(len(used_locs)):
+                l, r = used_locs[i]
+                if line_pos == l:
+                    line_used = True
+            if line_used != True:
+                look_for_loc = False
+                break
+        drgwin.addstr(line_pos, row_pos, t_k, blue)
+        used_locs.append((line_pos, row_pos))
+    draw_box(45, 2, 40, 4, True, blue, drgwin)
+    drgwin.addstr(45, 11, "[KEY VERIFICATION]", blue)
+    drgwin.addstr(47, 11, "ENTER KEY: ", blue)
+    drgwin.refresh()
+    #key_selection = get_input(blue, len(ekey), drgwin)
+    drgwin.refresh()
 
 
 def main(stdscr):
@@ -100,6 +161,7 @@ def main(stdscr):
     curses.init_pair(4, curses.COLOR_BLUE, -1)
     curses.init_pair(5, curses.COLOR_WHITE , curses.COLOR_BLUE)
     curses.init_pair(6, curses.COLOR_WHITE , curses.COLOR_RED)
+    curses.init_pair(7, curses.COLOR_YELLOW, -1)
     global white
     white = curses.color_pair(1) | curses.A_BOLD
     global red
@@ -112,6 +174,8 @@ def main(stdscr):
     w_on_b = curses.color_pair(5) | curses.A_BOLD
     global w_on_r
     w_on_r = curses.color_pair(6) | curses.A_BOLD
+    global YELLOW
+    YELLOW = curses.color_pair(7) | curses.A_BOLD
     # Clear screen
     stdscr.clear()
     stdscr.refresh()
@@ -170,6 +234,8 @@ def main(stdscr):
     stdscr.addstr(16, 3, "MOOD: 🥴 (INEBRIATED)", green)
     stdscr.addstr(17, 3, "MOOD: 🥺 (WORRIED)", green)
     stdscr.addstr(18, 3, "MOOD: 😶 (UNAVAILABLE)", green)
+    #stdscr.addstr(19, 3, "Type here: ", green)
+    #userstuff = get_input(green, 10, stdscr)
     #draw_box(20, 10, 20, 5, False, green, stdscr)
     #stdscr.addstr(22, 12, "USERNAME : ", green)
     #user = get_input(green, 5, stdscr)
@@ -177,21 +243,15 @@ def main(stdscr):
 
     while True:
         key = stdscr.getkey()
+        #stdscr.addstr(0, 0, key)
         if key == 'a':
             warn_msg("INVALID INPUT!", w_on_r, stdscr)
             pad.touchwin()
             pad.refresh(0, 0, 2, 7, 25, 70)
             stdscr.refresh()
-        elif key == 'b':
-            stdscr.addstr(24, 10, "YOU PRESSED 'B' WELL DONE MAN",
-             curses.A_RIGHT)
-            stdscr.refresh()
-        #test all colors curses can produce
-        elif key == 'c':
+        elif key == 'c' or key == 'C':
             decrypt_record_game(stdscr)
-        elif key == 'q':
+        elif key == 'q' or key == 'Q':
             exit()
 
 wrapper(main)
-
-
