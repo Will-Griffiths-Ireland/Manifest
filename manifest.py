@@ -4,7 +4,7 @@ import time
 import random
 
 global ANI_DLA
-ANI_DLA = 0.1
+ANI_DLA = 0.05
 global DIFFICULTY
 DIFFICULTY = "CHAOS"
 
@@ -190,9 +190,9 @@ def decrypt_record_game(stdscr):
 
 
 def main(stdscr):
-    #Grab max row and col so we can avoid placing out of bounds
-    MAX_LINE = curses.LINES - 1
-    MAX_COL = curses.COLS - 1
+    """
+        Primary startup function, which displays logo and menu
+    """
     curses.start_color()
     curses.use_default_colors()
     curses.init_pair(1, curses.COLOR_WHITE , -1)
@@ -219,13 +219,20 @@ def main(stdscr):
     # Clear screen
     stdscr.clear()
     stdscr.refresh()
+    #read in logo and animate display
     f = open('./assets/gfx/logo.txt')
     data = f.read()
     f.close()
     for i in range(24):
         stdscr.move(25 -i, 7)
         time.sleep(ANI_DLA)
+        new_r_count = 0
+        start_line = 1
         for ch in data:
+            if new_r_count >= (len(data) / 6):
+                stdscr.move(((25 - i) + start_line), 7)
+                new_r_count = 0
+                start_line += 1
             rc = random.randint(1,26 - i)
             if rc == 1:
                 stdscr.addstr(ch, red)
@@ -235,8 +242,35 @@ def main(stdscr):
                 stdscr.addstr(ch, blue)
             else:
                 stdscr.addstr(" ", white)
+            new_r_count = new_r_count + 1
         stdscr.refresh()
     draw_box(0, 0, 79, 51, False, green, stdscr)
+    stdscr.addstr(0, 30, "[ MANIFEST V0.2 ]", green)
+    for i in range(20):
+        draw_box(16, 18, 1 + (i*2), 1 + i, False, red, stdscr)
+        draw_box(17, 19, -1 + (i*2), -1 + i, False, green, stdscr)
+        draw_box(18, 20, -3 + (i*2), -3 + i, False, blue, stdscr)
+        time.sleep(ANI_DLA)
+        #draw_box(line, col, width, height, fill, style, stdscr)
+        stdscr.refresh()
+    stdscr.addstr(17, 31, "[ MAIN MENU ]", green)
+    stdscr.addstr(31, 25, "[ ", white)
+    stdscr.addstr("N", YELLOW)
+    stdscr.addstr("EW GAME ]", white)
+    stdscr.addstr(33, 30, "[ ", white)
+    stdscr.addstr("Q", YELLOW)
+    stdscr.addstr("UIT GAME ]", white)
+    stdscr.addstr(44, 16, "TYPE THE FIRST LETTER OF AN OPTION TO SELECT", white)
+    stdscr.refresh()
+    while True:
+        key = stdscr.getkey()
+        #stdscr.addstr(0, 0, key)
+        if key == 'N' or key == 'n':
+            #launch main game function
+            break
+        elif key == 'Q' or key == 'q':
+            exit()
+
     for i in range(38):
         draw_box(8, 1 + i, 1 + i, 1 + i, False, red, stdscr)
         time.sleep(ANI_DLA)
@@ -257,7 +291,7 @@ def main(stdscr):
     draw_box(48, 12, 10, 2, True, green, stdscr)
     stdscr.addstr(49, 14, "[P]ERMIT", green)
     draw_box(48, 23, 10, 2, True, green, stdscr)
-    stdscr.addstr(0, 30, "[MANIFEST V0.1]", green)
+    
     stdscr.addstr(8, 3, "[SUBDERMAL IMPLANT DATA]", green)
     stdscr.addstr(8, 42, "[SHIP MANIFEST DATA]", green)
     stdscr.addstr(10, 3, "NAME: MAX HEADROOM", green)
