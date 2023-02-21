@@ -4,7 +4,7 @@ import time
 import random
 
 global ANI_DLA
-ANI_DLA = 0.0
+ANI_DLA = 0.1
 global DIFFICULTY
 DIFFICULTY = "CHAOS"
 
@@ -49,6 +49,7 @@ def get_input(echo_style, max_size, stdscr):
         key = stdscr.getch()
         #stdscr.addstr(2, 2, "[" + str(key) + "]", s)
         if key == ord('\n') or key == ord('\r'):
+            input = input.upper()
             return input
         elif key == 127:
             if len(input) >= 1:
@@ -58,10 +59,12 @@ def get_input(echo_style, max_size, stdscr):
                 stdscr.move(y, x -1)
                 input = input[:-1]
         elif len(input) == max_size:
-            warn_msg("Name Too Long", w_on_r , stdscr)
+            warn_msg("INPUT LIMIT REACHED", w_on_r , stdscr)
         else:
             input += chr(key)
-            stdscr.addstr(chr(key), s)
+            screen_key = chr(key)
+            screen_key = screen_key.upper()
+            stdscr.addstr(screen_key, s)
 
 def warn_msg(msg, style, stdscr):
     """
@@ -88,7 +91,7 @@ def decrypt_record_game(stdscr):
     """
     drgwin = curses.newwin(52,81)
     draw_box(0, 0, 79, 51, True, blue, drgwin)
-    drgwin.addstr(0, 25, "[MANIFEST RECORD DECRIPTION]", blue )
+    drgwin.addstr(0, 25, "[MANIFEST RECORD DECRYPTION]", blue )
     drgwin.refresh()
     #Use alfanum file to create random key based on difficulty setting
     f = open('./assets/data/alfanum.txt')
@@ -119,11 +122,18 @@ def decrypt_record_game(stdscr):
     used_locs.append((line_pos, row_pos))
     drgwin.addstr(line_pos, row_pos, ekey, blue)
     #insert the other invalid keys
+    used_keys = []
     for keys in range(dud_keys):
         #Create a temp key the same size as the actual ekey
-        t_k = ''
-        for char in range(len(ekey)):
-            t_k += data[random.randint(0, (len(data) - 1))]
+        #Check if key has already been generated
+        duplicate_key = True
+        while duplicate_key:
+            t_k = ''
+            for char in range(len(ekey)):
+                t_k += data[random.randint(0, (len(data) - 1))]
+            if t_k not in used_keys:
+                duplicate_key = False
+                used_keys.append(t_k)
         #find somewhere to insert it that doesn't clash
         look_for_loc = True
         while look_for_loc:
@@ -141,12 +151,42 @@ def decrypt_record_game(stdscr):
                 break
         drgwin.addstr(line_pos, row_pos, t_k, blue)
         used_locs.append((line_pos, row_pos))
-    draw_box(45, 2, 40, 4, True, blue, drgwin)
-    drgwin.addstr(45, 11, "[KEY VERIFICATION]", blue)
-    drgwin.addstr(47, 11, "ENTER KEY: ", blue)
-    drgwin.refresh()
-    #key_selection = get_input(blue, len(ekey), drgwin)
-    drgwin.refresh()
+    correct_key = False
+    for i in range(5):
+        draw_box(45, 2, 40, 4, True, blue, drgwin)
+        drgwin.addstr(45, 11, "[KEY VERIFICATION]", blue)
+        drgwin.addstr(47, 11, "ENTER KEY: ", blue)
+        drgwin.refresh()
+        key_selection = get_input(blue, len(ekey), drgwin)
+        #drgwin.refresh()
+        drgwin.addstr(45  + i, 45, "ATTEMPT " + str(i + 1) + " : ", blue)
+        for i in range(len(key_selection)):
+            if key_selection[i] not in ekey:
+                drgwin.addstr(key_selection[i], red)
+            elif key_selection[i] == ekey[i]:
+                drgwin.addstr(key_selection[i], green)
+            else:
+                drgwin.addstr(key_selection[i], YELLOW)
+        if key_selection == ekey:
+                correct_key = True
+                break
+    if correct_key:
+        draw_box(45, 2, 40, 4, True, green, drgwin)
+        drgwin.addstr(45, 11, "[KEY VERIFICATION]", green)
+        drgwin.addstr(47, 12, "VALID KEY FOUND!", green)
+        drgwin.refresh()
+    else:
+        draw_box(45, 2, 40, 4, True, red, drgwin)
+        drgwin.addstr(45, 11, "[KEY VERIFICATION]", red)
+        drgwin.addstr(47, 10, "NO VALID KEY FOUND!", green)
+        drgwin.refresh()
+    
+    time.sleep(2)
+    drgwin.clear()
+    del drgwin
+    stdscr.touchwin()
+    stdscr.refresh()
+
 
 
 def main(stdscr):
@@ -179,41 +219,37 @@ def main(stdscr):
     # Clear screen
     stdscr.clear()
     stdscr.refresh()
-    pad = curses.newpad(6,78)
     f = open('./assets/gfx/logo.txt')
     data = f.read()
     f.close()
     for i in range(24):
-        pad.clear()
+        stdscr.move(25 -i, 7)
         time.sleep(ANI_DLA)
         for ch in data:
             rc = random.randint(1,26 - i)
             if rc == 1:
-                pad.addstr(ch, red)
+                stdscr.addstr(ch, red)
             elif rc == 2:
-                pad.addstr(ch, green)
+                stdscr.addstr(ch, green)
             elif rc == 3:
-                pad.addstr(ch, blue)
+                stdscr.addstr(ch, blue)
             else:
-                pad.addstr(" ", white)
-        pad.refresh(0, 0, 25 - i, 7, 25, 70)
-    draw_box(0, 0, 79, 51, True, green, stdscr)
+                stdscr.addstr(" ", white)
+        stdscr.refresh()
+    draw_box(0, 0, 79, 51, False, green, stdscr)
     for i in range(38):
         draw_box(8, 1 + i, 1 + i, 1 + i, False, red, stdscr)
         time.sleep(ANI_DLA)
         stdscr.refresh()
-        pad.refresh(0, 0, 2, 7, 25, 70)
     for i in range(38):
         draw_box(45 - i , 1 + i, 1 + i, 1 + i, False, green, stdscr)
         time.sleep(ANI_DLA)
         stdscr.refresh()
-        pad.refresh(0, 0, 2, 7, 25, 70)
     for i in range(38):
         draw_box(8, 38 - i, 1 + i, 1 + i, True, green, stdscr)
         draw_box(8, 77 - i, 1 + i, 1 + i, True, green, stdscr)
         time.sleep(ANI_DLA)
         stdscr.refresh()
-        pad.refresh(0, 0, 2, 7, 25, 70)
 
     #draw_box(1, 1, 77, 7, False, white, stdscr)
     draw_box(48, 1, 10, 2, True, green, stdscr)
