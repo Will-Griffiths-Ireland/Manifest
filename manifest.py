@@ -2,11 +2,12 @@ import curses
 from curses import wrapper
 import time
 import random
+import threading
 
-global ANI_DLA
-ANI_DLA = 0.00
-global DIFFICULTY
-DIFFICULTY = "MINOR"
+ANI_DLA = 0.1
+DIFFICULTY = "CHAOS"
+DRG_ACT = False
+
 
 def draw_box(line, col, width, height, fill, style, stdscr):
     """
@@ -27,7 +28,7 @@ def draw_box(line, col, width, height, fill, style, stdscr):
     stdscr.addstr(l, c + w , "╗", s)
     for i in range(h - 1):
         stdscr.addstr(l + 1 + i, c, "║", s)
-        if(fill):
+        if (f):
             for x in range(w - 1):
                 stdscr.addstr(l + 1 + i, c + 1 + x, " ", s)
         stdscr.addstr(l + 1 + i, c + w, "║", s)
@@ -35,37 +36,40 @@ def draw_box(line, col, width, height, fill, style, stdscr):
     for i in range(w - 1):
         stdscr.addstr(l + h, c + 1 + i, "═", s)
     stdscr.addstr(l + h , c + w , "╝", s)
-    #stdscr.refresh()
-    
+
+
 def get_input(echo_style, max_size, stdscr):
     """
         Gather input from the user and echo in selected style
     """
+    global DRG_ACT
     s = echo_style
     ms = max_size
     input = ""
-    while True:
+    while True and DRG_ACT:
         stdscr.refresh()
-        key = stdscr.getch()
-        #stdscr.addstr(2, 2, "[" + str(key) + "]", s)
-        if key == ord('\n') or key == ord('\r'):
-            input = input.upper()
-            return input
-        elif key == 127:
-            if len(input) >= 1:
-                (y, x) = curses.getsyx()
-                stdscr.move(y, x -1)
-                stdscr.addstr(" ", s)
-                stdscr.move(y, x -1)
-                input = input[:-1]
-        elif len(input) == max_size:
-            warn_msg("INPUT LIMIT REACHED", W_ON_R , stdscr)
-        else:
-            input += chr(key)
-            screen_key = chr(key)
-            screen_key = screen_key.upper()
-            stdscr.addstr(screen_key, s)
-
+        stdscr.nodelay(True)
+        try:
+            key = stdscr.getch()
+            if key == ord('\n') or key == ord('\r'):
+                input = input.upper()
+                return input
+            elif key == 127:
+                if len(input) >= 1:
+                    (y, x) = curses.getsyx()
+                    stdscr.move(y, x -1)
+                    stdscr.addstr(" ", s)
+                    stdscr.move(y, x -1)
+                    input = input[:-1]
+            elif len(input) == max_size:
+                warn_msg("INPUT LIMIT REACHED", W_ON_R , stdscr)
+            else:
+                input += chr(key)
+                screen_key = chr(key)
+                screen_key = screen_key.upper()
+                stdscr.addstr(screen_key, s)
+        except:
+            time.sleep(.1)
 def warn_msg(msg, style, stdscr):
     """
         Display warning to user
@@ -77,50 +81,89 @@ def warn_msg(msg, style, stdscr):
     stdscr.refresh()
     box.refresh(0, 0, 25, 25, 29, 53)
     time.sleep(2)
+    curses.flushinp()
     box.erase()
     del box
-    #box.refresh(0, 0, 23, 15, 29, 43)
-    #stdscr.clear()
     stdscr.touchwin()
     stdscr.refresh()
 
 
+def countdown(stdscr, drgwin):
+    """
+        Countdown timer
+    """
+    global DRG_ACT
+    timelimit = 15
+    blank_line = "   "
+    for i in range(timelimit):
+        blank_line += " "
+    while True and DRG_ACT:
+        bar_line = ""
+        for i in range(timelimit):
+            bar_line += "#"
+        if timelimit == 0:
+            # ran out of time!! need to do something here
+            DRG_ACT = False
+            drgwin.move(0, 0)
+            for i in range((52 * 81) -1):
+                drgwin.addstr("X", red)
+                drgwin.refresh
+            #time.sleep(1)
+            break
+        stdscr.addstr(2, 4, "SECURITY LOCKDOWN TRACEBACK IMINENT", blue )
+        stdscr.addstr(4, 4, blank_line, green )
+        if timelimit > 40:
+            stdscr.addstr(4, 4, str(timelimit) + " " + bar_line, green )
+        elif timelimit > 19 and timelimit <= 40:
+            stdscr.addstr(4, 4, str(timelimit) + " " + bar_line, YELLOW )
+        else:
+            stdscr.addstr(4, 4, str(timelimit) + " " + bar_line, red)
+        stdscr.refresh()
+        time.sleep(1)
+        timelimit -= 1
+    
+
 def decrypt_record_game(stdscr):
     """
-        Player gets 5 chances to work out the encryption key
+        Player gets 5 chances to work out the encryption key.
+
     """
+    global DRG_ACT
+    DRG_ACT = True
     drgwin = curses.newwin(52,81)
     draw_box(0, 0, 79, 51, True, blue, drgwin)
     drgwin.addstr(0, 25, "[ MANIFEST RECORD DECRYPTION ]", blue )
     drgwin.refresh()
     #Use alfanum file to create random key based on difficulty setting
-    f = open('./assets/data/alfanum.txt')
+    f = open("./assets/data/alfanum.txt", "r")
     data = f.read()
     f.close()
     ekey = ""
     if DIFFICULTY == "MINOR":
-        dud_keys = 15
+        dud_keys = 60
         for i in range(5):
             ekey += data[random.randint(0, (len(data) - 1))]
     if DIFFICULTY == "MAJOR":
-        dud_keys = 25
+        dud_keys = 60
         for i in range(8):
             ekey += data[random.randint(0, (len(data) - 1))]
     if DIFFICULTY == "CHAOS":
-        dud_keys = 34
+        dud_keys = 60
         for i in range(12):
             ekey += data[random.randint(0, (len(data) - 1))]
     for i in range(35):
         drgwin.move(6 + i, 4)
         for i in range(72):
-            drgwin.addstr(str(random.randint(0, 1)), white)
-    line_pos = random.randint(6, 41)
+            #drgwin.addstr(str(random.randint(0, 1)), white)
+            drgwin.addch(data[random.randint(0, (len(data) - 1))])
+    line_pos = random.randint(6, 40)
     row_pos = random.randint(4, (72 - len(ekey)))
     used_locs = []
     used_locs.append((line_pos, row_pos))
     drgwin.addstr(line_pos, row_pos, ekey, blue)
     # insert the invalid keys
     used_keys = []
+    insertions = 0
     for keys in range(dud_keys):
         # Create a temp key the same size as the actual ekey
         # Check if key has already been generated
@@ -145,10 +188,31 @@ def decrypt_record_game(stdscr):
                 if line_pos == l:
                     line_used = True
             if line_used is not True:
+                insertions += 1
+                drgwin.addstr(line_pos, row_pos, t_k, blue)
+                used_locs.append((line_pos, row_pos))
                 look_for_loc = False
                 break
-        drgwin.addstr(line_pos, row_pos, t_k, blue)
-        used_locs.append((line_pos, row_pos))
+            for i in range(6,40):
+                space_free = False
+                for x in range(len(used_locs)):
+                    l, r = used_locs[x]
+                    if line_pos == l:
+                        if row_pos <= ((r - len(ekey) - 1)) \
+                        or row_pos >= ((r + len(ekey) + 1)):
+                            space_free = True
+                            continue
+                        else:
+                            space_free = False
+                            break
+                if space_free is True:
+                    insertions += 1
+                    drgwin.addstr(line_pos, row_pos, t_k, blue)
+                    used_locs.append((line_pos, row_pos))
+                    look_for_loc = False
+                    break
+            break
+    threading.Thread(target=countdown, args=(stdscr, drgwin)).start()
     correct_key = False
     for i in range(5):
         draw_box(44, 4, 34, 4, True, blue, drgwin)
@@ -156,6 +220,8 @@ def decrypt_record_game(stdscr):
         drgwin.addstr(46, 10, "ENTER KEY: ", blue)
         drgwin.refresh()
         key_selection = get_input(blue, len(ekey), drgwin)
+        if DRG_ACT is False:
+            break
         draw_box(42, 35, 37, 8, False, blue, drgwin)
         drgwin.addstr(42, 46, "[ RESULT FEED ]", blue)
         drgwin.addstr(44 + i, 44, "SEQUENCE " + str(i + 1) + " : ", blue)
@@ -217,6 +283,7 @@ def main(stdscr):
     global YELLOW
     YELLOW = curses.color_pair(7) | curses.A_BOLD
     main_menu(stdscr)
+    
 
 
 def main_menu(stdscr):
@@ -224,6 +291,7 @@ def main_menu(stdscr):
         Display logo and main menu
     """
     # Clear screen
+    global ANI_DLA
     stdscr.clear()
     stdscr.refresh()
     # read in logo and animate display
@@ -252,13 +320,10 @@ def main_menu(stdscr):
             new_r_count = new_r_count + 1
         stdscr.refresh()
     draw_box(0, 0, 79, 51, False, green, stdscr)
-    stdscr.addstr(0, 30, "[ MANIFEST V0.2 ]", green)
+    stdscr.addstr(0, 30, "[ MANIFEST V0.3 ]", green)
     for i in range(11):
-        #draw_box(23, 18, 40, 3 + (i - 1), False, red, stdscr)
         draw_box(24, 19, 38, 2 + (i - 2), True, green, stdscr)
-        #draw_box(25, 20, 36, 1 + (i - 3), True, blue, stdscr)
         time.sleep(ANI_DLA)
-        #draw_box(line, col, width, height, fill, style, stdscr)
         stdscr.refresh()
     stdscr.addstr(24, 31, "[ MAIN MENU ]", green)
     stdscr.addstr(28, 31, "[ ", white)
@@ -269,6 +334,7 @@ def main_menu(stdscr):
     stdscr.addstr("UIT GAME ]", white)
     stdscr.addstr(44, 16, "TYPE THE FIRST LETTER OF AN OPTION TO SELECT", white)
     stdscr.refresh()
+    ANI_DLA = 0.005
     while True:
         key = stdscr.getkey()
         #stdscr.addstr(0, 0, key)
@@ -283,7 +349,7 @@ def main_menu(stdscr):
         time.sleep(ANI_DLA)
         stdscr.refresh()
     for i in range(38):
-        draw_box(45 - i , 1 + i, 1 + i, 1 + i, False, green, stdscr)
+        draw_box(45 - i, 1 + i, 1 + i, 1 + i, False, green, stdscr)
         time.sleep(ANI_DLA)
         stdscr.refresh()
     for i in range(38):
@@ -305,24 +371,12 @@ def main_menu(stdscr):
     stdscr.addstr(11, 3, "AGE: 49", green)
     stdscr.addstr(12, 3, "SEX: MALE", green)
     stdscr.addstr(12, 3, "COUNTRY: United Kingdom", green)
-    stdscr.addstr(13, 3, "MOOD: 🤨 (PUZZLED)", green) 
-    stdscr.addstr(14, 3, "MOOD: 🤢 (SICK)", green)
-    stdscr.addstr(15, 3, "MOOD: 🥳 (READY TO PARTY)", green)
-    stdscr.addstr(16, 3, "MOOD: 🥴 (INEBRIATED)", green)
-    stdscr.addstr(17, 3, "MOOD: 🥺 (WORRIED)", green)
-    stdscr.addstr(18, 3, "MOOD: 😶 (UNAVAILABLE)", green)
-    #stdscr.addstr(19, 3, "Type here: ", green)
-    #userstuff = get_input(green, 10, stdscr)
-    #draw_box(20, 10, 20, 5, False, green, stdscr)
-    #stdscr.addstr(22, 12, "USERNAME : ", green)
-    #user = get_input(green, 5, stdscr)
-    #stdscr.addstr(23, 12, user, green)
 
     while True:
         key = stdscr.getkey()
-        if key == 'c' or key == 'C':
+        if key == 'd' or key == 'D':
             decrypt_record_game(stdscr)
-        elif key == 'q' or key == 'Q':
-            exit()
+        elif key == 'm' or key == 'M':
+            main_menu(stdscr)
 
 wrapper(main)
