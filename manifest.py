@@ -5,7 +5,7 @@ import random
 import threading
 
 ANI_DLA = 0.1
-DIFFICULTY = "CHAOS"
+DIFFICULTY = "MINOR"
 DRG_ACT = False
 
 
@@ -46,11 +46,11 @@ def get_input(echo_style, max_size, stdscr):
     s = echo_style
     ms = max_size
     input = ""
-    while True and DRG_ACT:
-        stdscr.refresh()
-        stdscr.nodelay(True)
+    while True and DRG_ACT is True:
         try:
             key = stdscr.getch()
+            if DRG_ACT is False:
+                break
             if key == ord('\n') or key == ord('\r'):
                 input = input.upper()
                 return input
@@ -69,7 +69,7 @@ def get_input(echo_style, max_size, stdscr):
                 screen_key = screen_key.upper()
                 stdscr.addstr(screen_key, s)
         except:
-            time.sleep(.1)
+            time.sleep(.5)
 def warn_msg(msg, style, stdscr):
     """
         Display warning to user
@@ -97,18 +97,13 @@ def countdown(stdscr, drgwin):
     blank_line = "   "
     for i in range(timelimit):
         blank_line += " "
-    while True and DRG_ACT:
+    while True and DRG_ACT is True:
         bar_line = ""
         for i in range(timelimit):
             bar_line += "#"
         if timelimit == 0:
-            # ran out of time!! need to do something here
+            # ran out of time!! 
             DRG_ACT = False
-            drgwin.move(0, 0)
-            for i in range((52 * 81) -1):
-                drgwin.addstr("X", red)
-                drgwin.refresh
-            #time.sleep(1)
             break
         stdscr.addstr(2, 4, "SECURITY LOCKDOWN TRACEBACK IMINENT", blue )
         stdscr.addstr(4, 4, blank_line, green )
@@ -241,12 +236,15 @@ def decrypt_record_game(stdscr):
         drgwin.addstr(46, 12, "VALID KEY FOUND!", green)
         drgwin.refresh()
     else:
+        drgwin.move(0, 0)
+        for i in range((52 * 81) - 1):
+            drgwin.addstr("X", red)
         draw_box(44, 4, 34, 4, True, red, drgwin)
         drgwin.addstr(44, 12, "[ KEY VERIFICATION ]", red)
         drgwin.addstr(46, 12, "NO VALID KEY FOUND!", red)
         drgwin.refresh()
-    
-    time.sleep(3)
+    DRG_ACT = False
+    time.sleep(4)
     drgwin.clear()
     del drgwin
     stdscr.touchwin()
