@@ -4,11 +4,19 @@ import time
 import random
 import threading
 
+# Animation delay setting
 ANI_DLA = 0.1
 DIFFICULTY = "MINOR"
+# Decryption game active flag
 DRG_ACT = False
+# Cursor postion storage
 G_CUR_YX = (0, 0)
 
+
+def set_game(stdscr):
+    # pick diff
+    # give name
+    pass
 
 def draw_box(line, col, width, height, fill, style, stdscr):
     """
@@ -112,17 +120,25 @@ def countdown(stdscr):
         for i in range(timelimit):
             bar_line += "#"
         if timelimit == 0:
-            # ran out of time!! 
+            # ran out of time!!
+            blank_line = ""
+            for i in range(70):
+                blank_line += " "
+            stdscr.addstr(2, 4, blank_line, green )
+            stdscr.addstr(3, 4, blank_line, green )
+            stdscr.addstr(2, 30, "RECORD PERMA LOCKED!", red )
+            stdscr.addstr(3, 29, "HIT ANY KEY TO RETURN", red )
+            stdscr.refresh()
             DRG_ACT = False
             break
-        stdscr.addstr(2, 4, "SECURITY LOCKDOWN TRACEBACK IMINENT", blue )
-        stdscr.addstr(4, 4, blank_line, green )
+        stdscr.addstr(2, 4, "SEGMENTED MEMORY LOCKOUT EXPIRING IN ...", blue )
+        stdscr.addstr(3, 4, blank_line, green )
         if timelimit > 40:
-            stdscr.addstr(4, 4, str(timelimit) + " " + bar_line, green )
+            stdscr.addstr(3, 4, str(timelimit) + " " + bar_line, green )
         elif timelimit > 19 and timelimit <= 40:
-            stdscr.addstr(4, 4, str(timelimit) + " " + bar_line, YELLOW )
+            stdscr.addstr(3, 4, str(timelimit) + " " + bar_line, YELLOW )
         else:
-            stdscr.addstr(4, 4, str(timelimit) + " " + bar_line, red)
+            stdscr.addstr(3, 4, str(timelimit) + " " + bar_line, red)
         stdscr.refresh()
         # Put the cursor back to where it was for input
         (y, x) = G_CUR_YX
@@ -169,7 +185,7 @@ def decrypt_record_game(stdscr):
     row_pos = random.randint(4, (72 - len(ekey)))
     used_locs = []
     used_locs.append((line_pos, row_pos))
-    drgwin.addstr(line_pos, row_pos, ekey, blue)
+    drgwin.addstr(line_pos, row_pos, ekey, red)
     # insert the invalid keys
     used_keys = []
     for keys in range(dud_keys):
@@ -219,7 +235,7 @@ def decrypt_record_game(stdscr):
                     break
             break
     # Launch countodown timer in a thread
-    threading.Thread(target=countdown,daemon=True, args=(stdscr,)).start()
+    threading.Thread(target=countdown,daemon=True, args=(drgwin,)).start()
     # Pause execution to allow countdown thread to start
     time.sleep(0.1)
     correct_key = False
@@ -248,18 +264,20 @@ def decrypt_record_game(stdscr):
     if correct_key:
         draw_box(44, 4, 34, 4, True, green, drgwin)
         drgwin.addstr(44, 12, "[ KEY VERIFICATION ]", green)
-        drgwin.addstr(46, 12, "VALID KEY FOUND!", green)
+        drgwin.addstr(46, 7, "VALID KEY - RECORD RECOVERED", green)
         drgwin.refresh()
     else:
         drgwin.move(0, 0)
-        for i in range((52 * 81) - 1):
-            drgwin.addstr("X", red)
+        for i in range(52):
+            drgwin.move(0 + i, 0)
+            for i in range(80):
+                drgwin.addstr("X", red)
         draw_box(44, 4, 34, 4, True, red, drgwin)
         drgwin.addstr(44, 12, "[ KEY VERIFICATION ]", red)
-        drgwin.addstr(46, 12, "NO VALID KEY FOUND!", red)
+        drgwin.addstr(46, 10, "RECORD PERMA LOCKED!", red)
         drgwin.refresh()
     DRG_ACT = False
-    time.sleep(4)
+    time.sleep(2)
     drgwin.clear()
     del drgwin
     stdscr.touchwin()
@@ -270,7 +288,7 @@ def decrypt_record_game(stdscr):
 def main(stdscr):
     """
         Primary startup function.
-        Setup curses and global color vars
+        Setup curses and color vars
     """
     curses.start_color()
     curses.use_default_colors()
@@ -295,6 +313,7 @@ def main(stdscr):
     W_ON_R = curses.color_pair(6) | curses.A_BOLD
     global YELLOW
     YELLOW = curses.color_pair(7) | curses.A_BOLD
+    # Display main menu
     main_menu(stdscr)
     
 
@@ -333,26 +352,29 @@ def main_menu(stdscr):
             new_r_count = new_r_count + 1
         stdscr.refresh()
     draw_box(0, 0, 79, 51, False, green, stdscr)
-    stdscr.addstr(0, 30, "[ MANIFEST V0.3 ]", green)
+    stdscr.addstr(0, 29, "[ MANIFEST V0.4 ]", green)
     for i in range(11):
         draw_box(24, 19, 38, 2 + (i - 2), True, green, stdscr)
         time.sleep(ANI_DLA)
         stdscr.refresh()
     stdscr.addstr(24, 31, "[ MAIN MENU ]", green)
-    stdscr.addstr(28, 31, "[ ", white)
-    stdscr.addstr("N", YELLOW)
-    stdscr.addstr("EW GAME ]", white)
-    stdscr.addstr(30, 31, "[ ", white)
-    stdscr.addstr("Q", YELLOW)
-    stdscr.addstr("UIT GAME ]", white)
+    stdscr.addstr(26, 33, "N", YELLOW)
+    stdscr.addstr("EW GAME", white)
+    stdscr.addstr(28, 33, "T", YELLOW)
+    stdscr.addstr("UTORIAL", white)
+    stdscr.addstr(30, 33, "L", YELLOW)
+    stdscr.addstr("EADBOARD", white)
+    stdscr.addstr(32, 33, "Q", YELLOW)
+    stdscr.addstr("UIT", white)
     stdscr.addstr(44, 16, "TYPE THE FIRST LETTER OF AN OPTION TO SELECT", white)
     stdscr.refresh()
+    # Reduce animation delay time for future rendering
     ANI_DLA = 0.005
     while True:
         key = stdscr.getkey()
         #stdscr.addstr(0, 0, key)
         if key == 'N' or key == 'n':
-            #launch main game function
+            #launch new gaem setup
             break
         elif key == 'Q' or key == 'q':
             exit()
