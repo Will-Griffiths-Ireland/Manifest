@@ -47,7 +47,7 @@ def get_input(echo_style, max_size, stdscr):
     global G_CUR_YX
     s = echo_style
     ms = max_size
-    input = ""
+    user_input = ""
     while True and DRG_ACT is True:
         try:
             key = stdscr.getch()
@@ -55,10 +55,10 @@ def get_input(echo_style, max_size, stdscr):
             if DRG_ACT is False:
                 break
             if key == ord('\n') or key == ord('\r'):
-                input = input.upper()
-                return input
+                user_input = user_input.upper()
+                return user_input
             if key == 127 or key == ord('\b'):
-                if len(input) >= 1:
+                if len(user_input) >= 1:
                     if DRG_ACT is True:
                         (y, x) = G_CUR_YX
                         G_CUR_YX = (y, x - 1)
@@ -67,14 +67,14 @@ def get_input(echo_style, max_size, stdscr):
                     stdscr.move(y, x - 1)
                     stdscr.addstr(" ", s)
                     stdscr.move(y, x - 1)
-                    input = input[:-1]
-            elif len(input) == max_size:
+                    user_input = user_input[:-1]
+            elif len(user_input) == max_size:
                 warn_msg("INPUT LIMIT REACHED", W_ON_R , stdscr)
             else:
                 if DRG_ACT is True:
                     (y, x) = G_CUR_YX
                     G_CUR_YX = (y, x + 1)
-                input += chr(key)
+                user_input += chr(key)
                 screen_key = chr(key)
                 screen_key = screen_key.upper()
                 stdscr.addstr(screen_key, s)
@@ -103,11 +103,11 @@ def countdown(stdscr):
         Countdown timer
     """
     global DRG_ACT
-    timelimit = 15
+    timelimit = 60
     blank_line = "   "
     for i in range(timelimit):
         blank_line += " "
-    while True and DRG_ACT is True:
+    while DRG_ACT is True:
         bar_line = ""
         for i in range(timelimit):
             bar_line += "#"
@@ -139,11 +139,11 @@ def decrypt_record_game(stdscr):
     global G_CUR_YX
     global DRG_ACT
     DRG_ACT = True
-    drgwin = curses.newwin(52,81)
+    drgwin = curses.newwin(52, 81)
     draw_box(0, 0, 79, 51, True, blue, drgwin)
     drgwin.addstr(0, 25, "[ MANIFEST RECORD DECRYPTION ]", blue )
     drgwin.refresh()
-    #Use alfanum file to create random key based on difficulty setting
+    # Use alfanum file to create random key based on difficulty setting
     f = open("./assets/data/alfanum.txt", "r")
     data = f.read()
     f.close()
@@ -163,8 +163,8 @@ def decrypt_record_game(stdscr):
     for i in range(35):
         drgwin.move(6 + i, 4)
         for i in range(72):
-            #drgwin.addstr(str(random.randint(0, 1)), white)
-            drgwin.addch(data[random.randint(0, (len(data) - 1))])
+            drgwin.addstr(str(random.randint(0, 1)), white)
+            #drgwin.addch(data[random.randint(0, (len(data) - 1))])
     line_pos = random.randint(6, 40)
     row_pos = random.randint(4, (72 - len(ekey)))
     used_locs = []
@@ -172,7 +172,6 @@ def decrypt_record_game(stdscr):
     drgwin.addstr(line_pos, row_pos, ekey, blue)
     # insert the invalid keys
     used_keys = []
-    insertions = 0
     for keys in range(dud_keys):
         # Create a temp key the same size as the actual ekey
         # Check if key has already been generated
@@ -197,7 +196,6 @@ def decrypt_record_game(stdscr):
                 if line_pos == l:
                     line_used = True
             if line_used is not True:
-                insertions += 1
                 drgwin.addstr(line_pos, row_pos, t_k, blue)
                 used_locs.append((line_pos, row_pos))
                 look_for_loc = False
@@ -215,17 +213,18 @@ def decrypt_record_game(stdscr):
                             space_free = False
                             break
                 if space_free is True:
-                    insertions += 1
                     drgwin.addstr(line_pos, row_pos, t_k, blue)
                     used_locs.append((line_pos, row_pos))
                     look_for_loc = False
                     break
             break
     # Launch countodown timer in a thread
-    G_CUR_YX = (46, 22)
-    threading.Thread(target=countdown, args=(stdscr,)).start()
+    threading.Thread(target=countdown,daemon=True, args=(stdscr,)).start()
+    # Pause execution to allow countdown thread to start
+    time.sleep(0.1)
     correct_key = False
     for i in range(5):
+        G_CUR_YX = (46, 21)
         draw_box(44, 4, 34, 4, True, blue, drgwin)
         drgwin.addstr(44, 12, "[ KEY VERIFICATION ]", blue)
         drgwin.addstr(46, 10, "ENTER KEY: ", blue)
