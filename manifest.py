@@ -7,10 +7,45 @@ import threading
 # Animation delay setting
 ANI_DLA = 0.1
 DIFFICULTY = "MINOR"
+P_NAME = ""
 # Decryption game active flag
 DRG_ACT = False
 # Cursor postion storage
 G_CUR_YX = (0, 0)
+# Passenger data
+MALE_NAMES = []
+FEMALE_NAMES = []
+COUNTRY_NAMES = []
+
+
+def gen_pasenger_data_lists(stdscr):
+    """
+        Gen lists
+    """
+    global MALE_NAMES
+    global FEMALE_NAMES
+    global COUNTRY_NAMES
+
+    MALE_NAMES = []
+    f = open('./assets/data/male_names.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        MALE_NAMES.append(line.upper())
+
+    FEMALE_NAMES = []
+    f = open('./assets/data/female_names.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        FEMALE_NAMES.append(line.upper())
+    
+    COUNTRY_NAMES = []
+    f = open('./assets/data/country_names.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        COUNTRY_NAMES.append(line.upper())
 
 
 def set_game(stdscr):
@@ -202,7 +237,7 @@ def decrypt_record_game(stdscr):
     row_pos = random.randint(4, (72 - len(ekey)))
     used_locs = []
     used_locs.append((line_pos, row_pos))
-    drgwin.addstr(line_pos, row_pos, ekey, red)
+    drgwin.addstr(line_pos, row_pos, ekey, blue)
     # insert the invalid keys
     used_keys = []
     for keys in range(dud_keys):
@@ -385,42 +420,158 @@ def main_menu(stdscr):
     stdscr.addstr("UIT", white)
     stdscr.addstr(44, 16, "TYPE THE FIRST LETTER OF AN OPTION TO SELECT", white)
     stdscr.refresh()
+    gen_pasenger_data_lists(stdscr)
     # Reduce animation delay time for future rendering
     ANI_DLA = 0.005
     while True:
         key = stdscr.getkey()
         #stdscr.addstr(0, 0, key)
         if key == 'N' or key == 'n':
-            #launch new gaem setup
+            game_loop(stdscr)
             break
         elif key == 'Q' or key == 'q':
             exit()
 
+def game_loop(stdscr):
+    """
+        Handle main game loop
+    """
     for i in range(38):
-        draw_box(8, 1 + i, 1 + i, 1 + i, False, red, stdscr)
+        draw_box(9, 1 + i, 1 + i, 1 + i, False, red, stdscr)
         time.sleep(ANI_DLA)
         stdscr.refresh()
     for i in range(38):
-        draw_box(45 - i, 1 + i, 1 + i, 1 + i, False, green, stdscr)
+        draw_box(46 - i, 1 + i, 1 + i, 1 + i, False, green, stdscr)
         time.sleep(ANI_DLA)
         stdscr.refresh()
     for i in range(38):
-        draw_box(8, 38 - i, 1 + i, 1 + i, True, green, stdscr)
-        draw_box(8, 77 - i, 1 + i, 1 + i, True, green, stdscr)
+        draw_box(9, 38 - i, 1 + i, 1 + i, True, green, stdscr)
+        draw_box(9, 77 - i, 1 + i, 1 + i, True, green, stdscr)
         time.sleep(ANI_DLA)
         stdscr.refresh()
-
-    #draw_box(1, 1, 77, 7, False, white, stdscr)
-    draw_action_buttons(stdscr)
 
     
-    stdscr.addstr(8, 3, "[ SUBDERMAL IMPLANT DATA ]", green)
-    stdscr.addstr(8, 42, "[ SHIP MANIFEST DATA ]", green)
-    stdscr.addstr(10, 3, "NAME: MAX HEADROOM", green)
-    stdscr.addstr(11, 3, "AGE: 49", green)
-    stdscr.addstr(12, 3, "SEX: MALE", green)
-    stdscr.addstr(12, 3, "COUNTRY: United Kingdom", green)
+    time.sleep(2)
+    stdscr.addstr(2, 3, "PASSENGER    - ", green)
+    stdscr.addstr("* WALKS UP TO SECURITY SCREEN *", white)
+    stdscr.refresh()
+    time.sleep(2)
+    stdscr.addstr(3, 3, "SEC. OFFICER - ", green)
+    stdscr.addstr("' WELCOME ABOARD THE INTERLATTA '", white)
+    stdscr.refresh()
+    time.sleep(2)
+    stdscr.addstr(4, 3, "SEC. OFFICER - ", green)
+    stdscr.addstr("' PLEASE PLACE YOUR IMPLANT ON THE SCANNER '", white)
+    stdscr.refresh()
+    time.sleep(2)
+    stdscr.addstr(5, 3, "PASSENGER    - ", green)
+    stdscr.addstr("' SURE THING BUDDY! '", white)
+    stdscr.refresh()
+    time.sleep(1)
+    stdscr.addstr(9, 3, "[ CONNECTING TO IMPLANT. ]", YELLOW)
+    stdscr.refresh()
+    time.sleep(1)
+    stdscr.addstr(9, 3, "[ SUBDERMAL IMPLANT DATA ]", green)
+    stdscr.refresh()
+    time.sleep(.5)
+    stdscr.addstr(11, 4, "[ VOYAGE DATA ]", green)
+    stdscr.addstr(13, 4, "TICKET TOKEN: ", green)
+    stdscr.addstr("FH7FGH5", white)
+    stdscr.addstr(14, 4, "CABIN ID: ", green)
+    stdscr.addstr("FH7FGH5", white)
+    stdscr.addstr(15, 4, "CABIN CLASS: ", green)
+    stdscr.addstr("LUXURY", white)
+    stdscr.refresh()
+    time.sleep(.5)
+    stdscr.addstr(17, 4, "[ PERSONAL DATA ]", green)
+    stdscr.refresh()
+    time.sleep(.5)
+    stdscr.addstr(19, 4, "NAME: ", green)
+    stdscr.addstr(MALE_NAMES[random.randint(0, len(MALE_NAMES))], white)
+    stdscr.addstr(20, 4, "AGE: ", green)
+    stdscr.addstr("48", white)
+    stdscr.addstr(21, 4, "SEX: ", green)
+    stdscr.addstr("MALE", white)
+    stdscr.addstr(22, 4, "COUNTRY: ", green)
+    stdscr.addstr(COUNTRY_NAMES[random.randint(0, len(COUNTRY_NAMES))], white)
+    stdscr.addstr(23, 4, "HEIGHT: ", green)
+    stdscr.addstr("162 CM", white)
+    stdscr.addstr(24, 4, "HAIR COLOR: ", green)
+    stdscr.addstr("LIPSTICK PINK", white)
+    stdscr.addstr(25, 4, "PROFESSION: ", green)
+    stdscr.addstr("NUTRIBIOLOGIST", white)
+    stdscr.addstr(26, 4, "MARITAL STATUS: ", green)
+    stdscr.addstr("MARRIED", white)
+    stdscr.addstr(27, 4, "CRIMINAL STATUS: ", green)
+    stdscr.addstr("CLEAN RECORD", white)
+    stdscr.addstr(28, 4, "ALERGIES: ", green)
+    stdscr.addstr("NONE", white)
+    stdscr.addstr(29, 4, "VOICE COM ID: ", green)
+    stdscr.addstr("827364827634", white)
+    stdscr.addstr(30, 4, "CREDIT RATING: ", green)
+    stdscr.addstr("A++", white)
+    stdscr.addstr(31, 4, "EDUCATION LEVEL: ", green)
+    stdscr.addstr("PHD", white)
+    stdscr.addstr(32, 4, "UERI: ", green)
+    stdscr.addstr("FTHG 56GH FGH6 FGHS", white)
+    stdscr.addstr(33, 4, "MENTAK ALIGNMENT: ", green)
+    stdscr.addstr("LISTRO", white)
+    stdscr.refresh()
 
+    stdscr.addstr(9, 42, "[ WARNING !!!!!!!!!! ]", red)
+    stdscr.refresh()
+    time.sleep(1)
+    stdscr.addstr(9, 42, "[ RECORD ENCRYPTED ! ]", YELLOW)
+    stdscr.refresh()
+    time.sleep(1)
+    stdscr.addstr(9, 42, "[ SHIP MANIFEST DATA ]", green)
+    stdscr.refresh()
+    time.sleep(.5)
+    stdscr.addstr(11, 43, "[ VOYAGE DATA ]", green)
+    stdscr.addstr(13, 43, "TICKET TOKEN: ", green)
+    stdscr.addstr("FH7FGH5", white)
+    stdscr.addstr(14, 43, "CABIN ID: ", green)
+    stdscr.addstr("FH7####", red)
+    stdscr.addstr(15, 43, "CABIN CLASS: ", green)
+    stdscr.addstr("LUXURY", white)
+    stdscr.refresh()
+    time.sleep(.5)
+    stdscr.addstr(17, 43, "[ PERSONAL DATA ]", green)
+    stdscr.refresh()
+    time.sleep(.5)
+    stdscr.addstr(19, 43, "NAME: ", green)
+    stdscr.addstr(MALE_NAMES[random.randint(0, len(MALE_NAMES))], white)
+    stdscr.addstr(20, 43, "AGE: ", green)
+    stdscr.addstr("48", white)
+    stdscr.addstr(21, 43, "SEX: ", green)
+    stdscr.addstr("MALE", white)
+    stdscr.addstr(22, 43, "COUNTRY: ", green)
+    stdscr.addstr(COUNTRY_NAMES[random.randint(0, len(COUNTRY_NAMES))], white)
+    stdscr.addstr(23, 43, "HEIGHT: ", green)
+    stdscr.addstr("162 CM", white)
+    stdscr.addstr(24, 43, "HAIR COLOR: ", green)
+    stdscr.addstr("LIPSTICK PINK", white)
+    stdscr.addstr(25, 43, "PROFESSION: ", green)
+    stdscr.addstr("NUTRIBIOLOGIST", white)
+    stdscr.addstr(26, 43, "MARITAL STATUS: ", green)
+    stdscr.addstr("MARRIED", white)
+    stdscr.addstr(27, 43, "CRIMINAL STATUS: ", green)
+    stdscr.addstr("CLEAN RECORD", white)
+    stdscr.addstr(28, 43, "ALERGIES: ", green)
+    stdscr.addstr("NONE", white)
+    stdscr.addstr(29, 43, "VOICE COM ID: ", green)
+    stdscr.addstr("#####4827634", red)
+    stdscr.addstr(30, 43, "CREDIT RATING: ", green)
+    stdscr.addstr("###", red)
+    stdscr.addstr(31, 43, "EDUCATION LEVEL: ", green)
+    stdscr.addstr("PHD", white)
+    stdscr.addstr(32, 43, "UERI: ", green)
+    stdscr.addstr("FTHG #### FGH6 FGHS", red)
+    stdscr.addstr(33, 43, "MENTAK ALIGNMENT: ", green)
+    stdscr.addstr("LISTRO", white)
+    stdscr.refresh()
+
+    draw_action_buttons(stdscr)
     while True:
         key = stdscr.getkey()
         if key == 'd' or key == 'D':
