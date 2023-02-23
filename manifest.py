@@ -7,6 +7,7 @@ import threading
 ANI_DLA = 0.1
 DIFFICULTY = "MINOR"
 DRG_ACT = False
+G_CUR_YX = (0, 0)
 
 
 def draw_box(line, col, width, height, fill, style, stdscr):
@@ -43,33 +44,42 @@ def get_input(echo_style, max_size, stdscr):
         Gather input from the user and echo in selected style
     """
     global DRG_ACT
+    global G_CUR_YX
     s = echo_style
     ms = max_size
     input = ""
     while True and DRG_ACT is True:
         try:
             key = stdscr.getch()
+            #stdscr.addstr(0,0, str(key), red)
             if DRG_ACT is False:
                 break
             if key == ord('\n') or key == ord('\r'):
                 input = input.upper()
                 return input
-            elif key == 127:
+            if key == 127 or key == ord('\b'):
                 if len(input) >= 1:
-                    (y, x) = curses.getsyx()
-                    stdscr.move(y, x -1)
+                    if DRG_ACT is True:
+                        (y, x) = G_CUR_YX
+                        G_CUR_YX = (y, x - 1)
+                    else:
+                        (y, x) = curses.getsyx()
+                    stdscr.move(y, x - 1)
                     stdscr.addstr(" ", s)
-                    stdscr.move(y, x -1)
+                    stdscr.move(y, x - 1)
                     input = input[:-1]
             elif len(input) == max_size:
                 warn_msg("INPUT LIMIT REACHED", W_ON_R , stdscr)
             else:
+                if DRG_ACT is True:
+                    (y, x) = G_CUR_YX
+                    G_CUR_YX = (y, x + 1)
                 input += chr(key)
                 screen_key = chr(key)
                 screen_key = screen_key.upper()
                 stdscr.addstr(screen_key, s)
         except:
-            time.sleep(.5)
+            pass
 def warn_msg(msg, style, stdscr):
     """
         Display warning to user
@@ -88,7 +98,7 @@ def warn_msg(msg, style, stdscr):
     stdscr.refresh()
 
 
-def countdown(stdscr, drgwin):
+def countdown(stdscr):
     """
         Countdown timer
     """
@@ -114,6 +124,9 @@ def countdown(stdscr, drgwin):
         else:
             stdscr.addstr(4, 4, str(timelimit) + " " + bar_line, red)
         stdscr.refresh()
+        # Put the cursor back to where it was for input
+        (y, x) = G_CUR_YX
+        stdscr.move(y, x)
         time.sleep(1)
         timelimit -= 1
     
@@ -123,6 +136,7 @@ def decrypt_record_game(stdscr):
         Player gets 5 chances to work out the encryption key.
 
     """
+    global G_CUR_YX
     global DRG_ACT
     DRG_ACT = True
     drgwin = curses.newwin(52,81)
@@ -207,7 +221,9 @@ def decrypt_record_game(stdscr):
                     look_for_loc = False
                     break
             break
-    threading.Thread(target=countdown, args=(stdscr, drgwin)).start()
+    # Launch countodown timer in a thread
+    G_CUR_YX = (46, 22)
+    threading.Thread(target=countdown, args=(stdscr,)).start()
     correct_key = False
     for i in range(5):
         draw_box(44, 4, 34, 4, True, blue, drgwin)
