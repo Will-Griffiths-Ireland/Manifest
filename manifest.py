@@ -18,6 +18,23 @@ def set_game(stdscr):
     # give name
     pass
 
+
+def draw_action_buttons(stdscr):
+    """
+        Draw 'buttons' with actions the player can take
+    """
+    draw_box(48, 7, 14, 2, True, green, stdscr)
+    draw_box(48, 23, 14, 2, True, YELLOW, stdscr)
+    draw_box(48, 39, 14, 2, True, red, stdscr)
+    draw_box(48, 55, 14, 2, True, blue, stdscr)
+    stdscr.addstr(49, 12, "BOARD", white)
+    stdscr.addstr(49, 28, "REJECT", white)
+    stdscr.addstr(49, 43, "ARREST", white)
+    stdscr.addstr(49, 59, "DECRYPT", white)
+    #draw_box(48, 12, 10, 2, True, green, stdscr)
+    #stdscr.addstr(49, 14, "[P]ERMIT", green)
+    #draw_box(48, 23, 10, 2, True, green, stdscr)
+
 def draw_box(line, col, width, height, fill, style, stdscr):
     """
         Draw a window, takes starting position line & col.
@@ -394,11 +411,8 @@ def main_menu(stdscr):
         stdscr.refresh()
 
     #draw_box(1, 1, 77, 7, False, white, stdscr)
-    draw_box(48, 1, 10, 2, True, green, stdscr)
-    stdscr.addstr(49, 3, "[S]CAN", green)
-    draw_box(48, 12, 10, 2, True, green, stdscr)
-    stdscr.addstr(49, 14, "[P]ERMIT", green)
-    draw_box(48, 23, 10, 2, True, green, stdscr)
+    draw_action_buttons(stdscr)
+
     
     stdscr.addstr(8, 3, "[ SUBDERMAL IMPLANT DATA ]", green)
     stdscr.addstr(8, 42, "[ SHIP MANIFEST DATA ]", green)
