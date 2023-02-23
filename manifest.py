@@ -16,15 +16,52 @@ G_CUR_YX = (0, 0)
 MALE_NAMES = []
 FEMALE_NAMES = []
 COUNTRY_NAMES = []
+# Dialog responses
+P_APPR_ACT = []
+P_SCAN_RESP = []
+SO_WELC = []
+SO_SCAN_REQ = []
 
 
-def gen_pasenger_data_lists(stdscr):
+def gen_data_lists(stdscr):
     """
         Gen lists
     """
     global MALE_NAMES
     global FEMALE_NAMES
     global COUNTRY_NAMES
+    global P_APPR_ACT
+    global SO_WELC
+    global SO_SCAN_REQ
+    global P_SCAN_RESP
+
+    P_SCAN_RESP = []
+    f = open('./assets/data/passenger_scan_response.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        P_SCAN_RESP.append(line.upper())
+
+    SE_SCAN_REQ = []
+    f = open('./assets/data/secoff_scan_request')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        SO_SCAN_REQ.append(line.upper())
+
+    SO_WELC = []
+    f = open('./assets/data/secoff_welcome.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        SO_WELC.append(line.upper())
+
+    P_APPR_ACT = []
+    f = open('./assets/data/passenger_approach.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        P_APPR_ACT.append(line.upper())
 
     MALE_NAMES = []
     f = open('./assets/data/male_names.txt')
@@ -59,14 +96,23 @@ def draw_action_buttons(stdscr):
         Draw 'buttons' with actions the player can take
     """
     draw_box(48, 7, 14, 2, True, GREEN, stdscr)
+    stdscr.addstr(49, 12, "B", GREEN)
+    stdscr.addstr("OARD", WHITE)
+    stdscr.refresh()
+    time.sleep(.25)
     draw_box(48, 23, 14, 2, True, YELLOW, stdscr)
+    stdscr.addstr(49, 28, "R", YELLOW)
+    stdscr.addstr("EJECT", WHITE)
+    stdscr.refresh()
+    time.sleep(.25)
     draw_box(48, 39, 14, 2, True, RED, stdscr)
+    stdscr.addstr(49, 43, "A", RED)
+    stdscr.addstr("RREST", WHITE)
+    stdscr.refresh()
+    time.sleep(.25)
     draw_box(48, 55, 14, 2, True, BLUE, stdscr)
-    stdscr.addstr(49, 12, "BOARD", GREEN)
-    stdscr.addstr(49, 12, "BOARD", WHITE)
-    stdscr.addstr(49, 28, "REJECT", WHITE)
-    stdscr.addstr(49, 43, "ARREST", WHITE)
-    stdscr.addstr(49, 59, "DECRYPT", WHITE)
+    stdscr.addstr(49, 59, "D", BLUE)
+    stdscr.addstr("ECRYPT", WHITE)
 
 def draw_box(line, col, width, height, fill, style, stdscr):
     """
@@ -431,7 +477,7 @@ def main_menu(stdscr):
     stdscr.addstr(42, 16, "TYPE THE FIRST LETTER OF AN OPTION TO SELECT", WHITE)
     stdscr.addstr(51, 26, "[ © WILL GRIFFITHS 2023 ]", GREEN)
     stdscr.refresh()
-    gen_pasenger_data_lists(stdscr)
+    gen_data_lists(stdscr)
     # REDuce animation delay time for future rendering
     ANI_DLA = 0.005
 
@@ -448,12 +494,19 @@ def game_loop(stdscr):
     """
         Handle main game loop
     """
+    global P_APPR_ACT
+    global SO_WELC
+    global SO_SCAN_REQ
+    global P_SCAN_RESP
+
     for i in range(38):
         draw_box(9, 1 + i, 1 + i, 1 + i, False, RED, stdscr)
+        draw_box(46 - i, 1 + i, 1 + i, 1 + i, False, GREEN, stdscr)
         time.sleep(ANI_DLA)
         stdscr.refresh()
     for i in range(38):
         draw_box(46 - i, 1 + i, 1 + i, 1 + i, False, GREEN, stdscr)
+        draw_box(9, 1 + i, 1 + i, 1 + i, False, RED, stdscr)
         time.sleep(ANI_DLA)
         stdscr.refresh()
     for i in range(38):
@@ -462,22 +515,23 @@ def game_loop(stdscr):
         time.sleep(ANI_DLA)
         stdscr.refresh()
 
-    
-    time.sleep(2)
-    stdscr.addstr(2, 3, "PASSENGER    - ", GREEN)
-    stdscr.addstr("* WALKS UP TO SECURITY SCREEN *", WHITE)
+
+    stdscr.addstr(2, 3, "PASSENGER - ", GREEN)
+    stdscr.addstr(P_APPR_ACT[random.randint(0, len(P_APPR_ACT) - 1)], WHITE)
     stdscr.refresh()
     time.sleep(2)
-    stdscr.addstr(3, 3, "SEC. OFFICER - ", GREEN)
-    stdscr.addstr("' WELCOME ABOARD THE INTERLATTA '", WHITE)
+    stdscr.addstr(4, 56, " - SEC.OFFICER (YOU)", GREEN)
+    temp_resp = SO_WELC[random.randint(0, len(SO_WELC) - 1)]
+    stdscr.addstr(4, 56 - len(temp_resp), temp_resp, WHITE)
     stdscr.refresh()
     time.sleep(2)
-    stdscr.addstr(4, 3, "SEC. OFFICER - ", GREEN)
-    stdscr.addstr("' PLEASE PLACE YOUR IMPLANT ON THE SCANNER '", WHITE)
+    stdscr.addstr(5, 56, " - SEC.OFFICER (YOU)", GREEN)
+    temp_resp = SO_SCAN_REQ[random.randint(0, len(SO_SCAN_REQ) - 1)]
+    stdscr.addstr(5, 56 - len(temp_resp), temp_resp, WHITE)
     stdscr.refresh()
     time.sleep(2)
-    stdscr.addstr(5, 3, "PASSENGER    - ", GREEN)
-    stdscr.addstr("' SURE THING BUDDY! '", WHITE)
+    stdscr.addstr(7, 3, "PASSENGER - ", GREEN)
+    stdscr.addstr(P_SCAN_RESP[random.randint(0, len(P_SCAN_RESP) - 1)], WHITE)
     stdscr.refresh()
     time.sleep(1)
     stdscr.addstr(9, 3, "[ CONNECTING TO IMPLANT. ]", YELLOW)
