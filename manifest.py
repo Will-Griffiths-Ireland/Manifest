@@ -34,6 +34,36 @@ def set_game(scr):
     # give name
     pass
 
+
+def confirm_action(msg, style, scr):
+    """
+        Get use to confirm the action / key
+    """
+    conf_win = curses.newpad(6, 30)
+    draw_box(0, 0, 28, 4, True, style, conf_win)
+    conf_win.addstr(2, 10, "Y", WHITE)
+    conf_win.addstr("ES OR", style)
+    conf_win.addstr(2, 17, "N", WHITE)
+    conf_win.addstr("O", style)
+    conf_win.addstr(0, 8, "[ " + str(msg) + " ]", style)
+    scr.refresh()
+    conf_win.refresh(0, 0, 25, 25, 29, 53)
+    while True:
+        key = scr.getkey()
+        if key in ('Y', 'y'):
+            confirm = True
+            break
+        elif key in ('N', 'n'):
+            confirm = False
+            break
+    curses.flushinp()
+    conf_win.erase()
+    del conf_win
+    scr.touchwin()
+    scr.refresh()
+    return confirm
+
+
 def rand(start, stop):
     """
         Simple function to return random int
@@ -470,19 +500,15 @@ def game_loop(scr):
                 scr.addstr("▒" , GREEN)
         if h_loop > 0:
             scr.addstr(h_loop, 20, "*SECURITY HATCH SHUTTERING RAISES*")
-        if h_loop < 3:
-            scr.addstr(5, 23, "*'PASSENGER APPROACH' SIGN ILUMINATES*", YELLOW)
+        if h_loop < 2:
+            scr.addstr(5, 19, "*PASSENGER APPROACH SIGN ILUMINATES*", YELLOW)
         scr.refresh()
         time.sleep(.75)
         loop -= 1
         h_loop -= 1
-    
-    scr.addstr(5, 23, "*'PASSENGER APPROACH' SIGN ILUMINATES*", YELLOW)
+
+    scr.addstr(5, 19, "                                      ")
     scr.refresh()
-    time.sleep(2)
-    scr.addstr(5, 23, "                          ")
-    scr.refresh()
-    time.sleep(1)
     scr.addstr(2, 3, "PASSENGER - ", GREEN)
     scr.addstr(dl.P_APPR_ACT[rand(0, len(dl.P_APPR_ACT) - 1)], WHITE)
     scr.refresh()
@@ -520,21 +546,21 @@ def game_loop(scr):
     scr.refresh()
     time.sleep(.5)
     scr.addstr(19, 4, "NAME: ", GREEN)
-    scr.addstr(dl.MALE_NAMES[rand(0, len(dl.MALE_NAMES))], WHITE)
+    scr.addstr(dl.MALE_NAMES[rand(0, len(dl.MALE_NAMES) - 1)], WHITE)
     scr.addstr(20, 4, "AGE: ", GREEN)
     scr.addstr("48", WHITE)
     scr.addstr(21, 4, "SEX: ", GREEN)
     scr.addstr("MALE", WHITE)
     scr.addstr(22, 4, "CITIZENSHIP: ", GREEN)
-    scr.addstr(dl.COUNTRY_NAMES[rand(0, len(dl.COUNTRY_NAMES))], WHITE)
+    scr.addstr(dl.COUNTRY_NAMES[rand(0, len(dl.COUNTRY_NAMES) - 1)], WHITE)
     scr.addstr(23, 4, "HEIGHT: ", GREEN)
     scr.addstr(str(rand(60, 240)) + " CM", WHITE)
     scr.addstr(24, 4, "HAIR COLOR: ", GREEN)
-    scr.addstr(dl.HAIR_COLOUR[rand(0, len(dl.HAIR_COLOUR))], WHITE)
+    scr.addstr(dl.HAIR_COLOUR[rand(0, len(dl.HAIR_COLOUR) - 1)], WHITE)
     scr.addstr(25, 4, "PROFESSION: ", GREEN)
-    scr.addstr(dl.PROFESSION[rand(0, len(dl.PROFESSION))], WHITE)
+    scr.addstr(dl.PROFESSION[rand(0, len(dl.PROFESSION) - 1)], WHITE)
     scr.addstr(26, 4, "MARITAL STATUS: ", GREEN)
-    scr.addstr("MARRIED", WHITE)
+    scr.addstr(dl.MARITAL_STATUS[rand(0, len(dl.MARITAL_STATUS) - 1)], WHITE)
     scr.addstr(27, 4, "BLOOD TYPE: ", GREEN)
     scr.addstr("O-", WHITE)
     scr.addstr(28, 4, "ALERGIES: ", GREEN)
@@ -584,13 +610,13 @@ def game_loop(scr):
     scr.refresh()
     time.sleep(.5)
     scr.addstr(19, 43, "NAME: ", GREEN)
-    scr.addstr(dl.MALE_NAMES[rand(0, len(dl.MALE_NAMES))], WHITE)
+    scr.addstr(dl.MALE_NAMES[rand(0, len(dl.MALE_NAMES) - 1)], WHITE)
     scr.addstr(20, 43, "AGE: ", GREEN)
     scr.addstr("48", WHITE)
     scr.addstr(21, 43, "SEX: ", GREEN)
     scr.addstr("MALE", WHITE)
     scr.addstr(22, 43, "CITIZENSHIP:", GREEN)
-    scr.addstr(dl.COUNTRY_NAMES[rand(0, len(dl.COUNTRY_NAMES))], WHITE)
+    scr.addstr(dl.COUNTRY_NAMES[rand(0, len(dl.COUNTRY_NAMES) - 1)], WHITE)
     scr.addstr(23, 43, "HEIGHT: ", GREEN)
     scr.addstr("162 CM", WHITE)
     scr.addstr(24, 43, "HAIR COLOR: ", GREEN)
@@ -624,13 +650,19 @@ def game_loop(scr):
     scr.refresh()
 
     draw_action_buttons(scr)
+    # Display Quit option
+    scr.addstr(0, 70, "[ ", GREEN)
+    scr.addstr("Q", WHITE)
+    scr.addstr("UIT ]", GREEN)
     curses.flushinp()
     while True:
         key = scr.getkey()
         if key == 'd' or key == 'D':
             decrypt_record_game(scr)
-        elif key == 'm' or key == 'M':
-            main_menu(scr)
+        elif key == 'q' or key == 'Q':
+            end_game = confirm_action("END GAME", GREEN, scr)
+            if end_game == True:
+                main_menu(scr)
 
 # Handle curses intialisation of main function
 wrapper(main)

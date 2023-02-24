@@ -19,10 +19,18 @@ def gen_data_lists():
     global COUNTRY_NAMES
     global HAIR_COLOUR
     global PROFESSION
+    global MARITAL_STATUS
     global P_APPR_ACT
     global SO_WELC
     global SO_SCAN_REQ
     global P_SCAN_RESP
+
+    MARITAL_STATUS = []
+    f = open('./assets/data/marital_status.text')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        MARITAL_STATUS.append(line.upper())
 
     PROFESSION = []
     f = open('./assets/data/professions.text')
