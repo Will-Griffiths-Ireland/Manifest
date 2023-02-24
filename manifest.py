@@ -10,7 +10,11 @@ DIFFICULTY = "MINOR"
 P_NAME = ""
 # Decryption game active flag
 DRG_ACT = False
-# Cursor postion storage
+# Confirm action flag
+CONFIRM_ACTION = False
+# Decrption available flag
+DECRYPT_AVAILABLE = False 
+# Cursor postion used for threading screen updates
 G_CUR_YX = (0, 0)
 # Passenger data
 MALE_NAMES = []
@@ -94,6 +98,7 @@ def set_game(stdscr):
 def draw_action_buttons(stdscr):
     """
         Draw 'buttons' with actions the player can take
+        Draw with only 3 if decrpyt that been used
     """
     draw_box(48, 7, 14, 2, True, GREEN, stdscr)
     stdscr.addstr(49, 12, "B", GREEN)
@@ -195,7 +200,7 @@ def get_input(echo_style, max_size, stdscr):
                 screen_key = screen_key.upper()
                 stdscr.addstr(screen_key, s)
             else:
-                warn_msg("     INVALID KEY", W_ON_R , stdscr)
+                warn_msg("    INVALID KEY", W_ON_R , stdscr)
         except:
             pass
 def warn_msg(msg, style, stdscr):
@@ -205,7 +210,7 @@ def warn_msg(msg, style, stdscr):
     box = curses.newpad(6,30)
     draw_box(0, 0, 28, 4, True, style, box)
     box.addstr(2, 5, msg, style)
-    box.addstr(0, 10, "[ WARNING ]", style)
+    box.addstr(0, 9, "[ WARNING ]", style)
     stdscr.refresh()
     box.refresh(0, 0, 25, 25, 29, 53)
     time.sleep(2)
@@ -388,6 +393,7 @@ def decrypt_record_game(stdscr):
         drgwin.refresh()
     DRG_ACT = False
     time.sleep(2)
+    curses.flushinp()
     drgwin.clear()
     del drgwin
     stdscr.touchwin()
@@ -425,14 +431,12 @@ def main(stdscr):
     YELLOW = curses.color_pair(7) | curses.A_BOLD
     # Display main menu
     main_menu(stdscr)
-    
 
 
 def main_menu(stdscr):
     """
-        Display logo and main menu
+        Display logo and main menu options
     """
-    # Clear screen
     global ANI_DLA
     stdscr.clear()
     stdscr.refresh()
@@ -462,7 +466,7 @@ def main_menu(stdscr):
             new_r_count = new_r_count + 1
         stdscr.refresh()
     draw_box(0, 0, 79, 51, False, GREEN, stdscr)
-    stdscr.addstr(0, 29, "[ MANIFEST V0.4 ]", GREEN)
+    stdscr.addstr(0, 30, "[ MANIFEST V0.4 ]", GREEN)
     for i in range(9):
         draw_box(24, 19, 38, 2 + (i - 2), True, GREEN, stdscr)
         time.sleep(ANI_DLA)
@@ -481,6 +485,7 @@ def main_menu(stdscr):
     # REDuce animation delay time for future rendering
     ANI_DLA = 0.005
 
+    curses.flushinp()
     while True:
         key = stdscr.getkey()
         #stdscr.addstr(0, 0, key)
@@ -499,19 +504,13 @@ def game_loop(stdscr):
     global SO_SCAN_REQ
     global P_SCAN_RESP
 
+    stdscr.clear()
+    draw_box(0, 0, 79, 51, False, GREEN, stdscr)
+    stdscr.addstr(0, 30, "[ MANIFEST V0.4 ]", GREEN)
     for i in range(38):
-        draw_box(9, 1 + i, 1 + i, 1 + i, False, RED, stdscr)
-        draw_box(46 - i, 1 + i, 1 + i, 1 + i, False, GREEN, stdscr)
-        time.sleep(ANI_DLA)
-        stdscr.refresh()
-    for i in range(38):
-        draw_box(46 - i, 1 + i, 1 + i, 1 + i, False, GREEN, stdscr)
-        draw_box(9, 1 + i, 1 + i, 1 + i, False, RED, stdscr)
-        time.sleep(ANI_DLA)
-        stdscr.refresh()
-    for i in range(38):
-        draw_box(9, 38 - i, 1 + i, 1 + i, True, GREEN, stdscr)
-        draw_box(9, 77 - i, 1 + i, 1 + i, True, GREEN, stdscr)
+        draw_box(9, 1, 38, 1 + i, True, GREEN, stdscr)
+        draw_box(9, 40, 38, 1 + i, True, GREEN, stdscr)
+        #draw_box(line, col, width, height, fill, style, stdscr)
         time.sleep(ANI_DLA)
         stdscr.refresh()
 
@@ -537,12 +536,12 @@ def game_loop(stdscr):
     stdscr.addstr(9, 3, "[ CONNECTING TO IMPLANT. ]", YELLOW)
     stdscr.refresh()
     time.sleep(1)
-    stdscr.addstr(9, 3, "[ SUBDERMAL IMPLANT DATA ]", GREEN)
+    stdscr.addstr(9, 3, "[ SUBDERMAL IMPLANT DATA ]", WHITE)
     stdscr.refresh()
     time.sleep(.5)
     stdscr.addstr(11, 4, "[ VOYAGE DATA ]", GREEN)
     stdscr.addstr(13, 4, "TICKET TOKEN: ", GREEN)
-    stdscr.addstr("FH7FGH5", WHITE)
+    stdscr.addstr("IIS-FH7FGH5", WHITE)
     stdscr.addstr(14, 4, "CABIN ID: ", GREEN)
     stdscr.addstr("FH7FGH5", WHITE)
     stdscr.addstr(15, 4, "CABIN CLASS: ", GREEN)
@@ -558,7 +557,7 @@ def game_loop(stdscr):
     stdscr.addstr("48", WHITE)
     stdscr.addstr(21, 4, "SEX: ", GREEN)
     stdscr.addstr("MALE", WHITE)
-    stdscr.addstr(22, 4, "COUNTRY: ", GREEN)
+    stdscr.addstr(22, 4, "CITIZENSHIP: ", GREEN)
     stdscr.addstr(COUNTRY_NAMES[random.randint(0, len(COUNTRY_NAMES))], WHITE)
     stdscr.addstr(23, 4, "HEIGHT: ", GREEN)
     stdscr.addstr("162 CM", WHITE)
@@ -568,8 +567,8 @@ def game_loop(stdscr):
     stdscr.addstr("NUTRIBIOLOGIST", WHITE)
     stdscr.addstr(26, 4, "MARITAL STATUS: ", GREEN)
     stdscr.addstr("MARRIED", WHITE)
-    stdscr.addstr(27, 4, "CRIMINAL STATUS: ", GREEN)
-    stdscr.addstr("CLEAN RECORD", WHITE)
+    stdscr.addstr(27, 4, "BLOOD TYPE: ", GREEN)
+    stdscr.addstr("O-", WHITE)
     stdscr.addstr(28, 4, "ALERGIES: ", GREEN)
     stdscr.addstr("NONE", WHITE)
     stdscr.addstr(29, 4, "VOICE COM ID: ", GREEN)
@@ -582,6 +581,14 @@ def game_loop(stdscr):
     stdscr.addstr("FTHG 56GH FGH6 FGHS", WHITE)
     stdscr.addstr(33, 4, "MENTAK ALIGNMENT: ", GREEN)
     stdscr.addstr("LISTRO", WHITE)
+    stdscr.addstr(34, 4, "DIGITAL DNA FINGERPRINT: ", GREEN)
+    stdscr.move(36, 8)
+    dna_chr = ["|","#"]
+    for i in range(10):
+        stdscr.move(36 + i, 8)
+        for i in range(20):
+            char = dna_chr[random.randint(0, len(dna_chr) - 1)]
+            stdscr.addstr(char, WHITE)
     stdscr.refresh()
 
     stdscr.addstr(9, 42, "[ WARNING !!!!!!!!!! ]", RED)
@@ -611,7 +618,7 @@ def game_loop(stdscr):
     stdscr.addstr("48", WHITE)
     stdscr.addstr(21, 43, "SEX: ", GREEN)
     stdscr.addstr("MALE", WHITE)
-    stdscr.addstr(22, 43, "COUNTRY: ", GREEN)
+    stdscr.addstr(22, 43, "CITIZENSHIP: : ", GREEN)
     stdscr.addstr(COUNTRY_NAMES[random.randint(0, len(COUNTRY_NAMES))], WHITE)
     stdscr.addstr(23, 43, "HEIGHT: ", GREEN)
     stdscr.addstr("162 CM", WHITE)
@@ -621,8 +628,8 @@ def game_loop(stdscr):
     stdscr.addstr("NUTRIBIOLOGIST", WHITE)
     stdscr.addstr(26, 43, "MARITAL STATUS: ", GREEN)
     stdscr.addstr("MARRIED", WHITE)
-    stdscr.addstr(27, 43, "CRIMINAL STATUS: ", GREEN)
-    stdscr.addstr("CLEAN RECORD", WHITE)
+    stdscr.addstr(27, 43, "BLOOD TYPE: ", GREEN)
+    stdscr.addstr("O-", WHITE)
     stdscr.addstr(28, 43, "ALERGIES: ", GREEN)
     stdscr.addstr("NONE", WHITE)
     stdscr.addstr(29, 43, "VOICE COM ID: ", GREEN)
@@ -630,14 +637,23 @@ def game_loop(stdscr):
     stdscr.addstr(30, 43, "CREDIT RATING: ", GREEN)
     stdscr.addstr("###", RED)
     stdscr.addstr(31, 43, "EDUCATION LEVEL: ", GREEN)
-    stdscr.addstr("PHD", WHITE)
+    stdscr.addstr("SECONDARY SCHOOL", WHITE)
     stdscr.addstr(32, 43, "UERI: ", GREEN)
     stdscr.addstr("FTHG #### FGH6 FGHS", RED)
     stdscr.addstr(33, 43, "MENTAK ALIGNMENT: ", GREEN)
     stdscr.addstr("LISTRO", WHITE)
+    stdscr.addstr(34, 43, "DIGITAL DNA FINGERPRINT: ", GREEN)
+    stdscr.move(36, 48)
+    dna_chr = ["|","#"]
+    for i in range(10):
+        stdscr.move(36 + i, 48)
+        for i in range(20):
+            char = dna_chr[random.randint(0, len(dna_chr) - 1)]
+            stdscr.addstr(char, WHITE)
     stdscr.refresh()
 
     draw_action_buttons(stdscr)
+    curses.flushinp()
     while True:
         key = stdscr.getkey()
         if key == 'd' or key == 'D':
