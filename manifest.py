@@ -3,11 +3,14 @@ from curses import wrapper
 import time
 import random
 import threading
+import data_loader as dl
 
 # Animation delay setting
 ANI_DLA = 0.1
-DIFFICULTY = "MINOR"
+DIFFICULTY = "CHAOS"
 P_NAME = ""
+# Game active flag
+GAME_ACT = False
 # Decryption game active flag
 DRG_ACT = False
 # Confirm action flag
@@ -16,110 +19,53 @@ CONFIRM_ACTION = False
 DECRYPT_AVAILABLE = False 
 # Cursor postion used for threading screen updates
 G_CUR_YX = (0, 0)
-# Passenger data
-MALE_NAMES = []
-FEMALE_NAMES = []
-COUNTRY_NAMES = []
-# Dialog responses
-P_APPR_ACT = []
-P_SCAN_RESP = []
-SO_WELC = []
-SO_SCAN_REQ = []
+
+WHITE = "" 
+RED = ""
+GREEN = ""
+BLUE = ""
+W_ON_B = ""
+W_ON_R = ""
+YELLOW = ""
 
 
-def gen_data_lists(stdscr):
-    """
-        Gen lists
-    """
-    global MALE_NAMES
-    global FEMALE_NAMES
-    global COUNTRY_NAMES
-    global P_APPR_ACT
-    global SO_WELC
-    global SO_SCAN_REQ
-    global P_SCAN_RESP
-
-    P_SCAN_RESP = []
-    f = open('./assets/data/passenger_scan_response.txt')
-    data = f.read().splitlines()
-    f.close()
-    for line in data:
-        P_SCAN_RESP.append(line.upper())
-
-    SE_SCAN_REQ = []
-    f = open('./assets/data/secoff_scan_request')
-    data = f.read().splitlines()
-    f.close()
-    for line in data:
-        SO_SCAN_REQ.append(line.upper())
-
-    SO_WELC = []
-    f = open('./assets/data/secoff_welcome.txt')
-    data = f.read().splitlines()
-    f.close()
-    for line in data:
-        SO_WELC.append(line.upper())
-
-    P_APPR_ACT = []
-    f = open('./assets/data/passenger_approach.txt')
-    data = f.read().splitlines()
-    f.close()
-    for line in data:
-        P_APPR_ACT.append(line.upper())
-
-    MALE_NAMES = []
-    f = open('./assets/data/male_names.txt')
-    data = f.read().splitlines()
-    f.close()
-    for line in data:
-        MALE_NAMES.append(line.upper())
-
-    FEMALE_NAMES = []
-    f = open('./assets/data/female_names.txt')
-    data = f.read().splitlines()
-    f.close()
-    for line in data:
-        FEMALE_NAMES.append(line.upper())
-    
-    COUNTRY_NAMES = []
-    f = open('./assets/data/country_names.txt')
-    data = f.read().splitlines()
-    f.close()
-    for line in data:
-        COUNTRY_NAMES.append(line.upper())
-
-
-def set_game(stdscr):
+def set_game(scr):
     # pick diff
     # give name
     pass
 
+def rand(start, stop):
+    """
+        Simple function to return random int
+        Basic alias to shorten lines
+    """
+    return random.randint(start, stop)
 
-def draw_action_buttons(stdscr):
+def draw_action_buttons(scr):
     """
         Draw 'buttons' with actions the player can take
         Draw with only 3 if decrpyt that been used
     """
-    draw_box(48, 7, 14, 2, True, GREEN, stdscr)
-    stdscr.addstr(49, 12, "B", GREEN)
-    stdscr.addstr("OARD", WHITE)
-    stdscr.refresh()
+    draw_box(48, 7, 14, 2, True, GREEN, scr)
+    scr.addstr(49, 12, "B", GREEN)
+    scr.addstr("OARD", WHITE)
+    scr.refresh()
     time.sleep(.25)
-    draw_box(48, 23, 14, 2, True, YELLOW, stdscr)
-    stdscr.addstr(49, 28, "R", YELLOW)
-    stdscr.addstr("EJECT", WHITE)
-    stdscr.refresh()
+    draw_box(48, 23, 14, 2, True, YELLOW, scr)
+    scr.addstr(49, 28, "R", YELLOW)
+    scr.addstr("EJECT", WHITE)
+    scr.refresh()
     time.sleep(.25)
-    draw_box(48, 39, 14, 2, True, RED, stdscr)
-    stdscr.addstr(49, 43, "A", RED)
-    stdscr.addstr("RREST", WHITE)
-    stdscr.refresh()
+    draw_box(48, 39, 14, 2, True, RED, scr)
+    scr.addstr(49, 43, "A", RED)
+    scr.addstr("RREST", WHITE)
+    scr.refresh()
     time.sleep(.25)
-    draw_box(48, 55, 14, 2, True, BLUE, stdscr)
-    stdscr.addstr(49, 59, "D", BLUE)
-    stdscr.addstr("ECRYPT", WHITE)
+    draw_box(48, 55, 14, 2, True, BLUE, scr)
+    scr.addstr(49, 59, "D", BLUE)
+    scr.addstr("ECRYPT", WHITE)
 
-def draw_box(line, col, width, height, fill, style, stdscr):
+def draw_box(line, col, width, height, fill, style, scr):
     """
         Draw a window, takes starting position line & col.
         If fill is set True then insert spaces to fill window
@@ -132,23 +78,23 @@ def draw_box(line, col, width, height, fill, style, stdscr):
     h = int(height)
     s = style
     f = fill
-    stdscr.addstr(l, c, "╔", s)
+    scr.addstr(l, c, "╔", s)
     for i in range(w - 1):
-        stdscr.addstr(l, c  + 1 + i, "═", s)
-    stdscr.addstr(l, c + w , "╗", s)
+        scr.addstr(l, c  + 1 + i, "═", s)
+    scr.addstr(l, c + w , "╗", s)
     for i in range(h - 1):
-        stdscr.addstr(l + 1 + i, c, "║", s)
+        scr.addstr(l + 1 + i, c, "║", s)
         if (f):
             for x in range(w - 1):
-                stdscr.addstr(l + 1 + i, c + 1 + x, " ", s)
-        stdscr.addstr(l + 1 + i, c + w, "║", s)
-    stdscr.addstr(l + h, c, "╚", s)
+                scr.addstr(l + 1 + i, c + 1 + x, " ", s)
+        scr.addstr(l + 1 + i, c + w, "║", s)
+    scr.addstr(l + h, c, "╚", s)
     for i in range(w - 1):
-        stdscr.addstr(l + h, c + 1 + i, "═", s)
-    stdscr.addstr(l + h , c + w , "╝", s)
+        scr.addstr(l + h, c + 1 + i, "═", s)
+    scr.addstr(l + h , c + w , "╝", s)
 
 
-def get_input(echo_style, max_size, stdscr):
+def get_input(echo_style, max_size, scr):
     """
         Gather input from the user and echo in selected style
         Escape is 27
@@ -170,9 +116,9 @@ def get_input(echo_style, max_size, stdscr):
 
     while True and DRG_ACT is True:
         try:
-            key = stdscr.getch()
+            key = scr.getch()
             #key_as_char = str(chr(key))
-            #stdscr.addstr(0,0, str(key), RED)
+            #scr.addstr(0,0, str(key), RED)
             if DRG_ACT is False:
                 break
             if key == ord('\n') or key == ord('\r'):
@@ -185,12 +131,12 @@ def get_input(echo_style, max_size, stdscr):
                         G_CUR_YX = (y, x - 1)
                     else:
                         (y, x) = curses.getsyx()
-                    stdscr.move(y, x - 1)
-                    stdscr.addstr(" ", s)
-                    stdscr.move(y, x - 1)
+                    scr.move(y, x - 1)
+                    scr.addstr(" ", s)
+                    scr.move(y, x - 1)
                     user_input = user_input[:-1]
             elif len(user_input) == max_size:
-                warn_msg("INPUT LIMIT REACHED", W_ON_R , stdscr)
+                warn_msg("INPUT LIMIT REACHED", W_ON_R , scr)
             elif chr(key).upper() in valid_keys:
                 if DRG_ACT is True:
                     (y, x) = G_CUR_YX
@@ -198,12 +144,12 @@ def get_input(echo_style, max_size, stdscr):
                 user_input += chr(key)
                 screen_key = chr(key)
                 screen_key = screen_key.upper()
-                stdscr.addstr(screen_key, s)
+                scr.addstr(screen_key, s)
             else:
-                warn_msg("    INVALID KEY", W_ON_R , stdscr)
+                warn_msg("    INVALID KEY", W_ON_R , scr)
         except:
             pass
-def warn_msg(msg, style, stdscr):
+def warn_msg(msg, style, scr):
     """
         Display warning to user
     """
@@ -211,17 +157,17 @@ def warn_msg(msg, style, stdscr):
     draw_box(0, 0, 28, 4, True, style, box)
     box.addstr(2, 5, msg, style)
     box.addstr(0, 9, "[ WARNING ]", style)
-    stdscr.refresh()
+    scr.refresh()
     box.refresh(0, 0, 25, 25, 29, 53)
-    time.sleep(2)
+    time.sleep(1.5)
     curses.flushinp()
     box.erase()
     del box
-    stdscr.touchwin()
-    stdscr.refresh()
+    scr.touchwin()
+    scr.refresh()
 
 
-def countdown(stdscr):
+def countdown(scr):
     """
         Countdown timer
     """
@@ -239,30 +185,30 @@ def countdown(stdscr):
             blank_line = ""
             for i in range(70):
                 blank_line += " "
-            stdscr.addstr(2, 4, blank_line, GREEN )
-            stdscr.addstr(3, 4, blank_line, GREEN )
-            stdscr.addstr(2, 30, "RECORD PERMA LOCKED!", RED )
-            stdscr.addstr(3, 29, "HIT ANY KEY TO RETURN", RED )
-            stdscr.refresh()
+            scr.addstr(2, 4, blank_line, GREEN )
+            scr.addstr(3, 4, blank_line, GREEN )
+            scr.addstr(2, 30, "RECORD PERMA LOCKED!", RED )
+            scr.addstr(3, 29, "HIT ANY KEY TO RETURN", RED )
+            scr.refresh()
             DRG_ACT = False
             break
-        stdscr.addstr(2, 4, "SEGMENTED MEMORY LOCKOUT EXPIRING IN ...", BLUE )
-        stdscr.addstr(3, 4, blank_line, GREEN )
+        scr.addstr(2, 4, "SEGMENTED MEMORY LOCKOUT EXPIRING IN ...", BLUE )
+        scr.addstr(3, 4, blank_line, GREEN )
         if timelimit > 40:
-            stdscr.addstr(3, 4, str(timelimit) + " " + bar_line, GREEN )
+            scr.addstr(3, 4, str(timelimit) + " " + bar_line, GREEN )
         elif timelimit > 19 and timelimit <= 40:
-            stdscr.addstr(3, 4, str(timelimit) + " " + bar_line, YELLOW )
+            scr.addstr(3, 4, str(timelimit) + " " + bar_line, YELLOW )
         else:
-            stdscr.addstr(3, 4, str(timelimit) + " " + bar_line, RED)
-        stdscr.refresh()
+            scr.addstr(3, 4, str(timelimit) + " " + bar_line, RED)
+        scr.refresh()
         # Put the cursor back to where it was for input
         (y, x) = G_CUR_YX
-        stdscr.move(y, x)
+        scr.move(y, x)
         time.sleep(1)
         timelimit -= 1
     
 
-def decrypt_record_game(stdscr):
+def decrypt_record_game(scr):
     """
         Player gets 5 chances to work out the encryption key.
 
@@ -281,23 +227,23 @@ def decrypt_record_game(stdscr):
     ekey = ""
     if DIFFICULTY == "MINOR":
         dud_keys = 60
-        for i in range(5):
-            ekey += data[random.randint(0, (len(data) - 1))]
-    if DIFFICULTY == "MAJOR":
-        dud_keys = 60
-        for i in range(8):
-            ekey += data[random.randint(0, (len(data) - 1))]
-    if DIFFICULTY == "CHAOS":
-        dud_keys = 60
         for i in range(12):
-            ekey += data[random.randint(0, (len(data) - 1))]
+            ekey += data[rand(0, (len(data) - 1))]
+    if DIFFICULTY == "MAJOR":
+        dud_keys = 100
+        for i in range(8):
+            ekey += data[rand(0, (len(data) - 1))]
+    if DIFFICULTY == "CHAOS":
+        dud_keys = 120
+        for i in range(5):
+            ekey += data[rand(0, (len(data) - 1))]
     for i in range(35):
         drgwin.move(6 + i, 4)
         for i in range(72):
-            drgwin.addstr(str(random.randint(0, 1)), WHITE)
-            #drgwin.addch(data[random.randint(0, (len(data) - 1))])
-    line_pos = random.randint(6, 40)
-    row_pos = random.randint(4, (72 - len(ekey)))
+            drgwin.addstr(str(rand(0, 1)), WHITE)
+            #drgwin.addch(data[rand(0, (len(data) - 1))])
+    line_pos = rand(6, 40)
+    row_pos = rand(4, (72 - len(ekey)))
     used_locs = []
     used_locs.append((line_pos, row_pos))
     drgwin.addstr(line_pos, row_pos, ekey, BLUE)
@@ -310,7 +256,7 @@ def decrypt_record_game(stdscr):
         while duplicate_key:
             t_k = ''
             for char in range(len(ekey)):
-                t_k += data[random.randint(0, (len(data) - 1))]
+                t_k += data[rand(0, (len(data) - 1))]
             if t_k not in used_keys:
                 duplicate_key = False
                 used_keys.append(t_k)
@@ -318,8 +264,8 @@ def decrypt_record_game(stdscr):
         look_for_loc = True
         while look_for_loc:
             # create a new random location
-            line_pos = random.randint(6, 40)
-            row_pos = random.randint(4, (72 - len(ekey)))
+            line_pos = rand(6, 40)
+            row_pos = rand(4, (72 - len(ekey)))
             # check if line is empty
             line_used = False
             for i in range(len(used_locs)):
@@ -396,12 +342,11 @@ def decrypt_record_game(stdscr):
     curses.flushinp()
     drgwin.clear()
     del drgwin
-    stdscr.touchwin()
-    stdscr.refresh()
+    scr.touchwin()
+    scr.refresh()
 
 
-
-def main(stdscr):
+def main(scr):
     """
         Primary startup function.
         Setup curses and color vars
@@ -430,235 +375,262 @@ def main(stdscr):
     global YELLOW
     YELLOW = curses.color_pair(7) | curses.A_BOLD
     # Display main menu
-    main_menu(stdscr)
+    main_menu(scr)
 
 
-def main_menu(stdscr):
+def main_menu(scr):
     """
         Display logo and main menu options
     """
     global ANI_DLA
-    stdscr.clear()
-    stdscr.refresh()
+    scr.clear()
+    scr.refresh()
     # read in logo and animate display
     f = open('./assets/gfx/logo.txt')
     data = f.read()
     f.close()
     for i in range(24):
-        stdscr.move(32 - i, 7)
+        scr.move(32 - i, 7)
         time.sleep(ANI_DLA)
         new_r_count = 0
         start_line = 1
         for ch in data:
             if new_r_count >= (len(data) / 6):
-                stdscr.move(((32 - i) + start_line), 7)
+                scr.move(((32 - i) + start_line), 7)
                 new_r_count = 0
                 start_line += 1
-            rc = random.randint(1,26 - i)
+            rc = rand(1,26 - i)
             if rc == 1:
-                stdscr.addstr(ch, RED)
+                scr.addstr(ch, RED)
             elif rc == 2:
-                stdscr.addstr(ch, GREEN)
+                scr.addstr(ch, GREEN)
             elif rc == 3:
-                stdscr.addstr(ch, BLUE)
+                scr.addstr(ch, BLUE)
             else:
-                stdscr.addstr(" ", WHITE)
+                scr.addstr(" ", WHITE)
             new_r_count = new_r_count + 1
-        stdscr.refresh()
-    draw_box(0, 0, 79, 51, False, GREEN, stdscr)
-    stdscr.addstr(0, 30, "[ MANIFEST V0.4 ]", GREEN)
+        scr.refresh()
+    draw_box(0, 0, 79, 51, False, GREEN, scr)
+    scr.addstr(0, 30, "[ MANIFEST V0.4 ]", GREEN)
     for i in range(9):
-        draw_box(24, 19, 38, 2 + (i - 2), True, GREEN, stdscr)
+        draw_box(24, 19, 38, 2 + (i - 2), True, GREEN, scr)
         time.sleep(ANI_DLA)
-        stdscr.refresh()
-    stdscr.addstr(24, 31, "[ MAIN MENU ]", GREEN)
-    stdscr.addstr(26, 33, "N", YELLOW)
-    stdscr.addstr("EW GAME", WHITE)
-    stdscr.addstr(28, 33, "T", YELLOW)
-    stdscr.addstr("UTORIAL", WHITE)
-    stdscr.addstr(30, 33, "Q", YELLOW)
-    stdscr.addstr("UIT", WHITE)
-    stdscr.addstr(42, 16, "TYPE THE FIRST LETTER OF AN OPTION TO SELECT", WHITE)
-    stdscr.addstr(51, 26, "[ © WILL GRIFFITHS 2023 ]", GREEN)
-    stdscr.refresh()
-    gen_data_lists(stdscr)
-    # REDuce animation delay time for future rendering
+        scr.refresh()
+    scr.addstr(24, 31, "[ MAIN MENU ]", GREEN)
+    scr.addstr(26, 33, "N", YELLOW)
+    scr.addstr("EW GAME", WHITE)
+    scr.addstr(28, 33, "T", YELLOW)
+    scr.addstr("UTORIAL", WHITE)
+    scr.addstr(30, 33, "Q", YELLOW)
+    scr.addstr("UIT", WHITE)
+    scr.addstr(42, 16, "TYPE THE FIRST LETTER OF AN OPTION TO SELECT", WHITE)
+    scr.addstr(51, 26, "[ © WILL GRIFFITHS 2023 ]", GREEN)
+    scr.refresh()
+    dl.gen_data_lists()
+    # Reduce animation delay time for future rendering
     ANI_DLA = 0.005
 
     curses.flushinp()
     while True:
-        key = stdscr.getkey()
-        #stdscr.addstr(0, 0, key)
+        key = scr.getkey()
+        #scr.addstr(0, 0, key)
         if key == 'N' or key == 'n':
-            game_loop(stdscr)
+            game_loop(scr)
             break
         elif key == 'Q' or key == 'q':
             exit()
 
-def game_loop(stdscr):
+def game_loop(scr):
     """
         Handle main game loop
+        Interact with passenger
+        display data
+        take action
     """
-    global P_APPR_ACT
-    global SO_WELC
-    global SO_SCAN_REQ
-    global P_SCAN_RESP
 
-    stdscr.clear()
-    draw_box(0, 0, 79, 51, False, GREEN, stdscr)
-    stdscr.addstr(0, 30, "[ MANIFEST V0.4 ]", GREEN)
+    scr.clear()
+    draw_box(0, 0, 79, 51, False, GREEN, scr)
+    scr.addstr(0, 30, "[ MANIFEST V0.4 ]", GREEN)
     for i in range(38):
-        draw_box(9, 1, 38, 1 + i, True, GREEN, stdscr)
-        draw_box(9, 40, 38, 1 + i, True, GREEN, stdscr)
-        #draw_box(line, col, width, height, fill, style, stdscr)
+        draw_box(9, 1, 38, 1 + i, True, GREEN, scr)
+        draw_box(9, 40, 38, 1 + i, True, GREEN, scr)
         time.sleep(ANI_DLA)
-        stdscr.refresh()
-
-
-    stdscr.addstr(2, 3, "PASSENGER - ", GREEN)
-    stdscr.addstr(P_APPR_ACT[random.randint(0, len(P_APPR_ACT) - 1)], WHITE)
-    stdscr.refresh()
+        scr.refresh()
+    loop = 7
+    h_loop = 5
+    for i in range(8):
+        for i in range(8):
+            scr.move(1 + i, 1)
+            for i in range(78):
+                scr.addstr(" " , GREEN)
+        scr.refresh()
+        for i in range(loop):
+            scr.move(1 + i, 1)
+            for i in range(78):
+                scr.addstr("▒" , GREEN)
+        if h_loop > 0:
+            scr.addstr(h_loop, 20, "*SECURITY HATCH SHUTTERING RAISES*")
+        if h_loop < 3:
+            scr.addstr(5, 23, "*'PASSENGER APPROACH' SIGN ILUMINATES*", YELLOW)
+        scr.refresh()
+        time.sleep(.75)
+        loop -= 1
+        h_loop -= 1
+    
+    scr.addstr(5, 23, "*'PASSENGER APPROACH' SIGN ILUMINATES*", YELLOW)
+    scr.refresh()
     time.sleep(2)
-    stdscr.addstr(4, 56, " - SEC.OFFICER (YOU)", GREEN)
-    temp_resp = SO_WELC[random.randint(0, len(SO_WELC) - 1)]
-    stdscr.addstr(4, 56 - len(temp_resp), temp_resp, WHITE)
-    stdscr.refresh()
-    time.sleep(2)
-    stdscr.addstr(5, 56, " - SEC.OFFICER (YOU)", GREEN)
-    temp_resp = SO_SCAN_REQ[random.randint(0, len(SO_SCAN_REQ) - 1)]
-    stdscr.addstr(5, 56 - len(temp_resp), temp_resp, WHITE)
-    stdscr.refresh()
-    time.sleep(2)
-    stdscr.addstr(7, 3, "PASSENGER - ", GREEN)
-    stdscr.addstr(P_SCAN_RESP[random.randint(0, len(P_SCAN_RESP) - 1)], WHITE)
-    stdscr.refresh()
+    scr.addstr(5, 23, "                          ")
+    scr.refresh()
     time.sleep(1)
-    stdscr.addstr(9, 3, "[ CONNECTING TO IMPLANT. ]", YELLOW)
-    stdscr.refresh()
+    scr.addstr(2, 3, "PASSENGER - ", GREEN)
+    scr.addstr(dl.P_APPR_ACT[rand(0, len(dl.P_APPR_ACT) - 1)], WHITE)
+    scr.refresh()
+    time.sleep(2)
+    scr.addstr(4, 56, " - SEC.OFFICER (YOU)", GREEN)
+    temp_resp = dl.SO_WELC[rand(0, len(dl.SO_WELC) - 1)]
+    scr.addstr(4, 56 - len(temp_resp), temp_resp, WHITE)
+    scr.refresh()
+    time.sleep(2)
+    scr.addstr(5, 56, " - SEC.OFFICER (YOU)", GREEN)
+    temp_resp = dl.SO_SCAN_REQ[rand(0, len(dl.SO_SCAN_REQ) - 1)]
+    scr.addstr(5, 56 - len(temp_resp), temp_resp, WHITE)
+    scr.refresh()
+    time.sleep(2)
+    scr.addstr(7, 3, "PASSENGER - ", GREEN)
+    scr.addstr(dl.P_SCAN_RESP[rand(0, len(dl.P_SCAN_RESP) - 1)], WHITE)
+    scr.refresh()
     time.sleep(1)
-    stdscr.addstr(9, 3, "[ SUBDERMAL IMPLANT DATA ]", WHITE)
-    stdscr.refresh()
+    scr.addstr(9, 3, "[ CONNECTING TO IMPLANT  ]", YELLOW)
+    scr.refresh()
+    time.sleep(1)
+    scr.addstr(9, 3, "[ READING IMPLANT DATA.. ]", WHITE)
+    scr.refresh()
     time.sleep(.5)
-    stdscr.addstr(11, 4, "[ VOYAGE DATA ]", GREEN)
-    stdscr.addstr(13, 4, "TICKET TOKEN: ", GREEN)
-    stdscr.addstr("IIS-FH7FGH5", WHITE)
-    stdscr.addstr(14, 4, "CABIN ID: ", GREEN)
-    stdscr.addstr("FH7FGH5", WHITE)
-    stdscr.addstr(15, 4, "CABIN CLASS: ", GREEN)
-    stdscr.addstr("LUXURY", WHITE)
-    stdscr.refresh()
+    scr.addstr(11, 4, "[ VOYAGE DATA ]", GREEN)
+    scr.addstr(13, 4, "TICKET TOKEN: ", GREEN)
+    scr.addstr("IIS-FH7FGH5", WHITE)
+    scr.addstr(14, 4, "CABIN ID: ", GREEN)
+    scr.addstr("FH7FGH5", WHITE)
+    scr.addstr(15, 4, "CABIN CLASS: ", GREEN)
+    scr.addstr("LUXURY", WHITE)
+    scr.refresh()
     time.sleep(.5)
-    stdscr.addstr(17, 4, "[ PERSONAL DATA ]", GREEN)
-    stdscr.refresh()
+    scr.addstr(17, 4, "[ PERSONAL DATA ]", GREEN)
+    scr.refresh()
     time.sleep(.5)
-    stdscr.addstr(19, 4, "NAME: ", GREEN)
-    stdscr.addstr(MALE_NAMES[random.randint(0, len(MALE_NAMES))], WHITE)
-    stdscr.addstr(20, 4, "AGE: ", GREEN)
-    stdscr.addstr("48", WHITE)
-    stdscr.addstr(21, 4, "SEX: ", GREEN)
-    stdscr.addstr("MALE", WHITE)
-    stdscr.addstr(22, 4, "CITIZENSHIP: ", GREEN)
-    stdscr.addstr(COUNTRY_NAMES[random.randint(0, len(COUNTRY_NAMES))], WHITE)
-    stdscr.addstr(23, 4, "HEIGHT: ", GREEN)
-    stdscr.addstr("162 CM", WHITE)
-    stdscr.addstr(24, 4, "HAIR COLOR: ", GREEN)
-    stdscr.addstr("LIPSTICK PINK", WHITE)
-    stdscr.addstr(25, 4, "PROFESSION: ", GREEN)
-    stdscr.addstr("NUTRIBIOLOGIST", WHITE)
-    stdscr.addstr(26, 4, "MARITAL STATUS: ", GREEN)
-    stdscr.addstr("MARRIED", WHITE)
-    stdscr.addstr(27, 4, "BLOOD TYPE: ", GREEN)
-    stdscr.addstr("O-", WHITE)
-    stdscr.addstr(28, 4, "ALERGIES: ", GREEN)
-    stdscr.addstr("NONE", WHITE)
-    stdscr.addstr(29, 4, "VOICE COM ID: ", GREEN)
-    stdscr.addstr("827364827634", WHITE)
-    stdscr.addstr(30, 4, "CREDIT RATING: ", GREEN)
-    stdscr.addstr("A++", WHITE)
-    stdscr.addstr(31, 4, "EDUCATION LEVEL: ", GREEN)
-    stdscr.addstr("PHD", WHITE)
-    stdscr.addstr(32, 4, "UERI: ", GREEN)
-    stdscr.addstr("FTHG 56GH FGH6 FGHS", WHITE)
-    stdscr.addstr(33, 4, "MENTAK ALIGNMENT: ", GREEN)
-    stdscr.addstr("LISTRO", WHITE)
-    stdscr.addstr(34, 4, "DIGITAL DNA FINGERPRINT: ", GREEN)
-    stdscr.move(36, 8)
+    scr.addstr(19, 4, "NAME: ", GREEN)
+    scr.addstr(dl.MALE_NAMES[rand(0, len(dl.MALE_NAMES))], WHITE)
+    scr.addstr(20, 4, "AGE: ", GREEN)
+    scr.addstr("48", WHITE)
+    scr.addstr(21, 4, "SEX: ", GREEN)
+    scr.addstr("MALE", WHITE)
+    scr.addstr(22, 4, "CITIZENSHIP: ", GREEN)
+    scr.addstr(dl.COUNTRY_NAMES[rand(0, len(dl.COUNTRY_NAMES))], WHITE)
+    scr.addstr(23, 4, "HEIGHT: ", GREEN)
+    scr.addstr(str(rand(60, 240)) + " CM", WHITE)
+    scr.addstr(24, 4, "HAIR COLOR: ", GREEN)
+    scr.addstr(dl.HAIR_COLOUR[rand(0, len(dl.HAIR_COLOUR))], WHITE)
+    scr.addstr(25, 4, "PROFESSION: ", GREEN)
+    scr.addstr(dl.PROFESSION[rand(0, len(dl.PROFESSION))], WHITE)
+    scr.addstr(26, 4, "MARITAL STATUS: ", GREEN)
+    scr.addstr("MARRIED", WHITE)
+    scr.addstr(27, 4, "BLOOD TYPE: ", GREEN)
+    scr.addstr("O-", WHITE)
+    scr.addstr(28, 4, "ALERGIES: ", GREEN)
+    scr.addstr("NONE", WHITE)
+    scr.addstr(29, 4, "VOICE COM ID: ", GREEN)
+    scr.addstr("827364827634", WHITE)
+    scr.addstr(30, 4, "CREDIT RATING: ", GREEN)
+    scr.addstr("A++", WHITE)
+    scr.addstr(31, 4, "EDUCATION LEVEL: ", GREEN)
+    scr.addstr("PHD", WHITE)
+    scr.addstr(32, 4, "UERI: ", GREEN)
+    scr.addstr("FTHG 56GH FGH6 FGHS", WHITE)
+    scr.addstr(33, 4, "MENTAK ALIGNMENT: ", GREEN)
+    scr.addstr("LISTRO", WHITE)
+    scr.addstr(34, 4, "DIGITAL DNA FINGERPRINT: ", GREEN)
+    scr.move(36, 8)
+    dna_chr = ["|", "+"]
+    for i in range(10):
+        scr.move(36 + i, 8)
+        for i in range(20):
+            char = dna_chr[rand(0, len(dna_chr) - 1)]
+            scr.addstr(char, WHITE)
+    scr.addstr(9, 3, "[ SUBDERMAL IMPLANT DATA ]", GREEN)
+    scr.refresh()
+    scr.addstr(9, 42, "[ TICKET TOKEN MATCH ]", WHITE)
+    scr.refresh()
+    time.sleep(1)
+    scr.addstr(9, 42, "[ WARNING !!!!!!!!!! ]", RED)
+    scr.refresh()
+    time.sleep(1)
+    scr.addstr(9, 42, "[ PARTIAL RECORD...  ]", YELLOW)
+    scr.refresh()
+    time.sleep(1)
+    scr.addstr(9, 42, "[ SHIP MANIFEST DATA ]", GREEN)
+    scr.refresh()
+    time.sleep(.5)
+    scr.addstr(11, 43, "[ VOYAGE DATA ]", GREEN)
+    scr.addstr(13, 43, "TICKET TOKEN: ", GREEN)
+    scr.addstr("FH7FGH5", WHITE)
+    scr.addstr(14, 43, "CABIN ID: ", GREEN)
+    scr.addstr("FH7####", RED)
+    scr.addstr(15, 43, "CABIN CLASS: ", GREEN)
+    scr.addstr("LUXURY", WHITE)
+    scr.refresh()
+    time.sleep(.5)
+    scr.addstr(17, 43, "[ PERSONAL DATA ]", GREEN)
+    scr.refresh()
+    time.sleep(.5)
+    scr.addstr(19, 43, "NAME: ", GREEN)
+    scr.addstr(dl.MALE_NAMES[rand(0, len(dl.MALE_NAMES))], WHITE)
+    scr.addstr(20, 43, "AGE: ", GREEN)
+    scr.addstr("48", WHITE)
+    scr.addstr(21, 43, "SEX: ", GREEN)
+    scr.addstr("MALE", WHITE)
+    scr.addstr(22, 43, "CITIZENSHIP:", GREEN)
+    scr.addstr(dl.COUNTRY_NAMES[rand(0, len(dl.COUNTRY_NAMES))], WHITE)
+    scr.addstr(23, 43, "HEIGHT: ", GREEN)
+    scr.addstr("162 CM", WHITE)
+    scr.addstr(24, 43, "HAIR COLOR: ", GREEN)
+    scr.addstr("LIPSTICK PINK", WHITE)
+    scr.addstr(25, 43, "PROFESSION: ", GREEN)
+    scr.addstr("NUTRIBIOLOGIST", WHITE)
+    scr.addstr(26, 43, "MARITAL STATUS: ", GREEN)
+    scr.addstr("MARRIED", WHITE)
+    scr.addstr(27, 43, "BLOOD TYPE: ", GREEN)
+    scr.addstr("O-", WHITE)
+    scr.addstr(28, 43, "ALERGIES: ", GREEN)
+    scr.addstr("NONE", WHITE)
+    scr.addstr(29, 43, "VOICE COM ID: ", GREEN)
+    scr.addstr("#####4827634", RED)
+    scr.addstr(30, 43, "CREDIT RATING: ", GREEN)
+    scr.addstr("###", RED)
+    scr.addstr(31, 43, "EDUCATION LEVEL: ", GREEN)
+    scr.addstr("SECONDARY SCHOOL", WHITE)
+    scr.addstr(32, 43, "UERI: ", GREEN)
+    scr.addstr("FTHG #### FGH6 FGHS", RED)
+    scr.addstr(33, 43, "MENTAK ALIGNMENT: ", GREEN)
+    scr.addstr("LISTRO", WHITE)
+    scr.addstr(34, 43, "DIGITAL DNA FINGERPRINT: ", GREEN)
+    scr.move(36, 48)
     dna_chr = ["|","#"]
     for i in range(10):
-        stdscr.move(36 + i, 8)
+        scr.move(36 + i, 48)
         for i in range(20):
-            char = dna_chr[random.randint(0, len(dna_chr) - 1)]
-            stdscr.addstr(char, WHITE)
-    stdscr.refresh()
+            char = dna_chr[rand(0, len(dna_chr) - 1)]
+            scr.addstr(char, WHITE)
+    scr.refresh()
 
-    stdscr.addstr(9, 42, "[ WARNING !!!!!!!!!! ]", RED)
-    stdscr.refresh()
-    time.sleep(1)
-    stdscr.addstr(9, 42, "[ RECORD ENCRYPTED ! ]", YELLOW)
-    stdscr.refresh()
-    time.sleep(1)
-    stdscr.addstr(9, 42, "[ SHIP MANIFEST DATA ]", GREEN)
-    stdscr.refresh()
-    time.sleep(.5)
-    stdscr.addstr(11, 43, "[ VOYAGE DATA ]", GREEN)
-    stdscr.addstr(13, 43, "TICKET TOKEN: ", GREEN)
-    stdscr.addstr("FH7FGH5", WHITE)
-    stdscr.addstr(14, 43, "CABIN ID: ", GREEN)
-    stdscr.addstr("FH7####", RED)
-    stdscr.addstr(15, 43, "CABIN CLASS: ", GREEN)
-    stdscr.addstr("LUXURY", WHITE)
-    stdscr.refresh()
-    time.sleep(.5)
-    stdscr.addstr(17, 43, "[ PERSONAL DATA ]", GREEN)
-    stdscr.refresh()
-    time.sleep(.5)
-    stdscr.addstr(19, 43, "NAME: ", GREEN)
-    stdscr.addstr(MALE_NAMES[random.randint(0, len(MALE_NAMES))], WHITE)
-    stdscr.addstr(20, 43, "AGE: ", GREEN)
-    stdscr.addstr("48", WHITE)
-    stdscr.addstr(21, 43, "SEX: ", GREEN)
-    stdscr.addstr("MALE", WHITE)
-    stdscr.addstr(22, 43, "CITIZENSHIP: : ", GREEN)
-    stdscr.addstr(COUNTRY_NAMES[random.randint(0, len(COUNTRY_NAMES))], WHITE)
-    stdscr.addstr(23, 43, "HEIGHT: ", GREEN)
-    stdscr.addstr("162 CM", WHITE)
-    stdscr.addstr(24, 43, "HAIR COLOR: ", GREEN)
-    stdscr.addstr("LIPSTICK PINK", WHITE)
-    stdscr.addstr(25, 43, "PROFESSION: ", GREEN)
-    stdscr.addstr("NUTRIBIOLOGIST", WHITE)
-    stdscr.addstr(26, 43, "MARITAL STATUS: ", GREEN)
-    stdscr.addstr("MARRIED", WHITE)
-    stdscr.addstr(27, 43, "BLOOD TYPE: ", GREEN)
-    stdscr.addstr("O-", WHITE)
-    stdscr.addstr(28, 43, "ALERGIES: ", GREEN)
-    stdscr.addstr("NONE", WHITE)
-    stdscr.addstr(29, 43, "VOICE COM ID: ", GREEN)
-    stdscr.addstr("#####4827634", RED)
-    stdscr.addstr(30, 43, "CREDIT RATING: ", GREEN)
-    stdscr.addstr("###", RED)
-    stdscr.addstr(31, 43, "EDUCATION LEVEL: ", GREEN)
-    stdscr.addstr("SECONDARY SCHOOL", WHITE)
-    stdscr.addstr(32, 43, "UERI: ", GREEN)
-    stdscr.addstr("FTHG #### FGH6 FGHS", RED)
-    stdscr.addstr(33, 43, "MENTAK ALIGNMENT: ", GREEN)
-    stdscr.addstr("LISTRO", WHITE)
-    stdscr.addstr(34, 43, "DIGITAL DNA FINGERPRINT: ", GREEN)
-    stdscr.move(36, 48)
-    dna_chr = ["|","#"]
-    for i in range(10):
-        stdscr.move(36 + i, 48)
-        for i in range(20):
-            char = dna_chr[random.randint(0, len(dna_chr) - 1)]
-            stdscr.addstr(char, WHITE)
-    stdscr.refresh()
-
-    draw_action_buttons(stdscr)
+    draw_action_buttons(scr)
     curses.flushinp()
     while True:
-        key = stdscr.getkey()
+        key = scr.getkey()
         if key == 'd' or key == 'D':
-            decrypt_record_game(stdscr)
+            decrypt_record_game(scr)
         elif key == 'm' or key == 'M':
-            main_menu(stdscr)
+            main_menu(scr)
 
+# Handle curses intialisation of main function
 wrapper(main)
