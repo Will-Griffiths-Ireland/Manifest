@@ -1,24 +1,14 @@
+import config as c
 import curses
 from curses import wrapper
 import time
 import random
 import threading
 import data_loader as dl
+import passenger_creator as pg
 
-# Animation delay setting
-ANI_DLA = 0.1
-DIFFICULTY = "CHAOS"
-P_NAME = ""
-# Game active flag
-GAME_ACT = False
-# Decryption game active flag
-DRG_ACT = False
-# Confirm action flag
-CONFIRM_ACTION = False
-# Decrption available flag
-DECRYPT_AVAILABLE = False 
-# Cursor postion used for threading screen updates
-G_CUR_YX = (0, 0)
+
+
 
 WHITE = "" 
 RED = ""
@@ -132,18 +122,9 @@ def get_input(echo_style, max_size, scr):
         Space is 32
     """
     global DRG_ACT
-    global G_CUR_YX
     s = echo_style
     ms = max_size
     user_input = ""
-    valid_keys = []
-
-    f = open("./assets/data/alfanum.txt", "r")
-    data = f.read()
-    f.close()
-    for ch in data:
-        valid_keys.append(ch)
-
     while True and DRG_ACT is True:
         try:
             key = scr.getch()
@@ -157,8 +138,8 @@ def get_input(echo_style, max_size, scr):
             if key == 127 or key == ord('\b'):
                 if len(user_input) >= 1:
                     if DRG_ACT is True:
-                        (y, x) = G_CUR_YX
-                        G_CUR_YX = (y, x - 1)
+                        (y, x) = c.G_CUR_YX
+                        c.G_CUR_YX = (y, x - 1)
                     else:
                         (y, x) = curses.getsyx()
                     scr.move(y, x - 1)
@@ -167,10 +148,10 @@ def get_input(echo_style, max_size, scr):
                     user_input = user_input[:-1]
             elif len(user_input) == max_size:
                 warn_msg("INPUT LIMIT REACHED", W_ON_R , scr)
-            elif chr(key).upper() in valid_keys:
+            elif chr(key).upper() in c.VALID_KEYS:
                 if DRG_ACT is True:
-                    (y, x) = G_CUR_YX
-                    G_CUR_YX = (y, x + 1)
+                    (y, x) = c.G_CUR_YX
+                    c.G_CUR_YX = (y, x + 1)
                 user_input += chr(key)
                 screen_key = chr(key)
                 screen_key = screen_key.upper()
@@ -203,36 +184,42 @@ def countdown(scr):
     """
     global DRG_ACT
     timelimit = 60
-    blank_line = "   "
+    blank_line = ""
+    indent = 0
     for i in range(timelimit):
         blank_line += " "
     while DRG_ACT is True:
         bar_line = ""
         for i in range(timelimit):
-            bar_line += "#"
+            bar_line += "█"
         if timelimit == 0:
             # ran out of time!!
             blank_line = ""
             for i in range(70):
                 blank_line += " "
-            scr.addstr(2, 4, blank_line, GREEN )
             scr.addstr(3, 4, blank_line, GREEN )
-            scr.addstr(2, 30, "RECORD PERMA LOCKED!", RED )
-            scr.addstr(3, 29, "HIT ANY KEY TO RETURN", RED )
+            scr.addstr(4, 4, blank_line, GREEN )
+            scr.addstr(3, 30, "RECORD PERMA LOCKED!", RED )
+            scr.addstr(4, 29, "HIT ANY KEY TO RETURN", RED )
             scr.refresh()
             DRG_ACT = False
             break
-        scr.addstr(2, 4, "SEGMENTED MEMORY LOCKOUT EXPIRING IN ...", BLUE )
-        scr.addstr(3, 4, blank_line, GREEN )
+        scr.addstr(2, 4, "MEMORY ANALISED. INPUT CORRECT KEY TO UNLOCK", BLUE )
+        scr.addstr(4, 10, blank_line, GREEN )
         if timelimit > 40:
-            scr.addstr(3, 4, str(timelimit) + " " + bar_line, GREEN )
+            scr.addstr(4, 10 + ( 60 - timelimit) - indent, bar_line, GREEN )
+            scr.addstr(4, 37, "[ " + str(timelimit) + " ]", GREEN )
         elif timelimit > 19 and timelimit <= 40:
-            scr.addstr(3, 4, str(timelimit) + " " + bar_line, YELLOW )
+            scr.addstr(4, 10 + ( 60 - timelimit) - indent, bar_line, YELLOW )
+            scr.addstr(4, 37, "[ " + str(timelimit) + " ]", YELLOW )
         else:
-            scr.addstr(3, 4, str(timelimit) + " " + bar_line, RED)
+            scr.addstr(4, 10 + ( 60 - timelimit) - indent, bar_line, RED)
+            scr.addstr(4, 37, "[ " + str(timelimit) + " ]", RED )
         scr.refresh()
+        if timelimit % 2 == 0:
+            indent += 1
         # Put the cursor back to where it was for input
-        (y, x) = G_CUR_YX
+        (y, x) = c.G_CUR_YX
         scr.move(y, x)
         time.sleep(1)
         timelimit -= 1
@@ -243,34 +230,36 @@ def decrypt_record_game(scr):
         Player gets 5 chances to work out the encryption key.
 
     """
-    global G_CUR_YX
     global DRG_ACT
     DRG_ACT = True
     drgwin = curses.newwin(52, 81)
+    for i in range(51):
+        draw_box(51 - i , 0, 79, i, True, BLUE, drgwin)
+        drgwin.addstr(51 - i, 25, "[ MANIFEST RECORD DECRYPTION ]", BLUE )
+        drgwin.refresh()
+        time.sleep(.005)
+        #draw_box(line, col, width, height, fill, style, scr)
     draw_box(0, 0, 79, 51, True, BLUE, drgwin)
     drgwin.addstr(0, 25, "[ MANIFEST RECORD DECRYPTION ]", BLUE )
     drgwin.refresh()
-    # Use alfanum file to create random key based on difficulty setting
-    f = open("./assets/data/alfanum.txt", "r")
-    data = f.read()
-    f.close()
     ekey = ""
-    if DIFFICULTY == "MINOR":
+    if c.DIFFICULTY == "MINOR":
         dud_keys = 60
         for i in range(12):
-            ekey += data[rand(0, (len(data) - 1))]
-    if DIFFICULTY == "MAJOR":
+            ekey += c.VALID_KEYS[rand(0, (len(c.VALID_KEYS) - 1))]
+    if c.DIFFICULTY == "MAJOR":
         dud_keys = 100
         for i in range(8):
-            ekey += data[rand(0, (len(data) - 1))]
-    if DIFFICULTY == "CHAOS":
+            ekey += c.VALID_KEYS[rand(0, (len(c.VALID_KEYS) - 1))]
+    if c.DIFFICULTY == "CHAOS":
         dud_keys = 120
         for i in range(5):
-            ekey += data[rand(0, (len(data) - 1))]
+            ekey += c.VALID_KEYS[rand(0, (len(c.VALID_KEYS) - 1))]
     for i in range(35):
         drgwin.move(6 + i, 4)
         for i in range(72):
-            drgwin.addstr(str(rand(0, 1)), WHITE)
+            tk = c.VALID_KEYS[rand(0, (len(c.VALID_KEYS) - 1))]
+            drgwin.addstr(tk, WHITE)
             #drgwin.addch(data[rand(0, (len(data) - 1))])
     line_pos = rand(6, 40)
     row_pos = rand(4, (72 - len(ekey)))
@@ -286,7 +275,7 @@ def decrypt_record_game(scr):
         while duplicate_key:
             t_k = ''
             for char in range(len(ekey)):
-                t_k += data[rand(0, (len(data) - 1))]
+                t_k += c.VALID_KEYS[rand(0, (len(c.VALID_KEYS) - 1))]
             if t_k not in used_keys:
                 duplicate_key = False
                 used_keys.append(t_k)
@@ -331,7 +320,7 @@ def decrypt_record_game(scr):
     time.sleep(0.1)
     correct_key = False
     for i in range(5):
-        G_CUR_YX = (46, 21)
+        c.G_CUR_YX = (46, 21)
         draw_box(44, 4, 34, 4, True, BLUE, drgwin)
         drgwin.addstr(44, 12, "[ KEY VERIFICATION ]", BLUE)
         drgwin.addstr(46, 10, "ENTER KEY: ", BLUE)
@@ -404,6 +393,7 @@ def main(scr):
     W_ON_R = curses.color_pair(6) | curses.A_BOLD
     global YELLOW
     YELLOW = curses.color_pair(7) | curses.A_BOLD
+    dl.gen_data_lists()
     # Display main menu
     main_menu(scr)
 
@@ -412,7 +402,6 @@ def main_menu(scr):
     """
         Display logo and main menu options
     """
-    global ANI_DLA
     scr.clear()
     scr.refresh()
     # read in logo and animate display
@@ -421,7 +410,7 @@ def main_menu(scr):
     f.close()
     for i in range(24):
         scr.move(32 - i, 7)
-        time.sleep(ANI_DLA)
+        time.sleep(c.ANI_DLA)
         new_r_count = 0
         start_line = 1
         for ch in data:
@@ -444,7 +433,7 @@ def main_menu(scr):
     scr.addstr(0, 30, "[ MANIFEST V0.4 ]", GREEN)
     for i in range(9):
         draw_box(24, 19, 38, 2 + (i - 2), True, GREEN, scr)
-        time.sleep(ANI_DLA)
+        time.sleep(c.ANI_DLA)
         scr.refresh()
     scr.addstr(24, 31, "[ MAIN MENU ]", GREEN)
     scr.addstr(26, 33, "N", YELLOW)
@@ -456,9 +445,19 @@ def main_menu(scr):
     scr.addstr(42, 16, "TYPE THE FIRST LETTER OF AN OPTION TO SELECT", WHITE)
     scr.addstr(51, 26, "[ © WILL GRIFFITHS 2023 ]", GREEN)
     scr.refresh()
-    dl.gen_data_lists()
+
     # Reduce animation delay time for future rendering
-    ANI_DLA = 0.005
+    c.ANI_DLA = 0.005
+    pas_no = 0
+    for i in range(5):
+        scr.addstr(0, 46, c.VALID_KEYS[3], GREEN)
+        scr.refresh()
+        bob = pg.Passenger("true", "chaos")
+        c.PSNGR_LIST.append(bob)
+        scr.addstr(0, 3, bob.ticket_token, GREEN)
+        scr.addstr(0, 40, c.PSNGR_LIST[i].ticket_token, GREEN)
+        scr.refresh()
+        time.sleep(1)
 
     curses.flushinp()
     while True:
@@ -484,7 +483,7 @@ def game_loop(scr):
     for i in range(38):
         draw_box(9, 1, 38, 1 + i, True, GREEN, scr)
         draw_box(9, 40, 38, 1 + i, True, GREEN, scr)
-        time.sleep(ANI_DLA)
+        time.sleep(c.ANI_DLA)
         scr.refresh()
     loop = 7
     h_loop = 5
@@ -497,7 +496,7 @@ def game_loop(scr):
         for i in range(loop):
             scr.move(1 + i, 1)
             for i in range(78):
-                scr.addstr("▒" , GREEN)
+                scr.addstr("░" , GREEN)
         if h_loop > 0:
             scr.addstr(h_loop, 20, "*SECURITY HATCH SHUTTERING RAISES*")
         if h_loop < 2:
@@ -510,21 +509,21 @@ def game_loop(scr):
     scr.addstr(5, 19, "                                      ")
     scr.refresh()
     scr.addstr(2, 3, "PASSENGER - ", GREEN)
-    scr.addstr(dl.P_APPR_ACT[rand(0, len(dl.P_APPR_ACT) - 1)], WHITE)
+    scr.addstr(c.P_APPR_ACT[rand(0, len(c.P_APPR_ACT) - 1)], WHITE)
     scr.refresh()
     time.sleep(2)
     scr.addstr(4, 56, " - SEC.OFFICER (YOU)", GREEN)
-    temp_resp = dl.SO_WELC[rand(0, len(dl.SO_WELC) - 1)]
+    temp_resp = c.SO_WELC[rand(0, len(c.SO_WELC) - 1)]
     scr.addstr(4, 56 - len(temp_resp), temp_resp, WHITE)
     scr.refresh()
     time.sleep(2)
     scr.addstr(5, 56, " - SEC.OFFICER (YOU)", GREEN)
-    temp_resp = dl.SO_SCAN_REQ[rand(0, len(dl.SO_SCAN_REQ) - 1)]
+    temp_resp = c.SO_SCAN_REQ[rand(0, len(c.SO_SCAN_REQ) - 1)]
     scr.addstr(5, 56 - len(temp_resp), temp_resp, WHITE)
     scr.refresh()
     time.sleep(2)
     scr.addstr(7, 3, "PASSENGER - ", GREEN)
-    scr.addstr(dl.P_SCAN_RESP[rand(0, len(dl.P_SCAN_RESP) - 1)], WHITE)
+    scr.addstr(c.P_SCAN_RESP[rand(0, len(c.P_SCAN_RESP) - 1)], WHITE)
     scr.refresh()
     time.sleep(1)
     scr.addstr(9, 3, "[ CONNECTING TO IMPLANT  ]", YELLOW)
@@ -546,21 +545,21 @@ def game_loop(scr):
     scr.refresh()
     time.sleep(.5)
     scr.addstr(19, 4, "NAME: ", GREEN)
-    scr.addstr(dl.MALE_NAMES[rand(0, len(dl.MALE_NAMES) - 1)], WHITE)
+    scr.addstr(c.MALE_NAMES[rand(0, len(c.MALE_NAMES) - 1)], WHITE)
     scr.addstr(20, 4, "AGE: ", GREEN)
     scr.addstr("48", WHITE)
     scr.addstr(21, 4, "SEX: ", GREEN)
     scr.addstr("MALE", WHITE)
     scr.addstr(22, 4, "CITIZENSHIP: ", GREEN)
-    scr.addstr(dl.COUNTRY_NAMES[rand(0, len(dl.COUNTRY_NAMES) - 1)], WHITE)
+    scr.addstr(c.COUNTRY_NAMES[rand(0, len(c.COUNTRY_NAMES) - 1)], WHITE)
     scr.addstr(23, 4, "HEIGHT: ", GREEN)
     scr.addstr(str(rand(60, 240)) + " CM", WHITE)
     scr.addstr(24, 4, "HAIR COLOR: ", GREEN)
-    scr.addstr(dl.HAIR_COLOUR[rand(0, len(dl.HAIR_COLOUR) - 1)], WHITE)
+    scr.addstr(c.HAIR_COLOUR[rand(0, len(c.HAIR_COLOUR) - 1)], WHITE)
     scr.addstr(25, 4, "PROFESSION: ", GREEN)
-    scr.addstr(dl.PROFESSION[rand(0, len(dl.PROFESSION) - 1)], WHITE)
+    scr.addstr(c.PROFESSION[rand(0, len(c.PROFESSION) - 1)], WHITE)
     scr.addstr(26, 4, "MARITAL STATUS: ", GREEN)
-    scr.addstr(dl.MARITAL_STATUS[rand(0, len(dl.MARITAL_STATUS) - 1)], WHITE)
+    scr.addstr(c.MARITAL_STATUS[rand(0, len(c.MARITAL_STATUS) - 1)], WHITE)
     scr.addstr(27, 4, "BLOOD TYPE: ", GREEN)
     scr.addstr("O-", WHITE)
     scr.addstr(28, 4, "ALERGIES: ", GREEN)
@@ -610,13 +609,13 @@ def game_loop(scr):
     scr.refresh()
     time.sleep(.5)
     scr.addstr(19, 43, "NAME: ", GREEN)
-    scr.addstr(dl.MALE_NAMES[rand(0, len(dl.MALE_NAMES) - 1)], WHITE)
+    scr.addstr(c.MALE_NAMES[rand(0, len(c.MALE_NAMES) - 1)], WHITE)
     scr.addstr(20, 43, "AGE: ", GREEN)
     scr.addstr("48", WHITE)
     scr.addstr(21, 43, "SEX: ", GREEN)
     scr.addstr("MALE", WHITE)
     scr.addstr(22, 43, "CITIZENSHIP:", GREEN)
-    scr.addstr(dl.COUNTRY_NAMES[rand(0, len(dl.COUNTRY_NAMES) - 1)], WHITE)
+    scr.addstr(c.COUNTRY_NAMES[rand(0, len(c.COUNTRY_NAMES) - 1)], WHITE)
     scr.addstr(23, 43, "HEIGHT: ", GREEN)
     scr.addstr("162 CM", WHITE)
     scr.addstr(24, 43, "HAIR COLOR: ", GREEN)
