@@ -132,7 +132,6 @@ class Passenger():
     """
 
     def __init__(self):
-        # 
         self.threat_level = gen_passenger_threat_level()
         self.m_ticket_token = gen_ticket_token()
         self.i_ticket_token = self.m_ticket_token
@@ -144,7 +143,9 @@ class Passenger():
         self.i_sex = self.m_sex
         self.m_name = gen_passenger_name(self.m_sex)
         self.i_name = self.m_name
-        #self m_age = 
+        self.m_age = rand(18, 130)
+        self.i_age = self.m_age
+
 
         self.m_dna_fingerprint = gen_dna_fingerprint()
         self.i_dna_fingerprint = self.m_dna_fingerprint
