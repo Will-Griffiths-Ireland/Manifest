@@ -8,9 +8,7 @@ import data_loader as dl
 import passenger_creator as pg
 
 
-
-
-WHITE = "" 
+WHITE = ""
 RED = ""
 GREEN = ""
 BLUE = ""
@@ -27,7 +25,7 @@ def set_game(scr):
 
 def confirm_action(msg, style, scr):
     """
-        Get use to confirm the action / key
+        Get player to confirm the action / key
     """
     conf_win = curses.newpad(6, 30)
     draw_box(0, 0, 28, 4, True, style, conf_win)
@@ -448,16 +446,16 @@ def main_menu(scr):
 
     # Reduce animation delay time for future rendering
     c.ANI_DLA = 0.005
-    pas_no = 0
-    for i in range(5):
-        scr.addstr(0, 46, c.VALID_KEYS[3], GREEN)
-        scr.refresh()
-        bob = pg.Passenger("true", "chaos")
-        c.PSNGR_LIST.append(bob)
-        scr.addstr(0, 3, bob.ticket_token, GREEN)
-        scr.addstr(0, 40, c.PSNGR_LIST[i].ticket_token, GREEN)
-        scr.refresh()
-        time.sleep(1)
+    # pas_no = 0
+    # for i in range(5):
+    #     scr.addstr(0, 46, c.VALID_KEYS[3], GREEN)
+    #     scr.refresh()
+    #     bob = pg.Passenger("true", "chaos")
+    #     c.PSNGR_LIST.append(bob)
+    #     scr.addstr(0, 3, bob.ticket_token, GREEN)
+    #     scr.addstr(0, 40, c.PSNGR_LIST[i].ticket_token, GREEN)
+    #     scr.refresh()
+    #     time.sleep(1)
 
     curses.flushinp()
     while True:

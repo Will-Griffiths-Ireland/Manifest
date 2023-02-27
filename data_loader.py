@@ -23,6 +23,7 @@ def gen_data_lists():
     f.close()
     for line in data:
         c.MARITAL_STATUS.append(line.upper())
+    random.shuffle(c.MARITAL_STATUS)
 
     c.PROFESSION = []
     f = open('./assets/data/professions.text')
@@ -30,6 +31,7 @@ def gen_data_lists():
     f.close()
     for line in data:
         c.PROFESSION.append(line.upper())
+    random.shuffle(c.PROFESSION)
 
     c.HAIR_COLOUR = []
     f = open('./assets/data/hair_colours.text')
@@ -37,6 +39,7 @@ def gen_data_lists():
     f.close()
     for line in data:
         c.HAIR_COLOUR.append(line.upper())
+    random.shuffle(c.HAIR_COLOUR)
 
     c.P_SCAN_RESP = []
     f = open('./assets/data/passenger_scan_response.txt')
@@ -44,6 +47,7 @@ def gen_data_lists():
     f.close()
     for line in data:
         c.P_SCAN_RESP.append(line.upper())
+    random.shuffle(c.P_SCAN_RESP)
 
     c.SO_SCAN_REQ = []
     f = open('./assets/data/secoff_scan_request')
@@ -51,6 +55,7 @@ def gen_data_lists():
     f.close()
     for line in data:
         c.SO_SCAN_REQ.append(line.upper())
+    random.shuffle(c.SO_SCAN_REQ)
 
     c.SO_WELC = []
     f = open('./assets/data/secoff_welcome.txt')
