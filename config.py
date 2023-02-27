@@ -1,5 +1,5 @@
 # Animation delay setting
-ANI_DLA = 0.1
+ANI_DLA = 0.0
 DIFFICULTY = "CHAOS"
 PSNGR_LIST = []
 # Game active flag

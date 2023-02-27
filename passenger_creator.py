@@ -57,6 +57,27 @@ def gen_cabin_id():
     return temp_cabin_id
 
 
+def gen_dna_fingerprint():
+    """
+        Generate digital dna fingerprint
+        Check on the rare chance it has already been generated
+        during this playthrough and generate another
+    """
+    token_duplicate = True
+    while token_duplicate:
+        temp_dna = ""
+        temp_chars = ["+", "|"]
+        for i in range(200):
+            temp_dna += temp_chars[rand(0, 1)]
+        if len(c.PSNGR_LIST) > 0:
+            for i in range(len(c.PSNGR_LIST) - 1):
+                if temp_dna == c.PSNGR_LIST[i].m_dna_fingerprint:
+                    token_duplicate = True
+                    break
+        token_duplicate = False
+    return temp_dna
+
+
 class Passenger():
     """
         Build random passenger details
@@ -70,3 +91,5 @@ class Passenger():
         self.i_cabin_id = self.m_cabin_id
         self.m_cabin_class = c.CABIN_CLASS[rand(0, len(c.CABIN_CLASS) - 1)]
         self.i_cabin_class = self.m_cabin_class
+        self.m_dna_fingerprint = gen_dna_fingerprint()
+        self.i_dna_fingerprint = self.m_dna_fingerprint

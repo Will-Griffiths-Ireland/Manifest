@@ -566,13 +566,14 @@ def game_loop(scr):
     scr.addstr("LISTRO", WHITE)
     scr.addstr(34, 4, "DIGITAL DNA FINGERPRINT: ", GREEN)
     scr.move(36, 8)
-    dna_chr = ["|", "+"]
+    dna_loc = 0
+    dna_data = c.PSNGR_LIST[c.CUR_PSNGR_NO].i_dna_fingerprint
     for i in range(10):
         scr.move(36 + i, 8)
         for i in range(20):
-            char = dna_chr[rand(0, len(dna_chr) - 1)]
-            scr.addstr(char, WHITE)
-    scr.addstr(9, 3, "[ SUBDERMAL IMPLANT DATA ]", GREEN)
+            scr.addstr(dna_data[dna_loc], WHITE)
+            dna_loc += 1
+    scr.addstr(9, 3, "[ PASSENGER IMPLANT DATA ]", GREEN)
     scr.refresh()
 
     # Dsiplay manifest data record
@@ -633,12 +634,13 @@ def game_loop(scr):
     scr.addstr("LISTRO", WHITE)
     scr.addstr(34, 43, "DIGITAL DNA FINGERPRINT: ", GREEN)
     scr.move(36, 48)
-    dna_chr = ["|","#"]
+    dna_loc = 0
+    dna_data = c.PSNGR_LIST[c.CUR_PSNGR_NO].m_dna_fingerprint
     for i in range(10):
         scr.move(36 + i, 48)
         for i in range(20):
-            char = dna_chr[rand(0, len(dna_chr) - 1)]
-            scr.addstr(char, WHITE)
+            scr.addstr(dna_data[dna_loc], WHITE)
+            dna_loc += 1
     scr.refresh()
 
     draw_action_buttons(scr)
