@@ -8,7 +8,7 @@ def gen_data_lists():
         Passenger attributes
         Dialog responses
     """
-    #global VALID_KEYS
+
 
     c.VALID_KEYS = []
     f = open("./assets/data/alfanum.txt", "r")
@@ -18,7 +18,7 @@ def gen_data_lists():
         c.VALID_KEYS.append(ch)
     
     c.MARITAL_STATUS = []
-    f = open('./assets/data/marital_status.text')
+    f = open('./assets/data/marital_status.txt')
     data = f.read().splitlines()
     f.close()
     for line in data:
@@ -26,7 +26,7 @@ def gen_data_lists():
     random.shuffle(c.MARITAL_STATUS)
 
     c.PROFESSION = []
-    f = open('./assets/data/professions.text')
+    f = open('./assets/data/professions.txt')
     data = f.read().splitlines()
     f.close()
     for line in data:
@@ -34,7 +34,7 @@ def gen_data_lists():
     random.shuffle(c.PROFESSION)
 
     c.HAIR_COLOUR = []
-    f = open('./assets/data/hair_colours.text')
+    f = open('./assets/data/hair_colours.txt')
     data = f.read().splitlines()
     f.close()
     for line in data:
@@ -71,6 +71,7 @@ def gen_data_lists():
     f.close()
     for line in data:
         c.P_APPR_ACT.append(line.upper())
+    random.shuffle(c.P_APPR_ACT)
 
     c.MALE_NAMES = []
     f = open('./assets/data/male_names.txt')
@@ -78,6 +79,7 @@ def gen_data_lists():
     f.close()
     for line in data:
         c.MALE_NAMES.append(line.upper())
+    random.shuffle(c.MALE_NAMES)
 
     c.FEMALE_NAMES = []
     f = open('./assets/data/female_names.txt')
@@ -85,6 +87,7 @@ def gen_data_lists():
     f.close()
     for line in data:
         c.FEMALE_NAMES.append(line.upper())
+    random.shuffle(c.FEMALE_NAMES)
     
     c.COUNTRY_NAMES = []
     f = open('./assets/data/country_names.txt')
@@ -92,3 +95,12 @@ def gen_data_lists():
     f.close()
     for line in data:
         c.COUNTRY_NAMES.append(line.upper())
+    random.shuffle(c.COUNTRY_NAMES)
+
+    c.CABIN_CLASS = []
+    f = open('./assets/data/cabin_classes.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        c.CABIN_CLASS.append(line)
+    random.shuffle(c.CABIN_CLASS)

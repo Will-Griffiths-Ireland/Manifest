@@ -5,7 +5,7 @@ import time
 import random
 import threading
 import data_loader as dl
-import passenger_creator as pg
+import passenger_creator as pc
 
 
 WHITE = ""
@@ -446,18 +446,8 @@ def main_menu(scr):
 
     # Reduce animation delay time for future rendering
     c.ANI_DLA = 0.005
-    # pas_no = 0
-    # for i in range(5):
-    #     scr.addstr(0, 46, c.VALID_KEYS[3], GREEN)
-    #     scr.refresh()
-    #     bob = pg.Passenger("true", "chaos")
-    #     c.PSNGR_LIST.append(bob)
-    #     scr.addstr(0, 3, bob.ticket_token, GREEN)
-    #     scr.addstr(0, 40, c.PSNGR_LIST[i].ticket_token, GREEN)
-    #     scr.refresh()
-    #     time.sleep(1)
 
-    curses.flushinp()
+    #curses.flushinp()
     while True:
         key = scr.getkey()
         #scr.addstr(0, 0, key)
@@ -474,10 +464,12 @@ def game_loop(scr):
         display data
         take action
     """
+    # Generate a new passenger
+    c.PSNGR_LIST.append(pc.Passenger("good"))
 
     scr.clear()
     draw_box(0, 0, 79, 51, False, GREEN, scr)
-    scr.addstr(0, 30, "[ MANIFEST V0.4 ]", GREEN)
+    scr.addstr(0, 3, "[ INFINITUM SECURITY TERMINAL ]", GREEN)
     for i in range(38):
         draw_box(9, 1, 38, 1 + i, True, GREEN, scr)
         draw_box(9, 40, 38, 1 + i, True, GREEN, scr)
@@ -532,11 +524,11 @@ def game_loop(scr):
     time.sleep(.5)
     scr.addstr(11, 4, "[ VOYAGE DATA ]", GREEN)
     scr.addstr(13, 4, "TICKET TOKEN: ", GREEN)
-    scr.addstr("IIS-FH7FGH5", WHITE)
+    scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_ticket_token, WHITE)
     scr.addstr(14, 4, "CABIN ID: ", GREEN)
-    scr.addstr("FH7FGH5", WHITE)
+    scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_cabin_id, WHITE)
     scr.addstr(15, 4, "CABIN CLASS: ", GREEN)
-    scr.addstr("LUXURY", WHITE)
+    scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_cabin_class, WHITE)
     scr.refresh()
     time.sleep(.5)
     scr.addstr(17, 4, "[ PERSONAL DATA ]", GREEN)
@@ -582,6 +574,9 @@ def game_loop(scr):
             scr.addstr(char, WHITE)
     scr.addstr(9, 3, "[ SUBDERMAL IMPLANT DATA ]", GREEN)
     scr.refresh()
+
+    # Dsiplay manifest data record
+
     scr.addstr(9, 42, "[ TICKET TOKEN MATCH ]", WHITE)
     scr.refresh()
     time.sleep(1)
@@ -596,11 +591,11 @@ def game_loop(scr):
     time.sleep(.5)
     scr.addstr(11, 43, "[ VOYAGE DATA ]", GREEN)
     scr.addstr(13, 43, "TICKET TOKEN: ", GREEN)
-    scr.addstr("FH7FGH5", WHITE)
+    scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_ticket_token, WHITE)
     scr.addstr(14, 43, "CABIN ID: ", GREEN)
-    scr.addstr("FH7####", RED)
+    scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_cabin_id, RED)
     scr.addstr(15, 43, "CABIN CLASS: ", GREEN)
-    scr.addstr("LUXURY", WHITE)
+    scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_cabin_class, WHITE)
     scr.refresh()
     time.sleep(.5)
     scr.addstr(17, 43, "[ PERSONAL DATA ]", GREEN)

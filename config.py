@@ -1,10 +1,10 @@
 # Animation delay setting
 ANI_DLA = 0.1
 DIFFICULTY = "CHAOS"
-P_NAME = ""
 PSNGR_LIST = []
 # Game active flag
 GAME_ACT = False
+CUR_PSNGR_NO = 0
 # Decryption game active flag
 DRG_ACT = False
 # Confirm action flag
@@ -16,6 +16,7 @@ G_CUR_YX = (0, 0)
 # Valid input keys alphanum
 VALID_KEYS = []
 # Passenger data lists
+CABIN_CLASS = []
 MALE_NAMES = []
 FEMALE_NAMES = []
 COUNTRY_NAMES = []
@@ -25,3 +26,5 @@ P_APPR_ACT = []
 P_SCAN_RESP = []
 SO_WELC = []
 SO_SCAN_REQ = []
+# Debug counters
+DUP_COUNT = 0
