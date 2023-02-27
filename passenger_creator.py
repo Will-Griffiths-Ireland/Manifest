@@ -1,5 +1,6 @@
 import random
 import config as c
+import data_loader as dl
 
 
 def rand(start, stop):
@@ -15,6 +16,21 @@ def create_record_anomaly(source_rec, rec_field_type):
         or arrest actions
     """
     pass
+
+
+def gen_passenger_threat_level():
+    """
+        Randomly spawn bad actors in passengers
+        Set a threat level of high for dangerous ones (need arrest)
+        Medium is for bad details (reject)
+        None are all good passengers
+    """
+    chance = rand(1, 100)
+    if chance < 10:
+        return "high"
+    if chance > 85:
+        return "medium"
+    return "none"
 
 
 def gen_ticket_token():
@@ -80,15 +96,22 @@ def gen_dna_fingerprint():
 
 def gen_passenger_name(sex):
     """
-        Pick out rnadom passenger name
-        takes sex as input
+        Pick out random passenger name
+        Takes sex as input
         Remove name from the list
-        if all names are used then call the data_loader
+        if all names are used then call the data_loader and refil list
     """
+    if len(c.MALE_NAMES) < 1 or len(c.FEMALE_NAMES) < 1:
+        dl.gen_data_lists()
+
     if sex == "MALE":
-        temp_name = c.MALE_NAMES[rand(0, len(c.MALE_NAMES) - 1)]
+        index = rand(0, len(c.MALE_NAMES) - 1)
+        temp_name = c.MALE_NAMES[index]
+        c.MALE_NAMES.pop(index)
     else:
-        temp_name = 
+        index = rand(0, len(c.FEMALE_NAMES) - 1)
+        temp_name = c.FEMALE_NAMES[index]
+        c.FEMALE_NAMES.pop(index)
     return temp_name
 
 
@@ -103,10 +126,14 @@ def gen_passenger_sex():
 class Passenger():
     """
         Build random passenger details
+        Ticket token is master and never corrupt/hidden
+        Manifest details are the truth
+        Passenger details that differ from manifest are suspect
     """
 
-    def __init__(self, passenger_cat):
-        # Ticket token is master and never corrupt/hidden
+    def __init__(self):
+        # 
+        self.threat_level = gen_passenger_threat_level()
         self.m_ticket_token = gen_ticket_token()
         self.i_ticket_token = self.m_ticket_token
         self.m_cabin_id = gen_cabin_id()
@@ -116,6 +143,8 @@ class Passenger():
         self.m_sex = gen_passenger_sex()
         self.i_sex = self.m_sex
         self.m_name = gen_passenger_name(self.m_sex)
+        self.i_name = self.m_name
+        #self m_age = 
 
         self.m_dna_fingerprint = gen_dna_fingerprint()
         self.i_dna_fingerprint = self.m_dna_fingerprint
