@@ -78,6 +78,28 @@ def gen_dna_fingerprint():
     return temp_dna
 
 
+def gen_passenger_name(sex):
+    """
+        Pick out rnadom passenger name
+        takes sex as input
+        Remove name from the list
+        if all names are used then call the data_loader
+    """
+    if sex == "MALE":
+        temp_name = c.MALE_NAMES[rand(0, len(c.MALE_NAMES) - 1)]
+    else:
+        temp_name = 
+    return temp_name
+
+
+def gen_passenger_sex():
+    """
+        Pick out random sex
+    """
+    temp_sex = ["MALE", "FEMALE"]
+    return temp_sex[rand(0, 1)]
+
+
 class Passenger():
     """
         Build random passenger details
@@ -91,5 +113,9 @@ class Passenger():
         self.i_cabin_id = self.m_cabin_id
         self.m_cabin_class = c.CABIN_CLASS[rand(0, len(c.CABIN_CLASS) - 1)]
         self.i_cabin_class = self.m_cabin_class
+        self.m_sex = gen_passenger_sex()
+        self.i_sex = self.m_sex
+        self.m_name = gen_passenger_name(self.m_sex)
+
         self.m_dna_fingerprint = gen_dna_fingerprint()
         self.i_dna_fingerprint = self.m_dna_fingerprint

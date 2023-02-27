@@ -119,23 +119,22 @@ def get_input(echo_style, max_size, scr):
         Backspace is 127
         Space is 32
     """
-    global DRG_ACT
     s = echo_style
     ms = max_size
     user_input = ""
-    while True and DRG_ACT is True:
+    while c.DRG_ACT:
         try:
             key = scr.getch()
             #key_as_char = str(chr(key))
             #scr.addstr(0,0, str(key), RED)
-            if DRG_ACT is False:
+            if c.DRG_ACT is False:
                 break
             if key == ord('\n') or key == ord('\r'):
                 user_input = user_input.upper()
                 return user_input
             if key == 127 or key == ord('\b'):
                 if len(user_input) >= 1:
-                    if DRG_ACT is True:
+                    if c.DRG_ACT:
                         (y, x) = c.G_CUR_YX
                         c.G_CUR_YX = (y, x - 1)
                     else:
@@ -147,7 +146,7 @@ def get_input(echo_style, max_size, scr):
             elif len(user_input) == max_size:
                 warn_msg("INPUT LIMIT REACHED", W_ON_R , scr)
             elif chr(key).upper() in c.VALID_KEYS:
-                if DRG_ACT is True:
+                if c.DRG_ACT:
                     (y, x) = c.G_CUR_YX
                     c.G_CUR_YX = (y, x + 1)
                 user_input += chr(key)
@@ -180,13 +179,12 @@ def countdown(scr):
     """
         Countdown timer
     """
-    global DRG_ACT
     timelimit = 60
     blank_line = ""
     indent = 0
     for i in range(timelimit):
         blank_line += " "
-    while DRG_ACT is True:
+    while c.DRG_ACT:
         bar_line = ""
         for i in range(timelimit):
             bar_line += "█"
@@ -200,7 +198,7 @@ def countdown(scr):
             scr.addstr(3, 30, "RECORD PERMA LOCKED!", RED )
             scr.addstr(4, 29, "HIT ANY KEY TO RETURN", RED )
             scr.refresh()
-            DRG_ACT = False
+            c.DRG_ACT = False
             break
         scr.addstr(2, 4, "MEMORY ANALISED. INPUT CORRECT KEY TO UNLOCK", BLUE )
         scr.addstr(4, 10, blank_line, GREEN )
@@ -228,8 +226,7 @@ def decrypt_record_game(scr):
         Player gets 5 chances to work out the encryption key.
 
     """
-    global DRG_ACT
-    DRG_ACT = True
+    c.DRG_ACT = True
     drgwin = curses.newwin(52, 81)
     for i in range(51):
         draw_box(51 - i , 0, 79, i, True, BLUE, drgwin)
@@ -324,7 +321,7 @@ def decrypt_record_game(scr):
         drgwin.addstr(46, 10, "ENTER KEY: ", BLUE)
         drgwin.refresh()
         key_selection = get_input(BLUE, len(ekey), drgwin)
-        if DRG_ACT is False:
+        if c.DRG_ACT is False:
             break
         draw_box(42, 35, 37, 8, False, BLUE, drgwin)
         drgwin.addstr(42, 46, "[ RESULT FEED ]", BLUE)
@@ -354,7 +351,7 @@ def decrypt_record_game(scr):
         drgwin.addstr(44, 12, "[ KEY VERIFICATION ]", RED)
         drgwin.addstr(46, 10, "RECORD PERMA LOCKED!", RED)
         drgwin.refresh()
-    DRG_ACT = False
+    c.DRG_ACT = False
     time.sleep(2)
     curses.flushinp()
     drgwin.clear()
