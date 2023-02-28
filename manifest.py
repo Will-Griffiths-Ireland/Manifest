@@ -20,9 +20,27 @@ def choose_difficulty(scr):
     """
         Player selects difficulty
     """
-    draw_box(15, 25, 30, 5, True, BLUE, scr)
-    scr.addstr(37, 40, "(1) MINOR BREACH (EASY)", BLUE )
-    scr.getch()
+    draw_box(19, 17, 40, 14, True, GREEN, scr)
+    scr.addstr(19, 27, "[ CHOOSE DIFFICULTY ]", GREEN )
+    draw_box(21, 20, 34, 2, True, BLUE, scr)
+    scr.addstr(22, 26, "(1) MINOR BREACH (EASY)", BLUE )
+    draw_box(25, 20, 34, 2, True, YELLOW, scr)
+    scr.addstr(26, 26, "(2) MAJOR BREACH (MED)", YELLOW)
+    draw_box(29, 20, 34, 2, True, RED, scr)
+    scr.addstr(30, 26, "(1) CHAOS BREACH (HARD)", RED )
+    curses.flushinp()
+    while True:
+        key = scr.getkey()
+        if key == '1':
+            c.DIFFICULTY = "MINOR"
+            break
+        if key == '2':
+            c.DIFFICULTY = "MAJOR"
+            break
+        if key == '3':
+            c.DIFFICULTY = "CHAOS"
+            break
+    game_loop(scr)
 
 
 
@@ -468,7 +486,7 @@ def main_menu(scr):
     # Reduce animation delay time for future rendering
     c.ANI_DLA = 0.005
 
-    #curses.flushinp()
+    curses.flushinp()
     while True:
         key = scr.getkey()
         #scr.addstr(0, 0, key)
@@ -559,12 +577,12 @@ def game_loop(scr):
         for i in range(8):
             scr.move(1 + i, 1)
             for i in range(78):
-                scr.addstr(" " , GREEN)
+                scr.addstr(" ", GREEN)
         scr.refresh()
         for i in range(loop):
             scr.move(1 + i, 1)
             for i in range(78):
-                scr.addstr("░" , GREEN)
+                scr.addstr("░", GREEN)
         if h_loop > 0:
             scr.addstr(h_loop, 20, "*SECURITY HATCH SHUTTERING RAISES*")
         if h_loop < 2:
