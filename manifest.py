@@ -16,10 +16,14 @@ W_ON_R = ""
 YELLOW = ""
 
 
-def set_game(scr):
-    # pick diff
-    # give name
-    pass
+def choose_difficulty(scr):
+    """
+        Player selects difficulty
+    """
+    draw_box(15, 25, 30, 5, True, BLUE, scr)
+    scr.addstr(37, 40, "(1) MINOR BREACH (EASY)", BLUE )
+    scr.getch()
+
 
 
 def confirm_action(msg, style, scr):
@@ -74,33 +78,24 @@ def draw_action_buttons(scr):
         draw_box(48, 8, 14, 2, True, GREEN, scr)
         scr.addstr(49, 13, "B", GREEN)
         scr.addstr("OARD", WHITE)
-        scr.refresh()
-        time.sleep(.25)
         draw_box(48, 24, 14, 2, True, YELLOW, scr)
         scr.addstr(49, 29, "R", YELLOW)
         scr.addstr("EJECT", WHITE)
-        scr.refresh()
-        time.sleep(.25)
         draw_box(48, 41, 14, 2, True, RED, scr)
         scr.addstr(49, 45, "A", RED)
         scr.addstr("RREST", WHITE)
-        scr.refresh()
-        time.sleep(.25)
         draw_box(48, 57, 14, 2, True, BLUE, scr)
         scr.addstr(49, 61, "D", BLUE)
         scr.addstr("ECRYPT", WHITE)
+        scr.refresh()
 
     if not c.DECRYPT_AVAILABLE:
         draw_box(48, 17, 14, 2, True, GREEN, scr)
         scr.addstr(49, 22, "B", GREEN)
         scr.addstr("OARD", WHITE)
-        scr.refresh()
-        time.sleep(.25)
         draw_box(48, 33, 14, 2, True, YELLOW, scr)
         scr.addstr(49, 38, "R", YELLOW)
         scr.addstr("EJECT", WHITE)
-        scr.refresh()
-        time.sleep(.25)
         draw_box(48, 49, 14, 2, True, RED, scr)
         scr.addstr(49, 53, "A", RED)
         scr.addstr("RREST", WHITE)
@@ -253,11 +248,10 @@ def decrypt_record_game(scr):
     c.DRG_ACT = True
     drgwin = curses.newwin(52, 81)
     for i in range(51):
-        draw_box(51 - i , 0, 79, i, True, BLUE, drgwin)
+        draw_box(51 - i, 0, 79, i, True, BLUE, drgwin)
         drgwin.addstr(51 - i, 25, "[ MANIFEST RECORD DECRYPTION ]", BLUE )
         drgwin.refresh()
         time.sleep(.005)
-        #draw_box(line, col, width, height, fill, style, scr)
     draw_box(0, 0, 79, 51, True, BLUE, drgwin)
     drgwin.addstr(0, 25, "[ MANIFEST RECORD DECRYPTION ]", BLUE )
     drgwin.refresh()
@@ -283,7 +277,7 @@ def decrypt_record_game(scr):
     row_pos = rand(4, (72 - len(ekey)))
     used_locs = []
     used_locs.append((line_pos, row_pos))
-    drgwin.addstr(line_pos, row_pos, ekey, BLUE)
+    drgwin.addstr(line_pos, row_pos, ekey, RED)
     # insert the invalid keys
     used_keys = []
     for keys in range(dud_keys):
@@ -363,6 +357,9 @@ def decrypt_record_game(scr):
         draw_box(44, 4, 34, 4, True, GREEN, drgwin)
         drgwin.addstr(44, 12, "[ KEY VERIFICATION ]", GREEN)
         drgwin.addstr(46, 7, "VALID KEY - RECORD RECOVERED", GREEN)
+        c.DECRYPT_SUCCESS = True
+        c.ENCRYPT_ON = False
+        c.DECRYPT_AVAILABLE = False
         drgwin.refresh()
     else:
         drgwin.move(0, 0)
@@ -382,6 +379,8 @@ def decrypt_record_game(scr):
     del drgwin
     scr.touchwin()
     draw_action_buttons(scr)
+    if c.DECRYPT_SUCCESS:
+        display_manifest_panel(scr)
     scr.refresh()
 
 
@@ -452,7 +451,7 @@ def main_menu(scr):
     draw_box(0, 0, 79, 51, False, GREEN, scr)
     scr.addstr(0, 30, "[ MANIFEST V0.4 ]", GREEN)
     for i in range(9):
-        draw_box(24, 19, 38, 2 + (i - 2), True, GREEN, scr)
+        draw_box(24, 22, 31, i, True, GREEN, scr)
         time.sleep(c.ANI_DLA)
         scr.refresh()
     scr.addstr(24, 31, "[ MAIN MENU ]", GREEN)
@@ -474,7 +473,8 @@ def main_menu(scr):
         key = scr.getkey()
         #scr.addstr(0, 0, key)
         if key == 'N' or key == 'n':
-            game_loop(scr)
+            choose_difficulty(scr)
+            #game_loop(scr)
             break
         elif key == 'Q' or key == 'q':
             exit()
@@ -484,7 +484,7 @@ def encrypt(field):
     """
         Takes a record and randomly hides it based on difficulty.
         Only emulating the field as being encrypted for gameplay
-        Might skip encryption altogether 
+        Might skip encryption altogether for some fields 
     """
 
     if c.DIFFICULTY == "CHAOS":
@@ -516,7 +516,7 @@ def encrypt(field):
             total_injects += 1
         if total_injects >= injectlimit:
             injecting = False
-    
+
     field = ""
     for count, value in enumerate(temp_list):
         field += value
@@ -545,11 +545,14 @@ def game_loop(scr):
     scr.clear()
     draw_box(0, 0, 79, 51, False, GREEN, scr)
     scr.addstr(0, 3, "[ INFINITUM SECURITY TERMINAL ]", GREEN)
-    for i in range(38):
+    for i in range(4):
         draw_box(9, 1, 38, 1 + i, True, GREEN, scr)
         draw_box(9, 40, 38, 1 + i, True, GREEN, scr)
         time.sleep(c.ANI_DLA)
         scr.refresh()
+    scr.addstr(9, 3, "[ SCANNING FOR IMPLANT  ]", GREEN)
+    scr.addstr(9, 42, "[ AWAITING SCAN..... ]", GREEN)
+    scr.refresh()
     loop = 7
     h_loop = 5
     for i in range(8):
@@ -567,7 +570,7 @@ def game_loop(scr):
         if h_loop < 2:
             scr.addstr(5, 19, "*PASSENGER APPROACH SIGN ILUMINATES*", YELLOW)
         scr.refresh()
-        #time.sleep(.75)
+        time.sleep(.75)
         loop -= 1
         h_loop -= 1
 
@@ -576,27 +579,31 @@ def game_loop(scr):
     scr.addstr(2, 3, "PASSENGER - ", GREEN)
     scr.addstr(c.P_APPR_ACT[rand(0, len(c.P_APPR_ACT) - 1)], WHITE)
     scr.refresh()
-    #time.sleep(2)
+    time.sleep(2)
     scr.addstr(4, 56, " - SEC.OFFICER (YOU)", GREEN)
     temp_resp = c.SO_WELC[rand(0, len(c.SO_WELC) - 1)]
     scr.addstr(4, 56 - len(temp_resp), temp_resp, WHITE)
     scr.refresh()
-    #time.sleep(2)
+    time.sleep(2)
     scr.addstr(5, 56, " - SEC.OFFICER (YOU)", GREEN)
     temp_resp = c.SO_SCAN_REQ[rand(0, len(c.SO_SCAN_REQ) - 1)]
     scr.addstr(5, 56 - len(temp_resp), temp_resp, WHITE)
     scr.refresh()
-    #time.sleep(2)
+    time.sleep(2)
     scr.addstr(7, 3, "PASSENGER - ", GREEN)
     scr.addstr(c.P_SCAN_RESP[rand(0, len(c.P_SCAN_RESP) - 1)], WHITE)
     scr.refresh()
-    #time.sleep(1)
+    time.sleep(1)
+    for i in range(38):
+        draw_box(9, 1, 38, 1 + i, True, GREEN, scr)
+        time.sleep(c.ANI_DLA)
+        scr.refresh()
     scr.addstr(9, 3, "[ CONNECTING TO IMPLANT  ]", YELLOW)
     scr.refresh()
-    #time.sleep(1)
+    time.sleep(1)
     scr.addstr(9, 3, "[ READING IMPLANT DATA.. ]", WHITE)
     scr.refresh()
-    #time.sleep(.5)
+    time.sleep(.5)
     scr.addstr(11, 4, "[ VOYAGE DATA ]", GREEN)
     scr.addstr(13, 4, "TICKET TOKEN: ", GREEN)
     scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_ticket_token, WHITE)
@@ -605,10 +612,10 @@ def game_loop(scr):
     scr.addstr(15, 4, "CABIN CLASS: ", GREEN)
     scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_cabin_class, WHITE)
     scr.refresh()
-    #time.sleep(.5)
+    time.sleep(.5)
     scr.addstr(17, 4, "[ PERSONAL DATA ]", GREEN)
     scr.refresh()
-    #time.sleep(.5)
+    time.sleep(.5)
     scr.addstr(19, 4, "NAME: ", GREEN)
     scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_name, WHITE)
     scr.addstr(20, 4, "AGE: ", GREEN)
@@ -651,20 +658,48 @@ def game_loop(scr):
     scr.addstr(9, 3, "[ PASSENGER IMPLANT DATA ]", GREEN)
     scr.refresh()
 
-    # Dsiplay manifest data record
+    display_manifest_panel(scr)
 
-    scr.addstr(9, 42, "[ TICKET TOKEN MATCH ]", WHITE)
-    scr.refresh()
-    #time.sleep(1)
-    scr.addstr(9, 42, "[ WARNING !!!!!!!!!! ]", RED)
-    scr.refresh()
-    #time.sleep(1)
-    scr.addstr(9, 42, "[ PARTIAL RECORD...  ]", YELLOW)
-    scr.refresh()
-    #time.sleep(1)
-    scr.addstr(9, 42, "[ SHIP MANIFEST DATA ]", GREEN)
-    scr.refresh()
-    #time.sleep(.5)
+    draw_action_buttons(scr)
+    # Display Quit option
+    scr.addstr(0, 70, "[ ", GREEN)
+    scr.addstr("Q", WHITE)
+    scr.addstr("UIT ]", GREEN)
+    curses.flushinp()
+    while True:
+        key = scr.getkey()
+        if c.DECRYPT_AVAILABLE:
+            if key == 'd' or key == 'D':
+                decrypt_record_game(scr)
+        if key == 'q' or key == 'Q':
+            if confirm_action("END GAME", GREEN, scr):
+                main_menu(scr)
+
+
+def display_manifest_panel(scr):
+    """
+        Display panel and data
+    """
+
+    for i in range(38):
+        draw_box(9, 40, 38, 1 + i, True, GREEN, scr)
+        scr.addstr(9, 42, "[ TICKET TOKEN MATCH ]", WHITE)
+        time.sleep(c.ANI_DLA)
+        scr.refresh()
+    if c.ENCRYPT_ON:
+        scr.addstr(9, 42, "[ WARNING !!!!!!!!!! ]", RED)
+        scr.refresh()
+        time.sleep(1)
+        scr.addstr(9, 42, "[ PARTIAL RECORD...  ]", YELLOW)
+        scr.refresh()
+        time.sleep(1)
+        scr.addstr(9, 42, "[ SHIP MANIFEST DATA ]", GREEN)
+        scr.refresh()
+        time.sleep(.5)
+    else:
+        scr.addstr(9, 42, "[ SHIP MANIFEST DATA ]", GREEN)
+        scr.refresh()
+        time.sleep(.5)
     scr.addstr(11, 43, "[ VOYAGE DATA ]", GREEN)
     scr.addstr(13, 43, "TICKET TOKEN: ", GREEN)
     scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_ticket_token, WHITE)
@@ -689,11 +724,11 @@ def game_loop(scr):
         display_color = RED
     scr.addstr(cabin_class, WHITE)
     scr.refresh()
-    #time.sleep(.5)
+    time.sleep(.5)
 
     scr.addstr(17, 43, "[ PERSONAL DATA ]", GREEN)
     scr.refresh()
-    #time.sleep(.5)
+    time.sleep(.5)
 
     scr.addstr(19, 43, "NAME: ", GREEN)
     if c.ENCRYPT_ON:
@@ -863,20 +898,7 @@ def game_loop(scr):
             dna_loc += 1
     scr.refresh()
 
-    draw_action_buttons(scr)
-    # Display Quit option
-    scr.addstr(0, 70, "[ ", GREEN)
-    scr.addstr("Q", WHITE)
-    scr.addstr("UIT ]", GREEN)
-    curses.flushinp()
-    while True:
-        key = scr.getkey()
-        if key == 'd' or key == 'D':
-            decrypt_record_game(scr)
-        elif key == 'q' or key == 'Q':
-            end_game = confirm_action("END GAME", GREEN, scr)
-            if end_game == True:
-                main_menu(scr)
+
 
 # Handle curses intialisation of main function
 curses.wrapper(main)

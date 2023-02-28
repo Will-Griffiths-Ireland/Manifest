@@ -1,7 +1,7 @@
 """ Global variables. Lists and flags """
 
 # Animation delay setting
-ANI_DLA = 0.0
+ANI_DLA = 0.1
 DIFFICULTY = "CHAOS"
 PSNGR_LIST = []
 # Game active flag
@@ -14,6 +14,7 @@ DRG_ACT = False
 CONFIRM_ACTION = False
 # Decrption available flag
 DECRYPT_AVAILABLE = True
+DECRYPT_SUCCESS = False
 # Cursor postion used for threading screen updates
 G_CUR_YX = (0, 0)
 # Valid input keys alphanum
