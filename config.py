@@ -8,6 +8,7 @@ PSNGR_LIST = []
 GAME_ACT = False
 GAME_ENDED = False
 ENCRYPT_ON = False
+DSP_GAME_TMR = False
 CUR_PSNGR_NO = 0
 # Decryption game active flag
 DRG_ACT = False

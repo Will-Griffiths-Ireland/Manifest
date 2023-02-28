@@ -237,24 +237,25 @@ def countdown(scr):
             blank_line = ""
             for i in range(70):
                 blank_line += " "
-            scr.addstr(3, 4, blank_line, GREEN )
-            scr.addstr(4, 4, blank_line, GREEN )
-            scr.addstr(3, 30, "P", RED )
-            scr.addstr(4, 29, "HIT ANY KEY TO RETURN", RED )
+            scr.addstr(3, 4, blank_line, GREEN)
+            scr.addstr(4, 4, blank_line, GREEN)
+            scr.addstr(2, 4, blank_line, GREEN)
+            scr.addstr(3, 26, "CPU CYCLE TIME EXHAUSTED", RED)
+            scr.addstr(4, 29, "HIT ANY KEY TO RETURN", RED)
             scr.refresh()
             c.DRG_ACT = False
-            break
-        scr.addstr(2, 17, "PROCESSING RUNTIME QUOTA EXPIRING IN...", BLUE )
-        scr.addstr(4, 10, blank_line, GREEN )
+            return
+        scr.addstr(2, 20, "CPU CYCLE TIME QUOTA EXPIRING IN...", BLUE)
+        scr.addstr(4, 10, blank_line, GREEN)
         if timelimit > 40:
-            scr.addstr(4, 10 + ( 60 - timelimit) - indent, bar_line, GREEN )
-            scr.addstr(4, 37, "[ " + str(timelimit) + " ]", GREEN )
+            scr.addstr(4, 10 + (60 - timelimit) - indent, bar_line, GREEN)
+            scr.addstr(4, 37, "[ " + str(timelimit) + " ]", GREEN)
         elif timelimit > 19 and timelimit <= 40:
-            scr.addstr(4, 10 + ( 60 - timelimit) - indent, bar_line, YELLOW )
-            scr.addstr(4, 37, "[ " + str(timelimit) + " ]", YELLOW )
+            scr.addstr(4, 10 + (60 - timelimit) - indent, bar_line, YELLOW)
+            scr.addstr(4, 37, "[ " + str(timelimit) + " ]", YELLOW)
         else:
-            scr.addstr(4, 10 + ( 60 - timelimit) - indent, bar_line, RED)
-            scr.addstr(4, 37, "[ " + str(timelimit) + " ]", RED )
+            scr.addstr(4, 10 + (60 - timelimit) - indent, bar_line, RED)
+            scr.addstr(4, 37, "[ " + str(timelimit) + " ]", RED)
         scr.refresh()
         if timelimit % 2 == 0:
             indent += 1
@@ -268,18 +269,19 @@ def countdown(scr):
 def decrypt_record_game(scr):
     """
         Player gets 5 chances to work out the encryption key.
-        PROCESSING RUNTIME QOTA EXPIRINGINF IN...
+        Random key gerneated and displayed with mix of fakes.
+        Player gets feedback on entered string
 
     """
     c.DRG_ACT = True
     drgwin = curses.newwin(52, 81)
     for i in range(51):
         draw_box(51 - i, 0, 79, i, True, BLUE, drgwin)
-        drgwin.addstr(51 - i, 25, "[ MANIFEST RECORD DECRYPTION ]", BLUE )
+        drgwin.addstr(51 - i, 25, "[ MANIFEST RECORD DECRYPTION ]", BLUE)
         drgwin.refresh()
         time.sleep(.005)
     draw_box(0, 0, 79, 51, True, BLUE, drgwin)
-    drgwin.addstr(0, 25, "[ MANIFEST RECORD DECRYPTION ]", BLUE )
+    drgwin.addstr(0, 25, "[ MANIFEST RECORD DECRYPTION ]", BLUE)
     drgwin.refresh()
     ekey = ""
     if c.DIFFICULTY == "MINOR":
@@ -382,26 +384,21 @@ def decrypt_record_game(scr):
     if correct_key:
         draw_box(44, 4, 34, 4, True, GREEN, drgwin)
         drgwin.addstr(44, 12, "[ KEY VERIFICATION ]", GREEN)
-        drgwin.addstr(46, 7, "VALID KEY - RECORD RECOVERED", GREEN)
+        drgwin.addstr(46, 7, "CORRECT KEY - RECORD RECOVERED", GREEN)
         c.DECRYPT_SUCCESS = True
         c.ENCRYPT_ON = False
         c.DECRYPT_AVAILABLE = False
         drgwin.refresh()
     else:
-        drgwin.move(0, 0)
-        for i in range(52):
-            drgwin.move(0 + i, 0)
-            for i in range(80):
-                drgwin.addstr("X", RED)
         draw_box(44, 4, 34, 4, True, RED, drgwin)
         drgwin.addstr(44, 12, "[ KEY VERIFICATION ]", RED)
-        drgwin.addstr(46, 10, "RECORD PERMA LOCKED!", RED)
+        drgwin.addstr(46, 10, "FAILED TO DECRYPT RECORD", RED)
         drgwin.refresh()
     c.DECRYPT_AVAILABLE = False
     time.sleep(1)
     c.DRG_ACT = False
+    c.DSP_GAME_TMR = True
     time.sleep(.1)
-
     curses.flushinp()
     drgwin.clear()
     del drgwin
@@ -525,7 +522,7 @@ def gate_closure_countdown(scr):
         else:
             time_col = WHITE
 
-        if not c.DRG_ACT:
+        if c.DSP_GAME_TMR:
             scr.addstr(0, 35, "[ GATE CLOSES IN ", GREEN)
             if len(str(mins)) == 1:
                 scr.addstr(" " + str(mins), time_col)
@@ -619,12 +616,12 @@ def game_start(scr):
         # clear out the passenger list
         c.PSNGR_LIST = []
         c.GAME_ACT = True
+        c.DSP_GAME_TMR = True
         # Launch countodown timer in a thread
         threading.Thread(
             target=gate_closure_countdown, daemon=True, args=(scr,)).start()
         time.sleep(.1)
 
-        
         loop = 7
         h_loop = 5
         for i in range(8):
@@ -747,6 +744,8 @@ def game_start(scr):
         key = scr.getkey()
         if c.DECRYPT_AVAILABLE:
             if key == 'd' or key == 'D':
+                c.DSP_GAME_TMR = False
+                time.sleep(.1)
                 decrypt_record_game(scr)
         if key == 'q' or key == 'Q':
             if confirm_action("END GAME", GREEN, scr):
@@ -754,11 +753,26 @@ def game_start(scr):
                 c.DECRYPT_AVAILABLE = True
                 main_menu(scr)
         if key == 'b' or key == 'B':
-                c.GAME_ACT = True
-                c.DECRYPT_AVAILABLE = True
-                c.CUR_PSNGR_NO += 1
-                game_start(scr)
-
+            c.GAME_ACT = True
+            c.DECRYPT_AVAILABLE = True
+            c.PSNGR_LIST[c.CUR_PSNGR_NO].boarding_status = "BOARDED"
+            c.CUR_PSNGR_NO += 1
+            # show boarding dialog
+            game_start(scr)
+        if key == 'r' or key == 'R':
+            c.GAME_ACT = True
+            c.DECRYPT_AVAILABLE = True
+            c.PSNGR_LIST[c.CUR_PSNGR_NO].boarding_status = "REJECTED"
+            c.CUR_PSNGR_NO += 1
+            # show reject dialog
+            game_start(scr)
+        if key == 'a' or key == 'A':
+            c.GAME_ACT = True
+            c.DECRYPT_AVAILABLE = True
+            c.PSNGR_LIST[c.CUR_PSNGR_NO].boarding_status = "ARRESTED"
+            c.CUR_PSNGR_NO += 1
+            # show arrest dialog
+            game_start(scr)
 
 def display_manifest_panel(scr):
     """
