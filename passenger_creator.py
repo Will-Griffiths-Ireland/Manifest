@@ -10,12 +10,6 @@ def rand(start, stop):
     """
     return random.randint(start, stop)
 
-def create_record_anomaly(source_rec, rec_field_type):
-    """
-        Introduce record anomlaies whihc require reject
-        or arrest actions
-    """
-    pass
 
 
 def gen_passenger_threat_level():
@@ -26,7 +20,7 @@ def gen_passenger_threat_level():
         None are all good passengers
     """
     chance = rand(1, 100)
-    if chance < 10:
+    if chance < 1000:
         return "high"
     if chance > 85:
         return "medium"
@@ -164,13 +158,13 @@ def gen_passenger_ueri():
 
 class Passenger():
     """
-        Build random passenger details
-        Ticket token is master and never corrupt/hidden
-        Manifest details are the 'truth'
-        Passenger details that differ from manifest are suspect
+        Create a new passsenger
     """
 
     def __init__(self):
+        """
+            Init field data and generate field values where needed
+        """
         self.threat_level = gen_passenger_threat_level()
         self.m_ticket_token = gen_ticket_token()
         self.i_ticket_token = self.m_ticket_token
@@ -213,3 +207,15 @@ class Passenger():
         self.i_mentak_alignment = self.m_mentak_alignment
         self.m_dna_fingerprint = gen_dna_fingerprint()
         self.i_dna_fingerprint = self.m_dna_fingerprint
+        self.modify_implant_data()
+
+    def modify_implant_data(self):
+        """
+            Manipulate fields to create bad passengers
+        """
+        if self.threat_level == "high":
+            # Pick 1 or 2 fields to modify. Small 1 byte change
+            self.i_dna_fingerprint = gen_dna_fingerprint()
+        if self.threat_level == "Medium":
+            # Pick 1 or 2 fields to modify. total obvious swap
+            pass

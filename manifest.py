@@ -1,9 +1,8 @@
-import config as c
 import curses
-from curses import wrapper
 import time
 import random
 import threading
+import config as c
 import data_loader as dl
 import passenger_creator as pc
 
@@ -59,29 +58,53 @@ def rand(start, stop):
     """
     return random.randint(start, stop)
 
+
 def draw_action_buttons(scr):
     """
         Draw 'buttons' with actions the player can take
         Draw with only 3 if decrpyt that been used
     """
-    draw_box(48, 7, 14, 2, True, GREEN, scr)
-    scr.addstr(49, 12, "B", GREEN)
-    scr.addstr("OARD", WHITE)
-    scr.refresh()
-    time.sleep(.25)
-    draw_box(48, 23, 14, 2, True, YELLOW, scr)
-    scr.addstr(49, 28, "R", YELLOW)
-    scr.addstr("EJECT", WHITE)
-    scr.refresh()
-    time.sleep(.25)
-    draw_box(48, 39, 14, 2, True, RED, scr)
-    scr.addstr(49, 43, "A", RED)
-    scr.addstr("RREST", WHITE)
-    scr.refresh()
-    time.sleep(.25)
-    draw_box(48, 55, 14, 2, True, BLUE, scr)
-    scr.addstr(49, 59, "D", BLUE)
-    scr.addstr("ECRYPT", WHITE)
+    scr.move(48, 1)
+    for i in range(3):
+        scr.move(48 + i, 1)
+        for i in range(78):
+            scr.addstr(" ", WHITE)
+
+    if c.DECRYPT_AVAILABLE:
+        draw_box(48, 8, 14, 2, True, GREEN, scr)
+        scr.addstr(49, 13, "B", GREEN)
+        scr.addstr("OARD", WHITE)
+        scr.refresh()
+        time.sleep(.25)
+        draw_box(48, 24, 14, 2, True, YELLOW, scr)
+        scr.addstr(49, 29, "R", YELLOW)
+        scr.addstr("EJECT", WHITE)
+        scr.refresh()
+        time.sleep(.25)
+        draw_box(48, 41, 14, 2, True, RED, scr)
+        scr.addstr(49, 45, "A", RED)
+        scr.addstr("RREST", WHITE)
+        scr.refresh()
+        time.sleep(.25)
+        draw_box(48, 57, 14, 2, True, BLUE, scr)
+        scr.addstr(49, 61, "D", BLUE)
+        scr.addstr("ECRYPT", WHITE)
+
+    if not c.DECRYPT_AVAILABLE:
+        draw_box(48, 17, 14, 2, True, GREEN, scr)
+        scr.addstr(49, 22, "B", GREEN)
+        scr.addstr("OARD", WHITE)
+        scr.refresh()
+        time.sleep(.25)
+        draw_box(48, 33, 14, 2, True, YELLOW, scr)
+        scr.addstr(49, 38, "R", YELLOW)
+        scr.addstr("EJECT", WHITE)
+        scr.refresh()
+        time.sleep(.25)
+        draw_box(48, 49, 14, 2, True, RED, scr)
+        scr.addstr(49, 53, "A", RED)
+        scr.addstr("RREST", WHITE)
+        scr.refresh()
 
 def draw_box(line, col, width, height, fill, style, scr):
     """
@@ -195,12 +218,12 @@ def countdown(scr):
                 blank_line += " "
             scr.addstr(3, 4, blank_line, GREEN )
             scr.addstr(4, 4, blank_line, GREEN )
-            scr.addstr(3, 30, "RECORD PERMA LOCKED!", RED )
+            scr.addstr(3, 30, "P", RED )
             scr.addstr(4, 29, "HIT ANY KEY TO RETURN", RED )
             scr.refresh()
             c.DRG_ACT = False
             break
-        scr.addstr(2, 4, "MEMORY ANALISED. INPUT CORRECT KEY TO UNLOCK", BLUE )
+        scr.addstr(2, 17, "PROCESSING RUNTIME QUOTA EXPIRING IN...", BLUE )
         scr.addstr(4, 10, blank_line, GREEN )
         if timelimit > 40:
             scr.addstr(4, 10 + ( 60 - timelimit) - indent, bar_line, GREEN )
@@ -219,11 +242,12 @@ def countdown(scr):
         scr.move(y, x)
         time.sleep(1)
         timelimit -= 1
-    
+
 
 def decrypt_record_game(scr):
     """
         Player gets 5 chances to work out the encryption key.
+        PROCESSING RUNTIME QOTA EXPIRINGINF IN...
 
     """
     c.DRG_ACT = True
@@ -255,7 +279,6 @@ def decrypt_record_game(scr):
         for i in range(72):
             tk = c.VALID_KEYS[rand(0, (len(c.VALID_KEYS) - 1))]
             drgwin.addstr(tk, WHITE)
-            #drgwin.addch(data[rand(0, (len(data) - 1))])
     line_pos = rand(6, 40)
     row_pos = rand(4, (72 - len(ekey)))
     used_locs = []
@@ -310,8 +333,8 @@ def decrypt_record_game(scr):
                     break
             break
     # Launch countodown timer in a thread
-    threading.Thread(target=countdown,daemon=True, args=(drgwin,)).start()
-    # Pause execution to allow countdown thread to start
+    threading.Thread(target=countdown, daemon=True, args=(drgwin,)).start()
+    # Pause execution to allow countdown thread to start cleanly
     time.sleep(0.1)
     correct_key = False
     for i in range(5):
@@ -352,11 +375,13 @@ def decrypt_record_game(scr):
         drgwin.addstr(46, 10, "RECORD PERMA LOCKED!", RED)
         drgwin.refresh()
     c.DRG_ACT = False
-    time.sleep(2)
+    c.DECRYPT_AVAILABLE = False
+    time.sleep(1)
     curses.flushinp()
     drgwin.clear()
     del drgwin
     scr.touchwin()
+    draw_action_buttons(scr)
     scr.refresh()
 
 
@@ -854,4 +879,4 @@ def game_loop(scr):
                 main_menu(scr)
 
 # Handle curses intialisation of main function
-wrapper(main)
+curses.wrapper(main)

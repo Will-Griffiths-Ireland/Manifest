@@ -3,6 +3,7 @@ Albania
 Algeria
 Andorra
 Angola
+Ricktopia
 Antigua & Deps
 Argentina
 Armenia
@@ -37,7 +38,7 @@ China
 Colombia
 Comoros
 Congo
-Congo (Democratic Rep)
+Congo
 Costa Rica
 Croatia
 Cuba
@@ -141,13 +142,12 @@ Poland
 Portugal
 Qatar
 Romania
-Russian Federation
+Russia
 Rwanda
 St Kitts & Nevis
 St Lucia
 Samoa
 San Marino
-Sao Tome & Principe
 Saudi Arabia
 Senegal
 Serbia

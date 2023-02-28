@@ -1,3 +1,5 @@
+""" Global variables. Lists and flags """
+
 # Animation delay setting
 ANI_DLA = 0.0
 DIFFICULTY = "CHAOS"
@@ -11,7 +13,7 @@ DRG_ACT = False
 # Confirm action flag
 CONFIRM_ACTION = False
 # Decrption available flag
-DECRYPT_AVAILABLE = False 
+DECRYPT_AVAILABLE = True
 # Cursor postion used for threading screen updates
 G_CUR_YX = (0, 0)
 # Valid input keys alphanum
