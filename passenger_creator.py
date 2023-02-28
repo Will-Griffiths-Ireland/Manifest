@@ -147,19 +147,19 @@ def gen_passenger_ueri():
     """
     duplicate = True
     while duplicate:
-        temp_euri = ""
+        temp_ueri = ""
         for i in range(4):
             for i in range(4):
-                temp_euri += c.VALID_KEYS[rand(0, len(c.VALID_KEYS) - 1)]
-            if len(temp_euri) < 15:
-                temp_euri += "-"
+                temp_ueri += c.VALID_KEYS[rand(0, len(c.VALID_KEYS) - 1)]
+            if len(temp_ueri) < 15:
+                temp_ueri += "-"
         if len(c.PSNGR_LIST) > 0:
             for i in range(len(c.PSNGR_LIST) - 1):
-                if temp_euri == c.PSNGR_LIST[i].m_ueri:
+                if temp_ueri == c.PSNGR_LIST[i].m_ueri:
                     duplicate = True
                     break
         duplicate = False
-    return temp_euri
+    return temp_ueri
 
 
 class Passenger():
