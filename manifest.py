@@ -454,6 +454,55 @@ def main_menu(scr):
         elif key == 'Q' or key == 'q':
             exit()
 
+
+def encrypt(field):
+    """
+        Takes a record and randomly hides it based on difficulty.
+        Only emulating the field as being encrypted for gameplay
+        Might skip encryption altogether 
+    """
+
+    if c.DIFFICULTY == "CHAOS":
+        diff_modifier = 0.90
+        skip_chance = 4
+    if c.DIFFICULTY == "MAJOR":
+        diff_modifier = 0.7
+        skip_chance = 3
+    if c.DIFFICULTY == "MINOR":
+        diff_modifier = 0.5
+        skip_chance = 2
+
+    if rand(1, skip_chance) == 1:
+        return field
+
+    size = len(field)
+    temp_list = []
+    injecting = True
+    injectlimit = round(size * diff_modifier)
+    total_injects = 0
+
+    for count, value in enumerate(field):
+        temp_list.append(value)
+
+    while injecting:
+        temp_loc = rand(0, size - 1)
+        if temp_list[temp_loc] != "#":
+            temp_list[temp_loc] = "#"
+            total_injects += 1
+        if total_injects >= injectlimit:
+            injecting = False
+    
+    field = ""
+    for count, value in enumerate(temp_list):
+        field += value
+
+    return field
+
+
+    # inject random hashes
+    # stop once threshold reached
+
+
 def game_loop(scr):
     """
         Handle main game loop
@@ -463,6 +512,7 @@ def game_loop(scr):
     """
     # clear out the passenger list
     c.PSNGR_LIST = []
+
     # Generate a new passenger
     c.PSNGR_LIST.append(pc.Passenger())
 
@@ -537,33 +587,33 @@ def game_loop(scr):
     scr.addstr(19, 4, "NAME: ", GREEN)
     scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_name, WHITE)
     scr.addstr(20, 4, "AGE: ", GREEN)
-    scr.addstr("48", WHITE)
+    scr.addstr(str(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_age), WHITE)
     scr.addstr(21, 4, "SEX: ", GREEN)
     scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_sex, WHITE)
     scr.addstr(22, 4, "CITIZENSHIP: ", GREEN)
-    scr.addstr(c.COUNTRY_NAMES[rand(0, len(c.COUNTRY_NAMES) - 1)], WHITE)
+    scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_citizenship, WHITE)
     scr.addstr(23, 4, "HEIGHT: ", GREEN)
-    scr.addstr(str(rand(60, 240)) + " CM", WHITE)
+    scr.addstr(str(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_height) + " CM", WHITE)
     scr.addstr(24, 4, "HAIR COLOR: ", GREEN)
-    scr.addstr(c.HAIR_COLOUR[rand(0, len(c.HAIR_COLOUR) - 1)], WHITE)
+    scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_hair_color, WHITE)
     scr.addstr(25, 4, "PROFESSION: ", GREEN)
-    scr.addstr(c.PROFESSION[rand(0, len(c.PROFESSION) - 1)], WHITE)
+    scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_profession, WHITE)
     scr.addstr(26, 4, "MARITAL STATUS: ", GREEN)
-    scr.addstr(c.MARITAL_STATUS[rand(0, len(c.MARITAL_STATUS) - 1)], WHITE)
+    scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_marital_stat, WHITE)
     scr.addstr(27, 4, "BLOOD TYPE: ", GREEN)
-    scr.addstr("O-", WHITE)
-    scr.addstr(28, 4, "ALERGIES: ", GREEN)
-    scr.addstr("NONE", WHITE)
+    scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_blood_type, WHITE)
+    scr.addstr(28, 4, "ALLERGIES: ", GREEN)
+    scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_allergies, WHITE)
     scr.addstr(29, 4, "VOICE COM ID: ", GREEN)
-    scr.addstr("827364827634", WHITE)
+    scr.addstr(str(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_voice_com_id), WHITE)
     scr.addstr(30, 4, "CREDIT RATING: ", GREEN)
-    scr.addstr("A++", WHITE)
+    scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_credit_rating, WHITE)
     scr.addstr(31, 4, "EDUCATION LEVEL: ", GREEN)
-    scr.addstr("PHD", WHITE)
+    scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_edu_lv, WHITE)
     scr.addstr(32, 4, "UERI: ", GREEN)
-    scr.addstr("FTHG 56GH FGH6 FGHS", WHITE)
+    scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_ueri, WHITE)
     scr.addstr(33, 4, "MENTAK ALIGNMENT: ", GREEN)
-    scr.addstr("LISTRO", WHITE)
+    scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_mentak_alignment, WHITE)
     scr.addstr(34, 4, "DIGITAL DNA FINGERPRINT: ", GREEN)
     scr.move(36, 8)
     dna_loc = 0
@@ -593,53 +643,198 @@ def game_loop(scr):
     scr.addstr(11, 43, "[ VOYAGE DATA ]", GREEN)
     scr.addstr(13, 43, "TICKET TOKEN: ", GREEN)
     scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_ticket_token, WHITE)
+
     scr.addstr(14, 43, "CABIN ID: ", GREEN)
-    scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_cabin_id, RED)
+    if c.ENCRYPT_ON:
+        cabin_id = encrypt(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_cabin_id)
+    else:
+        cabin_id = c.PSNGR_LIST[c.CUR_PSNGR_NO].m_cabin_id
+    display_color = WHITE
+    if "#" in str(cabin_id):
+        display_color = RED
+    scr.addstr(cabin_id, display_color)
+
     scr.addstr(15, 43, "CABIN CLASS: ", GREEN)
-    scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_cabin_class, WHITE)
+    if c.ENCRYPT_ON:
+        cabin_class = encrypt(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_cabin_class)
+    else:
+        cabin_class = c.PSNGR_LIST[c.CUR_PSNGR_NO].m_cabin_class
+    display_color = WHITE
+    if "#" in str(cabin_class):
+        display_color = RED
+    scr.addstr(cabin_class, WHITE)
     scr.refresh()
     #time.sleep(.5)
+
     scr.addstr(17, 43, "[ PERSONAL DATA ]", GREEN)
     scr.refresh()
     #time.sleep(.5)
+
     scr.addstr(19, 43, "NAME: ", GREEN)
-    scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_name, WHITE)
+    if c.ENCRYPT_ON:
+        name = encrypt(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_name)
+    else:
+        name = c.PSNGR_LIST[c.CUR_PSNGR_NO].m_name
+    display_color = WHITE
+    if "#" in str(name):
+        display_color = RED
+    scr.addstr(name, display_color)
+
     scr.addstr(20, 43, "AGE: ", GREEN)
-    scr.addstr("48", WHITE)
+    if c.ENCRYPT_ON:
+        age = encrypt(str(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_age))
+    else:
+        age = str(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_age)
+    display_color = WHITE
+    if "#" in str(age):
+        display_color = RED
+    scr.addstr(age, display_color)
+
     scr.addstr(21, 43, "SEX: ", GREEN)
-    scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_sex, WHITE)
-    scr.addstr(22, 43, "CITIZENSHIP:", GREEN)
-    scr.addstr(c.COUNTRY_NAMES[rand(0, len(c.COUNTRY_NAMES) - 1)], WHITE)
+    if c.ENCRYPT_ON:
+        sex = encrypt(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_sex)
+    else:
+        sex = c.PSNGR_LIST[c.CUR_PSNGR_NO].m_sex
+    display_color = WHITE
+    if "#" in str(sex):
+        display_color = RED
+    scr.addstr(sex, display_color)
+
+    scr.addstr(22, 43, "CITIZENSHIP: ", GREEN)
+    if c.ENCRYPT_ON:
+        citizen = encrypt(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_citizenship)
+    else:
+        citizen = c.PSNGR_LIST[c.CUR_PSNGR_NO].m_citizenship
+    display_color = WHITE
+    if "#" in str(citizen):
+        display_color = RED
+    scr.addstr(citizen, display_color)
+
     scr.addstr(23, 43, "HEIGHT: ", GREEN)
-    scr.addstr("162 CM", WHITE)
+    if c.ENCRYPT_ON:
+        height = encrypt(str(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_height))
+    else:
+        height = str(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_height)
+    display_color = WHITE
+    if "#" in str(height):
+        display_color = RED
+    scr.addstr(height + " CM", display_color)
+
     scr.addstr(24, 43, "HAIR COLOR: ", GREEN)
-    scr.addstr("LIPSTICK PINK", WHITE)
+    if c.ENCRYPT_ON:
+        hair = encrypt(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_hair_color)
+    else:
+        hair = c.PSNGR_LIST[c.CUR_PSNGR_NO].m_hair_color
+    display_color = WHITE
+    if "#" in str(hair):
+        display_color = RED
+    scr.addstr(hair, display_color)
+
     scr.addstr(25, 43, "PROFESSION: ", GREEN)
-    scr.addstr("NUTRIBIOLOGIST", WHITE)
+    if c.ENCRYPT_ON:
+        prof = encrypt(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_profession)
+    else:
+        prof = c.PSNGR_LIST[c.CUR_PSNGR_NO].m_profession
+    display_color = WHITE
+    if "#" in str(prof):
+        display_color = RED
+    scr.addstr(prof, display_color)
+
     scr.addstr(26, 43, "MARITAL STATUS: ", GREEN)
-    scr.addstr("MARRIED", WHITE)
+    if c.ENCRYPT_ON:
+        mari = encrypt(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_marital_stat)
+    else:
+        mari = c.PSNGR_LIST[c.CUR_PSNGR_NO].m_marital_stat
+    display_color = WHITE
+    if "#" in str(mari):
+        display_color = RED
+    scr.addstr(mari, display_color)
+
     scr.addstr(27, 43, "BLOOD TYPE: ", GREEN)
-    scr.addstr("O-", WHITE)
-    scr.addstr(28, 43, "ALERGIES: ", GREEN)
-    scr.addstr("NONE", WHITE)
+    if c.ENCRYPT_ON:
+        blood = encrypt(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_blood_type)
+    else:
+        blood = c.PSNGR_LIST[c.CUR_PSNGR_NO].m_blood_type
+    display_color = WHITE
+    if "#" in str(blood):
+        display_color = RED
+    scr.addstr(blood, display_color)
+
+    scr.addstr(28, 43, "ALLERGIES: ", GREEN)
+    if c.ENCRYPT_ON:
+        allergies = encrypt(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_allergies)
+    else:
+        allergies = c.PSNGR_LIST[c.CUR_PSNGR_NO].m_allergies
+    display_color = WHITE
+    if "#" in str(allergies):
+        display_color = RED
+    scr.addstr(allergies, display_color)
+
     scr.addstr(29, 43, "VOICE COM ID: ", GREEN)
-    scr.addstr("#####4827634", RED)
+    if c.ENCRYPT_ON:
+        com = encrypt(str(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_voice_com_id))
+    else:
+        com = str(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_voice_com_id)
+    display_color = WHITE
+    if "#" in str(com):
+        display_color = RED
+    scr.addstr(com, display_color)
+
     scr.addstr(30, 43, "CREDIT RATING: ", GREEN)
-    scr.addstr("###", RED)
+    if c.ENCRYPT_ON:
+        cred = encrypt(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_credit_rating)
+    else:
+        cred = c.PSNGR_LIST[c.CUR_PSNGR_NO].m_credit_rating
+    display_color = WHITE
+    if "#" in str(cred):
+        display_color = RED
+    scr.addstr(cred, display_color)
+
     scr.addstr(31, 43, "EDUCATION LEVEL: ", GREEN)
-    scr.addstr("SECONDARY SCHOOL", WHITE)
+    if c.ENCRYPT_ON:
+        edu = encrypt(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_edu_lv)
+    else:
+        edu = c.PSNGR_LIST[c.CUR_PSNGR_NO].m_edu_lv
+    display_color = WHITE
+    if "#" in str(edu):
+        display_color = RED
+    scr.addstr(edu, display_color)
+
     scr.addstr(32, 43, "UERI: ", GREEN)
-    scr.addstr("FTHG #### FGH6 FGHS", RED)
+    if c.ENCRYPT_ON:
+        ueri = encrypt(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_ueri)
+    else:
+        ueri = c.PSNGR_LIST[c.CUR_PSNGR_NO].m_ueri
+    display_color = WHITE
+    if "#" in str(ueri):
+        display_color = RED
+    scr.addstr(ueri, display_color)
+
     scr.addstr(33, 43, "MENTAK ALIGNMENT: ", GREEN)
-    scr.addstr("LISTRO", WHITE)
+    if c.ENCRYPT_ON:
+        mentak = encrypt(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_mentak_alignment)
+    else:
+        mentak = c.PSNGR_LIST[c.CUR_PSNGR_NO].m_mentak_alignment
+    display_color = WHITE
+    if "#" in str(mentak):
+        display_color = RED
+    scr.addstr(mentak, display_color)
+
     scr.addstr(34, 43, "DIGITAL DNA FINGERPRINT: ", GREEN)
+    if c.ENCRYPT_ON:
+        dna = encrypt(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_dna_fingerprint)
+    else:
+        dna = c.PSNGR_LIST[c.CUR_PSNGR_NO].m_dna_fingerprint
+    display_color = WHITE
+    if "#" in str(dna):
+        display_color = RED
     scr.move(36, 48)
     dna_loc = 0
-    dna_data = c.PSNGR_LIST[c.CUR_PSNGR_NO].m_dna_fingerprint
+    dna_data = dna
     for i in range(10):
         scr.move(36 + i, 48)
         for i in range(20):
-            scr.addstr(dna_data[dna_loc], WHITE)
+            scr.addstr(dna_data[dna_loc], display_color)
             dna_loc += 1
     scr.refresh()
 

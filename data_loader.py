@@ -3,12 +3,28 @@ import config as c
 
 def gen_data_lists():
     """
-        Build lists from stored data
-        Input key list
+        Build lists from stored data files
+        Input validation key list
         Passenger attributes
         Dialog responses
     """
 
+
+    c.ALLERGIES = []
+    f = open('./assets/data/allergies.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        c.ALLERGIES.append(line)
+    random.shuffle(c.ALLERGIES)
+
+    c.BLOOD_TYPES = []
+    f = open('./assets/data/blood_type.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        c.BLOOD_TYPES.append(line)
+    random.shuffle(c.BLOOD_TYPES)
 
     c.VALID_KEYS = []
     f = open("./assets/data/alfanum.txt", "r")
@@ -104,3 +120,27 @@ def gen_data_lists():
     for line in data:
         c.CABIN_CLASS.append(line)
     random.shuffle(c.CABIN_CLASS)
+
+    c.CREDIT_RATING = []
+    f = open('./assets/data/credit_rating.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        c.CREDIT_RATING.append(line)
+    random.shuffle(c.CREDIT_RATING)
+
+    c.EDU_LVS = []
+    f = open('./assets/data/education_level.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        c.EDU_LVS.append(line)
+    random.shuffle(c.EDU_LVS)
+
+    c.MENTAK_ALIGNMENTS = []
+    f = open('./assets/data/mentak_alignments.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        c.MENTAK_ALIGNMENTS.append(line)
+    random.shuffle(c.MENTAK_ALIGNMENTS)

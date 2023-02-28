@@ -123,11 +123,50 @@ def gen_passenger_sex():
     return temp_sex[rand(0, 1)]
 
 
+def gen_voice_com_id():
+    """
+        Generate a voice com Id
+        Regen to avoid duplication
+    """
+    duplicate = True
+    while duplicate:
+        temp_com_id = rand(111111111111, 999999999999)
+        if len(c.PSNGR_LIST) > 0:
+            for i in range(len(c.PSNGR_LIST) - 1):
+                if temp_com_id == c.PSNGR_LIST[i].m_voice_com_id:
+                    duplicate = True
+                    break
+        duplicate = False
+    return temp_com_id
+
+
+def gen_passenger_ueri():
+    """
+        Generate a UERI (United Earth Resident Identifier)
+        Regen to avoid duplication
+    """
+    duplicate = True
+    while duplicate:
+        temp_euri = ""
+        for i in range(4):
+            for i in range(4):
+                temp_euri += c.VALID_KEYS[rand(0, len(c.VALID_KEYS) - 1)]
+            if len(temp_euri) < 15:
+                temp_euri += "-"
+        if len(c.PSNGR_LIST) > 0:
+            for i in range(len(c.PSNGR_LIST) - 1):
+                if temp_euri == c.PSNGR_LIST[i].m_ueri:
+                    duplicate = True
+                    break
+        duplicate = False
+    return temp_euri
+
+
 class Passenger():
     """
         Build random passenger details
         Ticket token is master and never corrupt/hidden
-        Manifest details are the truth
+        Manifest details are the 'truth'
         Passenger details that differ from manifest are suspect
     """
 
@@ -145,7 +184,32 @@ class Passenger():
         self.i_name = self.m_name
         self.m_age = rand(18, 130)
         self.i_age = self.m_age
-
-
+        self.m_citizenship = c.COUNTRY_NAMES[rand(0, len(c.COUNTRY_NAMES) - 1)]
+        self.i_citizenship = self.m_citizenship
+        self.m_height = rand(85, 240)
+        self.i_height = self.m_height
+        self.m_hair_color = c.HAIR_COLOUR[rand(0, len(c.HAIR_COLOUR) - 1)]
+        self.i_hair_color = self.m_hair_color
+        self.m_profession = c.PROFESSION[rand(0, len(c.PROFESSION) - 1)]
+        self.i_profession = self.m_profession
+        self.m_marital_stat = \
+            c.MARITAL_STATUS[rand(0, len(c.MARITAL_STATUS) - 1)]
+        self.i_marital_stat = self.m_marital_stat
+        self.m_blood_type = c.BLOOD_TYPES[rand(0, len(c.BLOOD_TYPES) - 1)]
+        self.i_blood_type = self.m_blood_type
+        self.m_allergies = c.ALLERGIES[rand(0, len(c.ALLERGIES) - 1)]
+        self.i_allergies = self.m_allergies
+        self.m_voice_com_id = gen_voice_com_id()
+        self.i_voice_com_id = self.m_voice_com_id
+        self.m_credit_rating = \
+            c.CREDIT_RATING[rand(0, len(c.CREDIT_RATING) - 1)]
+        self.i_credit_rating = self.m_credit_rating
+        self.m_edu_lv = c.EDU_LVS[rand(0, len(c.EDU_LVS) - 1)]
+        self.i_edu_lv = self.m_edu_lv
+        self.m_ueri = gen_passenger_ueri()
+        self.i_ueri = self.m_ueri
+        self.m_mentak_alignment = \
+            c.MENTAK_ALIGNMENTS[rand(0, len(c.MENTAK_ALIGNMENTS) - 1)]
+        self.i_mentak_alignment = self.m_mentak_alignment
         self.m_dna_fingerprint = gen_dna_fingerprint()
         self.i_dna_fingerprint = self.m_dna_fingerprint

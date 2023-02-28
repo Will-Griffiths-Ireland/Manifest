@@ -4,6 +4,7 @@ DIFFICULTY = "CHAOS"
 PSNGR_LIST = []
 # Game active flag
 GAME_ACT = False
+ENCRYPT_ON = True
 CUR_PSNGR_NO = 0
 # Decryption game active flag
 DRG_ACT = False
@@ -21,9 +22,22 @@ MALE_NAMES = []
 FEMALE_NAMES = []
 COUNTRY_NAMES = []
 HAIR_COLOUR = []
+PROFESSION = []
+MARITAL_STATUS = []
+BLOOD_TYPES = []
+ALLERGIES = []
+CREDIT_RATING = []
+EDU_LVS = []
+MENTAK_ALIGNMENTS = []
 # Dialog responses lists
 P_APPR_ACT = []
+BP_APPR_ACT = []
 P_SCAN_RESP = []
+BP_SCAN_RESP = []
+P_REJECT_RESP = []
+BP_REJECT_RESP = []
+P_ARREST_RESP = []
+BP_ARREST_RESP = []
 SO_WELC = []
 SO_SCAN_REQ = []
 # Debug counters
