@@ -1,6 +1,7 @@
 import curses
 import time
 import random
+from math import trunc
 import threading
 import config as c
 import data_loader as dl
@@ -21,13 +22,20 @@ def choose_difficulty(scr):
         Player selects difficulty
     """
     draw_box(19, 17, 40, 14, True, GREEN, scr)
-    scr.addstr(19, 27, "[ CHOOSE DIFFICULTY ]", GREEN )
+    scr.addstr(19, 27, "[ CHOOSE DIFFICULTY ]", GREEN)
     draw_box(21, 20, 34, 2, True, BLUE, scr)
-    scr.addstr(22, 26, "(1) MINOR BREACH (EASY)", BLUE )
+    scr.addstr(22, 26, "(", BLUE)
+    scr.addstr("1", WHITE)
+    scr.addstr(") MINOR BREACH (EASY)", BLUE)
     draw_box(25, 20, 34, 2, True, YELLOW, scr)
-    scr.addstr(26, 26, "(2) MAJOR BREACH (MED)", YELLOW)
+    scr.addstr(26, 26, "(", YELLOW)
+    scr.addstr("2", WHITE)
+    scr.addstr(") MAJOR BREACH (MED)", YELLOW)
     draw_box(29, 20, 34, 2, True, RED, scr)
-    scr.addstr(30, 26, "(1) CHAOS BREACH (HARD)", RED )
+    scr.addstr(30, 26, "(", RED)
+    scr.addstr("3", WHITE)
+    scr.addstr(") CHAOS BREACH (HARD)", RED)
+    scr.addstr(42, 16, "TYPE THE NUMBER OF THE DIFFICULTY YOU WANT  ", WHITE)
     curses.flushinp()
     while True:
         key = scr.getkey()
@@ -40,7 +48,7 @@ def choose_difficulty(scr):
         if key == '3':
             c.DIFFICULTY = "CHAOS"
             break
-    game_loop(scr)
+    game_start(scr)
 
 
 
@@ -389,9 +397,11 @@ def decrypt_record_game(scr):
         drgwin.addstr(44, 12, "[ KEY VERIFICATION ]", RED)
         drgwin.addstr(46, 10, "RECORD PERMA LOCKED!", RED)
         drgwin.refresh()
-    c.DRG_ACT = False
     c.DECRYPT_AVAILABLE = False
     time.sleep(1)
+    c.DRG_ACT = False
+    time.sleep(.1)
+
     curses.flushinp()
     drgwin.clear()
     del drgwin
@@ -498,6 +508,46 @@ def main_menu(scr):
             exit()
 
 
+def gate_closure_countdown(scr):
+    """
+        Display gate closure countdown
+        Not displayed during DRG
+
+    """
+    time_left = c.TIME_LIMIT
+    while c.GAME_ACT and time_left > 0:
+        mins = trunc(time_left / 60)
+        sec = time_left % 60
+        if time_left < (c.TIME_LIMIT * .15):
+            time_col = RED
+        elif time_left < (c.TIME_LIMIT * .30):
+            time_col = YELLOW
+        else:
+            time_col = WHITE
+
+        if not c.DRG_ACT:
+            scr.addstr(0, 35, "[ GATE CLOSES IN ", GREEN)
+            if len(str(mins)) == 1:
+                scr.addstr(" " + str(mins), time_col)
+                scr.addstr(" MINS ", GREEN)
+            else:
+                scr.addstr(str(mins), time_col)
+                scr.addstr(" MINS ", GREEN)
+            
+            if len(str(sec)) == 1:
+                scr.addstr(" " + str(sec), time_col)
+                scr.addstr(" SECS ]", GREEN)
+            else:
+                scr.addstr(str(sec), time_col)
+                scr.addstr(" SECS ]", GREEN)
+        scr.refresh()
+        time.sleep(1)
+        time_left -= 1
+    if time_left == 0:
+        scr.addstr(0, 35, "[  GATE CLOSED - LAST PASSENGER  ]", RED)
+    scr.refresh()
+
+
 def encrypt(field):
     """
         Takes a record and randomly hides it based on difficulty.
@@ -546,22 +596,15 @@ def encrypt(field):
     # stop once threshold reached
 
 
-def game_loop(scr):
+def game_start(scr):
     """
         Handle main game loop
         Interact with passenger
         display data
         take action
     """
-    # clear out the passenger list
-    c.PSNGR_LIST = []
 
-    # Generate a new passenger
-    c.PSNGR_LIST.append(pc.Passenger())
-
-
-    scr.clear()
-    draw_box(0, 0, 79, 51, False, GREEN, scr)
+    draw_box(0, 0, 79, 51, True, GREEN, scr)
     scr.addstr(0, 3, "[ INFINITUM SECURITY TERMINAL ]", GREEN)
     for i in range(4):
         draw_box(9, 1, 38, 1 + i, True, GREEN, scr)
@@ -571,29 +614,44 @@ def game_loop(scr):
     scr.addstr(9, 3, "[ SCANNING FOR IMPLANT  ]", GREEN)
     scr.addstr(9, 42, "[ AWAITING SCAN..... ]", GREEN)
     scr.refresh()
-    loop = 7
-    h_loop = 5
-    for i in range(8):
-        for i in range(8):
-            scr.move(1 + i, 1)
-            for i in range(78):
-                scr.addstr(" ", GREEN)
-        scr.refresh()
-        for i in range(loop):
-            scr.move(1 + i, 1)
-            for i in range(78):
-                scr.addstr("░", GREEN)
-        if h_loop > 0:
-            scr.addstr(h_loop, 20, "*SECURITY HATCH SHUTTERING RAISES*")
-        if h_loop < 2:
-            scr.addstr(5, 19, "*PASSENGER APPROACH SIGN ILUMINATES*", YELLOW)
-        scr.refresh()
-        time.sleep(.75)
-        loop -= 1
-        h_loop -= 1
 
-    scr.addstr(5, 19, "                                      ")
-    scr.refresh()
+    if not c.GAME_ACT:
+        # clear out the passenger list
+        c.PSNGR_LIST = []
+        c.GAME_ACT = True
+        # Launch countodown timer in a thread
+        threading.Thread(
+            target=gate_closure_countdown, daemon=True, args=(scr,)).start()
+        time.sleep(.1)
+
+        
+        loop = 7
+        h_loop = 5
+        for i in range(8):
+            for i in range(8):
+                scr.move(1 + i, 1)
+                for i in range(78):
+                    scr.addstr(" ", GREEN)
+            scr.refresh()
+            for i in range(loop):
+                scr.move(1 + i, 1)
+                for i in range(78):
+                    scr.addstr("░", GREEN)
+            if h_loop > 0:
+                scr.addstr(h_loop, 20, "*SECURITY HATCH SHUTTERING RAISES*")
+            if h_loop < 2:
+                scr.addstr(
+                    5, 19, "*PASSENGER APPROACH SIGN ILUMINATES*", YELLOW)
+            scr.refresh()
+            time.sleep(.75)
+            loop -= 1
+            h_loop -= 1
+        scr.addstr(5, 19, "                                      ")
+        scr.refresh()
+    
+    # Generate a new passenger
+    c.PSNGR_LIST.append(pc.Passenger())
+
     scr.addstr(2, 3, "PASSENGER - ", GREEN)
     scr.addstr(c.P_APPR_ACT[rand(0, len(c.P_APPR_ACT) - 1)], WHITE)
     scr.refresh()
@@ -623,6 +681,7 @@ def game_loop(scr):
     scr.refresh()
     time.sleep(.5)
     scr.addstr(11, 4, "[ VOYAGE DATA ]", GREEN)
+    scr.addstr(12, 4, "SEC-RAT - " + c.PSNGR_LIST[c.CUR_PSNGR_NO].threat_level, WHITE)
     scr.addstr(13, 4, "TICKET TOKEN: ", GREEN)
     scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_ticket_token, WHITE)
     scr.addstr(14, 4, "CABIN ID: ", GREEN)
@@ -637,7 +696,7 @@ def game_loop(scr):
     scr.addstr(19, 4, "NAME: ", GREEN)
     scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_name, WHITE)
     scr.addstr(20, 4, "AGE: ", GREEN)
-    scr.addstr(str(c.PSNGR_LIST[c.CUR_PSNGR_NO].m_age), WHITE)
+    scr.addstr(str(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_age), WHITE)
     scr.addstr(21, 4, "SEX: ", GREEN)
     scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_sex, WHITE)
     scr.addstr(22, 4, "CITIZENSHIP: ", GREEN)
@@ -691,7 +750,14 @@ def game_loop(scr):
                 decrypt_record_game(scr)
         if key == 'q' or key == 'Q':
             if confirm_action("END GAME", GREEN, scr):
+                c.GAME_ACT = False
+                c.DECRYPT_AVAILABLE = True
                 main_menu(scr)
+        if key == 'b' or key == 'B':
+                c.GAME_ACT = True
+                c.DECRYPT_AVAILABLE = True
+                c.CUR_PSNGR_NO += 1
+                game_start(scr)
 
 
 def display_manifest_panel(scr):
@@ -740,7 +806,7 @@ def display_manifest_panel(scr):
     display_color = WHITE
     if "#" in str(cabin_class):
         display_color = RED
-    scr.addstr(cabin_class, WHITE)
+    scr.addstr(cabin_class, display_color)
     scr.refresh()
     time.sleep(.5)
 

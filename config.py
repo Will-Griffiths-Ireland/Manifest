@@ -6,10 +6,12 @@ DIFFICULTY = "CHAOS"
 PSNGR_LIST = []
 # Game active flag
 GAME_ACT = False
-ENCRYPT_ON = True
+GAME_ENDED = False
+ENCRYPT_ON = False
 CUR_PSNGR_NO = 0
 # Decryption game active flag
 DRG_ACT = False
+TIME_LIMIT = 300
 # Confirm action flag
 CONFIRM_ACTION = False
 # Decrption available flag
