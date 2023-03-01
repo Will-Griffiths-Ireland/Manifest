@@ -1,7 +1,7 @@
 """ Global variables. Lists and flags """
 
 # Animation base delay on initial menu load
-ANI_DLA = 0.0
+ANI_DLA = 0.1
 DIFFICULTY = "MINOR"
 PSNGR_LIST = []
 # Game active flag
