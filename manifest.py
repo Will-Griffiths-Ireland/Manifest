@@ -73,7 +73,7 @@ def choose_difficulty(scr):
     scr.addstr("5", WHITE)
     scr.addstr(") 30 MINUTES", BLUE)
 
-    scr.addstr(42, 16, "TYPE THE NUMBER OF THE DURATION YOU WANT", WHITE)
+    scr.addstr(42, 16, "TYPE THE NUMBER OF THE DURATION YOU WANT  ", WHITE)
     curses.flushinp()
     while True:
         key = scr.getkey()
@@ -478,23 +478,23 @@ def main(scr):
     curses.init_pair(8, curses.COLOR_CYAN, -1)
     curses.init_pair(9, curses.COLOR_MAGENTA, -1)
     global WHITE
-    WHITE = curses.color_pair(1) | curses.A_BOLD
+    WHITE = curses.color_pair(1)
     global RED
-    RED = curses.color_pair(2) | curses.A_BOLD
+    RED = curses.color_pair(2)
     global GREEN
-    GREEN = curses.color_pair(3) | curses.A_BOLD
+    GREEN = curses.color_pair(3)
     global BLUE
-    BLUE = curses.color_pair(4) | curses.A_BOLD
+    BLUE = curses.color_pair(4)
     global W_ON_B
-    W_ON_B = curses.color_pair(5) | curses.A_BOLD
+    W_ON_B = curses.color_pair(5)
     global W_ON_R
-    W_ON_R = curses.color_pair(6) | curses.A_BOLD
+    W_ON_R = curses.color_pair(6)
     global YELLOW
-    YELLOW = curses.color_pair(7) | curses.A_BOLD
+    YELLOW = curses.color_pair(7)
     global CYAN
-    CYAN = curses.color_pair(8) | curses.A_BOLD
+    CYAN = curses.color_pair(8)
     global MAGENTA
-    MAGENTA = curses.color_pair(9) | curses.A_BOLD
+    MAGENTA = curses.color_pair(9)
     
     #pull all data from files in lists
     dl.gen_data_lists()
@@ -615,7 +615,7 @@ def shift_analysis_report(scr):
     time.sleep(.5)
     draw_box(6, 12, 55, 35, True, CYAN, scr)
     scr.addstr(6, 14, "[ SECOFF PERFORMACE SUMMARY - EMPLOYEE GRL56T4 ]", CYAN)
-    scr.addstr(8, 17, "TODAYS SYSTEMS BREACH HAS NOW BEEN RESOLVED.", WHITE)
+    scr.addstr(8, 17, "TODAY'S SYSTEM BREACH HAS NOW BEEN RESOLVED.", WHITE)
     scr.addstr(9, 17, "PASSENGERS YOU PROCESSED MANUALLY HAVE BEEN", WHITE)
     scr.addstr(10, 17, "FULLY AUDITED.", WHITE)
     scr.refresh()
@@ -637,7 +637,7 @@ def shift_analysis_report(scr):
     scr.addstr(results["decrypts"], WHITE)
 
     scr.addstr(20, 17, "[", CYAN)
-    scr.addstr(" CORRECTLY PROCCESED ", WHITE)
+    scr.addstr(" CORRECTLY PROCESSED ", WHITE)
     scr.addstr("]", CYAN)
 
     scr.addstr(22, 19, "PASSENGERS BOARDED: ", CYAN)
@@ -648,7 +648,7 @@ def shift_analysis_report(scr):
     scr.addstr(results["arrested_correctly"], WHITE)
 
     scr.addstr(26, 17, "[", CYAN)
-    scr.addstr(" INCORRECTLY PROCCESED ", WHITE)
+    scr.addstr(" INCORRECTLY PROCESSED ", WHITE)
     scr.addstr("]", CYAN)
 
     scr.addstr(28, 19, "PASSENGERS BOARDED: ", CYAN)
@@ -659,7 +659,7 @@ def shift_analysis_report(scr):
     scr.addstr(results["arrested_wrongly"], WHITE)
 
     scr.addstr(32, 17, "[", CYAN)
-    scr.addstr(" OVERAL PERFORMANCE ", WHITE)
+    scr.addstr(" OVERALL PERFORMANCE ", WHITE)
     scr.addstr("]", CYAN)
 
     scr.addstr(34, 19, "CREDITS REWARDED: ", CYAN)
