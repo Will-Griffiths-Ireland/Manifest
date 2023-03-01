@@ -1,8 +1,8 @@
 """ Global variables. Lists and flags """
 
-# Animation delay setting
+# Animation base delay on initial menu load
 ANI_DLA = 0.0
-DIFFICULTY = "CHAOS"
+DIFFICULTY = "MINOR"
 PSNGR_LIST = []
 # Game active flag
 GAME_ACT = False
@@ -50,5 +50,6 @@ SO_SCAN_REQ = []
 SECOFF_BOARD_RSP = []
 SECOFF_REJECT_RSP = []
 SECOFF_ARREST_RSP = []
+SO_NEXT = []
 # Debug counters
 DUP_COUNT = 0

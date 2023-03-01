@@ -10,6 +10,46 @@ def gen_data_lists():
         Dialog responses
     """
 
+    c.SO_NEXT = []
+    f = open('./assets/data/secoff_next.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        c.SO_NEXT.append(line)
+    random.shuffle(c.SO_NEXT)
+
+    c.BP_ARREST_RESP = []
+    f = open('./assets/data/bad_passenger_arrest_response.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        c.BP_ARREST_RESP.append(line)
+    random.shuffle(c.BP_ARREST_RESP)
+
+    c.P_ARREST_RESP = []
+    f = open('./assets/data/passenger_arrest_response.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        c.P_ARREST_RESP.append(line)
+    random.shuffle(c.P_ARREST_RESP)
+
+    c.P_REJECT_RESP = []
+    f = open('./assets/data/passenger_reject_response.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        c.P_REJECT_RESP.append(line)
+    random.shuffle(c.P_REJECT_RESP)
+
+    c.BP_APPR_ACT = []
+    f = open('./assets/data/bad_passenger_approach.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        c.BP_APPR_ACT.append(line)
+    random.shuffle(c.BP_APPR_ACT)
+
     c.P_BOARD_RSP = []
     f = open('./assets/data/passenger_board_response.txt')
     data = f.read().splitlines()

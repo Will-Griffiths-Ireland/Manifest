@@ -92,9 +92,8 @@ def choose_difficulty(scr):
         if key == '5':
             c.TIME_LIMIT = 1800
             break
-    
-    game_start(scr)
 
+    game_start(scr)
 
 
 def confirm_action(msg, style, scr):
@@ -272,7 +271,7 @@ def countdown(scr):
         Countdown timer for DRG
         Displays decresing bar with time at center
     """
-    timelimit = 5
+    timelimit = 60
     blank_line = ""
     indent = 0
     for i in range(timelimit):
@@ -308,7 +307,7 @@ def countdown(scr):
         scr.refresh()
         if timelimit % 2 == 0:
             indent += 1
-        # Put the cursor back to where it was for input
+        # Put the cursor back to where it was for player input
         (y, x) = c.G_CUR_YX
         scr.move(y, x)
         time.sleep(1)
@@ -579,7 +578,7 @@ def gate_closure_countdown(scr):
             time_col = WHITE
 
         if c.DSP_GAME_TMR:
-            scr.addstr(0, 35, "[ GATE CLOSES IN ", GREEN)
+            scr.addstr(0, 36, "[ GATE CLOSURE ", GREEN)
             if len(str(mins)) == 1:
                 scr.addstr(" " + str(mins), time_col)
                 scr.addstr(" MINS ", GREEN)
@@ -654,11 +653,30 @@ def player_action_result(action, scr):
     """
         Show dialog based on player action
     """
+    
+
     # Clear dialog area
     for i in range(8):
         scr.move(1 + i, 1)
         for i in range(78):
             scr.addstr(" ")
+    scr.refresh()
+
+    # fold up panels
+    #clean panel area
+    for x in range(35):
+        for i in range(39):
+            scr.move(9 + i, 1)
+            for i in range(78):
+                scr.addstr(" ")
+        draw_box(9, 1, 38, 38 - x, True, GREEN, scr)
+        draw_box(9, 40, 38, 38 - x, True, GREEN, scr)
+        scr.addstr(9, 3, "[ SCANNING FOR IMPLANT ]", GREEN)
+        scr.addstr(9, 42, "[ SEARCH READY ]", GREEN)
+        scr.refresh()
+        time.sleep(c.ANI_DLA)
+    scr.addstr(11, 12, "** NO DATA **", WHITE)
+    scr.addstr(11, 52, "** NO MATCH **", WHITE)
     scr.refresh()
 
     if action == "BOARD":
@@ -680,12 +698,48 @@ def player_action_result(action, scr):
         scr.refresh()
         time.sleep(2)
 
+        scr.addstr(4, 3, "PASSENGER - ", GREEN)
+        scr.addstr(c.P_REJECT_RESP[rand(0, len(c.P_REJECT_RESP) - 1)], WHITE)
+        scr.refresh()
+        time.sleep(2)
+
     if action == "ARREST":
         scr.addstr(2, 56, " - SEC.OFFICER (YOU)", GREEN)
         temp_resp = c.SECOFF_ARREST_RSP[rand(0, len(c.SECOFF_ARREST_RSP) - 1)]
         scr.addstr(2, 56 - len(temp_resp), temp_resp, RED)
         scr.refresh()
         time.sleep(2)
+
+        if c.PSNGR_LIST[c.CUR_PSNGR_NO].threat_level == "high":
+            scr.addstr(4, 3, "PASSENGER - ", GREEN)
+            scr.addstr(c.BP_ARREST_RESP[
+                rand(0, len(c.BP_ARREST_RESP) - 1)], WHITE)
+            scr.refresh()
+            time.sleep(5)
+        else:
+            scr.addstr(4, 3, "PASSENGER - ", GREEN)
+            scr.addstr(c.P_ARREST_RESP[
+                rand(0, len(c.P_ARREST_RESP) - 1)], WHITE)
+            scr.refresh()
+            time.sleep(3)
+
+    if c.GAME_ACT:
+        scr.addstr(6, 56, " - SEC.OFFICER (YOU)", GREEN)
+        temp_resp = c.SO_NEXT[rand(0, len(c.SO_NEXT) - 1)]
+        scr.addstr(6, 56 - len(temp_resp), temp_resp, WHITE)
+        scr.refresh()
+        time.sleep(2)
+
+    if c.GAME_ACT:
+        # Clear dialog area
+        for i in range(8):
+            scr.move(1 + i, 1)
+            for i in range(78):
+                scr.addstr(" ")
+        scr.addstr(4, 20, "*PASSENGER APPROACH SIGN ILUMINATES*", YELLOW)
+        scr.refresh()
+        time.sleep(3)
+
 
 def game_start(scr):
     """
@@ -703,8 +757,10 @@ def game_start(scr):
         draw_box(9, 40, 38, 1 + i, True, GREEN, scr)
         time.sleep(c.ANI_DLA)
         scr.refresh()
-    scr.addstr(9, 3, "[ SCANNING FOR IMPLANT  ]", GREEN)
-    scr.addstr(9, 42, "[ AWAITING SCAN..... ]", GREEN)
+    scr.addstr(9, 3, "[ SCANNING FOR IMPLANT ]", GREEN)
+    scr.addstr(11, 12, "** NO DATA **", WHITE)
+    scr.addstr(9, 42, "[ SEARCH READY ]", GREEN)
+    scr.addstr(11, 52, "** NO MATCH **", WHITE)
     scr.refresh()
 
     if not c.GAME_ACT:
@@ -734,21 +790,29 @@ def game_start(scr):
                 scr.addstr(h_loop, 20, "*SECURITY HATCH SHUTTERING RAISES*")
             if h_loop < 2:
                 scr.addstr(
-                    5, 19, "*PASSENGER APPROACH SIGN ILUMINATES*", YELLOW)
+                    5, 20, "*PASSENGER APPROACH SIGN ILUMINATES*", YELLOW)
             scr.refresh()
             time.sleep(.75)
             loop -= 1
             h_loop -= 1
-        scr.addstr(5, 19, "                                      ")
+        scr.addstr(5, 20, "                                      ")
         scr.refresh()
     
     # Generate a new passenger
     c.PSNGR_LIST.append(pc.Passenger())
 
-    scr.addstr(2, 3, "PASSENGER - ", GREEN)
-    scr.addstr(c.P_APPR_ACT[rand(0, len(c.P_APPR_ACT) - 1)], WHITE)
-    scr.refresh()
-    time.sleep(2)
+    # Initial dialog
+    if c.PSNGR_LIST[c.CUR_PSNGR_NO].threat_level == "high":
+        scr.addstr(2, 3, "PASSENGER - ", GREEN)
+        scr.addstr(c.BP_APPR_ACT[rand(0, len(c.BP_APPR_ACT) - 1)], WHITE)
+        scr.refresh()
+        time.sleep(2)
+    else:
+        scr.addstr(2, 3, "PASSENGER - ", GREEN)
+        scr.addstr(c.P_APPR_ACT[rand(0, len(c.P_APPR_ACT) - 1)], WHITE)
+        scr.refresh()
+        time.sleep(2)
+
     scr.addstr(4, 56, " - SEC.OFFICER (YOU)", GREEN)
     temp_resp = c.SO_WELC[rand(0, len(c.SO_WELC) - 1)]
     scr.addstr(4, 56 - len(temp_resp), temp_resp, WHITE)
@@ -855,7 +919,6 @@ def game_start(scr):
         if key == 'b' or key == 'B':
             c.PSNGR_LIST[c.CUR_PSNGR_NO].boarding_status = "BOARDED"
             player_action_result("BOARD", scr)
-            scr.getch()
             if not c.GAME_ACT:
                 main_menu(scr)
             c.CUR_PSNGR_NO += 1
@@ -864,7 +927,6 @@ def game_start(scr):
         if key == 'r' or key == 'R':
             c.PSNGR_LIST[c.CUR_PSNGR_NO].boarding_status = "REJECTED"
             player_action_result("REJECT", scr)
-            scr.getch()
             if not c.GAME_ACT:
                 main_menu(scr)
             c.CUR_PSNGR_NO += 1
@@ -873,7 +935,6 @@ def game_start(scr):
         if key == 'a' or key == 'A':
             c.PSNGR_LIST[c.CUR_PSNGR_NO].boarding_status = "ARRESTED"
             player_action_result("ARREST", scr)
-            scr.getch()
             if not c.GAME_ACT:
                 main_menu(scr)
             c.CUR_PSNGR_NO += 1
@@ -892,12 +953,15 @@ def display_manifest_panel(scr):
         time.sleep(c.ANI_DLA)
         scr.refresh()
     if c.ENCRYPT_ON:
-        scr.addstr(9, 42, "[ WARNING !!!!!!!!!! ]", RED)
+        draw_box(9, 40, 38, 38, False, GREEN, scr)
+        scr.addstr(9, 42, "[ *** WARNING *** ]", RED)
         scr.refresh()
         time.sleep(1)
-        scr.addstr(9, 42, "[ PARTIAL RECORD...  ]", YELLOW)
+        draw_box(9, 40, 38, 38, False, GREEN, scr)
+        scr.addstr(9, 42, "[ ENCRYPTED RECORD ]", YELLOW)
         scr.refresh()
         time.sleep(1)
+        draw_box(9, 40, 38, 38, False, GREEN, scr)
         scr.addstr(9, 42, "[ SHIP MANIFEST DATA ]", GREEN)
         scr.refresh()
         time.sleep(.5)
