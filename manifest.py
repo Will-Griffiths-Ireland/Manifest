@@ -488,7 +488,7 @@ def main(scr):
     global W_ON_B
     W_ON_B = curses.color_pair(5)
     global W_ON_R
-    W_ON_R = curses.color_pair(6)
+    W_ON_R = curses.color_pair(6) | curses.A_BOLD
     global YELLOW
     YELLOW = curses.color_pair(7)
     global CYAN
@@ -1064,7 +1064,6 @@ def game_start(scr):
     scr.refresh()
     time.sleep(.5)
     scr.addstr(11, 4, "[ VOYAGE DATA ]", GREEN)
-    scr.addstr(12, 4, "SEC-RAT - " + c.PSNGR_LIST[c.CUR_PSNGR_NO].threat_level, WHITE)
     scr.addstr(13, 4, "TICKET TOKEN: ", GREEN)
     scr.addstr(c.PSNGR_LIST[c.CUR_PSNGR_NO].i_ticket_token, WHITE)
     scr.addstr(14, 4, "CABIN ID: ", GREEN)
