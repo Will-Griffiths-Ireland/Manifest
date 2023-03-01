@@ -72,8 +72,8 @@ def choose_difficulty(scr):
     scr.addstr(30, 31, "(", BLUE)
     scr.addstr("5", WHITE)
     scr.addstr(") 30 MINUTES", BLUE)
-    
-    scr.addstr(42, 16, "TYPE THE NUMBER OF THE DURATION YOU WANT  ", WHITE)
+
+    scr.addstr(42, 16, "TYPE THE NUMBER OF THE DURATION YOU WANT", WHITE)
     curses.flushinp()
     while True:
         key = scr.getkey()
@@ -171,6 +171,7 @@ def draw_action_buttons(scr):
         scr.addstr("RREST", WHITE)
         scr.refresh()
 
+
 def draw_box(line, col, width, height, fill, style, scr):
     """
         Draw a window, takes starting position line & col.
@@ -178,26 +179,26 @@ def draw_box(line, col, width, height, fill, style, scr):
         Width and height for size and style is curses color pairing.
         Also takes curses screen/pad we need to use
     """
-    l = int(line)
+    li = int(line)
     c = int(col)
     w = int(width)
     h = int(height)
     s = style
     f = fill
-    scr.addstr(l, c, "╔", s)
+    scr.addstr(li, c, "╔", s)
     for i in range(w - 1):
-        scr.addstr(l, c  + 1 + i, "═", s)
-    scr.addstr(l, c + w , "╗", s)
+        scr.addstr(li, c  + 1 + i, "═", s)
+    scr.addstr(li, c + w , "╗", s)
     for i in range(h - 1):
-        scr.addstr(l + 1 + i, c, "║", s)
-        if (f):
+        scr.addstr(li + 1 + i, c, "║", s)
+        if f:
             for x in range(w - 1):
-                scr.addstr(l + 1 + i, c + 1 + x, " ", s)
-        scr.addstr(l + 1 + i, c + w, "║", s)
-    scr.addstr(l + h, c, "╚", s)
+                scr.addstr(li + 1 + i, c + 1 + x, " ", s)
+        scr.addstr(li + 1 + i, c + w, "║", s)
+    scr.addstr(li + h, c, "╚", s)
     for i in range(w - 1):
-        scr.addstr(l + h, c + 1 + i, "═", s)
-    scr.addstr(l + h , c + w , "╝", s)
+        scr.addstr(li + h, c + 1 + i, "═", s)
+    scr.addstr(li + h, c + w, "╝", s)
 
 
 def get_input(echo_style, max_size, scr):
@@ -234,8 +235,10 @@ def get_input(echo_style, max_size, scr):
                 scr.addstr(" ", s)
                 scr.move(y, x - 1)
                 user_input = user_input[:-1]
-        elif len(user_input) == max_size:
-            warn_msg("INPUT LIMIT REACHED", W_ON_R , scr)
+
+        elif len(user_input) == ms:
+            warn_msg("INPUT LIMIT REACHED", W_ON_R, scr)
+
         elif chr(key).upper() in c.VALID_KEYS:
             if c.DRG_ACT:
                 (y, x) = c.G_CUR_YX
@@ -245,7 +248,7 @@ def get_input(echo_style, max_size, scr):
             screen_key = screen_key.upper()
             scr.addstr(screen_key, s)
         else:
-            warn_msg("    INVALID KEY", W_ON_R , scr)
+            warn_msg("    INVALID KEY", W_ON_R, scr)
 
 
 def warn_msg(msg, style, scr):
@@ -266,7 +269,7 @@ def warn_msg(msg, style, scr):
     scr.refresh()
 
 
-def countdown(scr):
+def drg_countdown(scr):
     """
         Countdown timer for DRG
         Displays decresing bar with time at center
@@ -384,7 +387,7 @@ def decrypt_record_game(scr):
                 used_locs.append((line_pos, row_pos))
                 look_for_loc = False
                 break
-            for i in range(6,40):
+            for i in range(6, 40):
                 space_free = False
                 for x in range(len(used_locs)):
                     l, r = used_locs[x]
@@ -403,7 +406,7 @@ def decrypt_record_game(scr):
                     break
             break
     # Launch countodown timer in a thread
-    threading.Thread(target=countdown, daemon=True, args=(drgwin,)).start()
+    threading.Thread(target=drg_countdown, daemon=True, args=(drgwin,)).start()
     # Pause execution to allow countdown thread to start cleanly
     time.sleep(0.1)
     correct_key = False
@@ -436,6 +439,7 @@ def decrypt_record_game(scr):
         c.DECRYPT_SUCCESS = True
         c.ENCRYPT_ON = False
         c.DECRYPT_AVAILABLE = False
+        c.PSNGR_LIST[c.CUR_PSNGR_NO].record_decrypted = True
         drgwin.refresh()
     else:
         draw_box(44, 4, 34, 4, True, RED, drgwin)
@@ -471,6 +475,8 @@ def main(scr):
     curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_BLUE)
     curses.init_pair(6, curses.COLOR_WHITE, curses.COLOR_RED)
     curses.init_pair(7, curses.COLOR_YELLOW, -1)
+    curses.init_pair(8, curses.COLOR_CYAN, -1)
+    curses.init_pair(9, curses.COLOR_MAGENTA, -1)
     global WHITE
     WHITE = curses.color_pair(1) | curses.A_BOLD
     global RED
@@ -485,6 +491,12 @@ def main(scr):
     W_ON_R = curses.color_pair(6) | curses.A_BOLD
     global YELLOW
     YELLOW = curses.color_pair(7) | curses.A_BOLD
+    global CYAN
+    CYAN = curses.color_pair(8) | curses.A_BOLD
+    global MAGENTA
+    MAGENTA = curses.color_pair(9) | curses.A_BOLD
+    
+    #pull all data from files in lists
     dl.gen_data_lists()
     # Display main menu
     main_menu(scr)
@@ -557,6 +569,205 @@ def shift_analysis_report(scr):
     """
         Display results of game
     """
+    draw_box(0, 0, 79, 51, True, CYAN, scr)
+    scr.addstr(0, 3, "[ INFINITUM EMPLOYEE TERMINAL ]", CYAN)
+    scr.refresh()
+
+    col_list = [GREEN, RED, BLUE, WHITE, MAGENTA, CYAN, YELLOW]
+
+    for i in range(500):
+        y_start = rand(2, 45)
+        x_start = rand(2, 67)
+        height_max = 49 - y_start
+        width_max = 77 - x_start
+        height = rand(2, height_max)
+        width = rand(7, width_max)
+        color = col_list[rand(0, 6)]
+        draw_box(y_start, x_start, width, height, False, color, scr)
+    scr.refresh()
+    for i in range(25):
+        y_start = rand(1, 45)
+        x_start = rand(1, 67)
+        height_max = 50 - y_start
+        width_max = 78 - x_start
+        height = rand(2, height_max)
+        width = rand(7, width_max)
+        color = col_list[rand(0, 6)]
+        draw_box(y_start, x_start, width, height, False, color, scr)
+        scr.refresh()
+        time.sleep(.1)
+
+    draw_box(20, 15, 48, 5, True, WHITE, scr)
+    scr.addstr(21, 18, "LATER THAT EVENING, WHILE ENJOYING SOME", WHITE)
+    scr.addstr(22, 18, "RELAXING 'HYPNO BOX' ON YOUR TERMINAL,", WHITE)
+    scr.addstr(23, 18, "YOU GET A MESSAGE FROM THE SECURITY CHIEF.", WHITE)
+    scr.refresh()
+    time.sleep(1)
+    scr.addstr(25, 26, "[ HIT ANY KEY TO PROCEED ]", WHITE)
+    scr.getch()
+
+    for i in range(52):
+        draw_box(0, 0, 79, i, True, CYAN, scr)
+        scr.addstr(0, 3, "[ INFINITUM EMPLOYEE TERMINAL ]", CYAN)
+        scr.refresh()
+        time.sleep(.01)
+
+    time.sleep(.5)
+    draw_box(6, 12, 55, 35, True, CYAN, scr)
+    scr.addstr(6, 14, "[ SECOFF PERFORMACE SUMMARY - EMPLOYEE GRL56T4 ]", CYAN)
+    scr.addstr(8, 17, "TODAYS SYSTEMS BREACH HAS NOW BEEN RESOLVED.", WHITE)
+    scr.addstr(9, 17, "PASSENGERS YOU PROCESSED MANUALLY HAVE BEEN", WHITE)
+    scr.addstr(10, 17, "FULLY AUDITED.", WHITE)
+    scr.refresh()
+    time.sleep(1)
+
+    results = calc_performance()
+
+    scr.addstr(13, 17, "[", CYAN)
+    scr.addstr(" OVERVIEW ", WHITE)
+    scr.addstr("]", CYAN)
+
+    scr.addstr(15, 19, "DATA BREACH TYPE: ", CYAN)
+    scr.addstr(results["difficulty"], WHITE)
+    scr.addstr(16, 19, "DURATION: ", CYAN)
+    scr.addstr(results["duration"], WHITE)
+    scr.addstr(17, 19, "PASSENGERS PROCESSED: ", CYAN)
+    scr.addstr(results["total_pass"], WHITE)
+    scr.addstr(18, 19, "RECORDS DECRYPTED: ", CYAN)
+    scr.addstr(results["decrypts"], WHITE)
+
+    scr.addstr(20, 17, "[", CYAN)
+    scr.addstr(" CORRECTLY PROCCESED ", WHITE)
+    scr.addstr("]", CYAN)
+
+    scr.addstr(22, 19, "PASSENGERS BOARDED: ", CYAN)
+    scr.addstr(results["boarded_correctly"], WHITE)
+    scr.addstr(23, 19, "PASSENGERS REJECTED: ", CYAN)
+    scr.addstr(results["rejected_correctly"], WHITE)
+    scr.addstr(24, 19, "PASSENGERS ARRESTED: ", CYAN)
+    scr.addstr(results["arrested_correctly"], WHITE)
+
+    scr.addstr(26, 17, "[", CYAN)
+    scr.addstr(" INCORRECTLY PROCCESED ", WHITE)
+    scr.addstr("]", CYAN)
+
+    scr.addstr(28, 19, "PASSENGERS BOARDED: ", CYAN)
+    scr.addstr(results["boarded_wrongly"], WHITE)
+    scr.addstr(29, 19, "PASSENGERS REJECTED: ", CYAN)
+    scr.addstr(results["rejected_wrongly"], WHITE)
+    scr.addstr(30, 19, "PASSENGERS ARRESTED: ", CYAN)
+    scr.addstr(results["arrested_wrongly"], WHITE)
+
+    scr.addstr(32, 17, "[", CYAN)
+    scr.addstr(" OVERAL PERFORMANCE ", WHITE)
+    scr.addstr("]", CYAN)
+
+    scr.addstr(34, 19, "CREDITS REWARDED: ", CYAN)
+    scr.addstr(results["player_score"] + " of " + results["max_score"], WHITE)
+    scr.addstr(35, 19, "RATING: ", CYAN)
+    scr.addstr(results["rating"], RED)
+
+    scr.addstr(38, 17, "YOURS DIGITALLY,", WHITE)
+    scr.addstr(39, 17, "A.I SEC-CHIEF 1012", WHITE)
+
+    scr.addstr(45, 23, "HIT ANY KEY TO RETURN TO MAIN MENU", WHITE)
+    scr.getch()
+
+
+def calc_performance():
+    """
+    Inspect passenger list and generate performance metrics
+    """
+    results = {}
+
+    results["difficulty"] = c.DIFFICULTY
+    results["duration"] = str(round(c.TIME_LIMIT / 60)) + " MINUTES"
+
+    total_decrypts = 0
+    total_passengers = 0
+    total_boarded_correctly = 0
+    total_rejected_correctly = 0
+    total_arrested_correctly = 0
+    total_boarded_wrongly = 0
+    total_rejected_wrongly = 0
+    total_arrested_wrongly = 0
+
+    max_score = 0
+    player_score = 0
+
+    for i in range(len(c.PSNGR_LIST)):
+        total_passengers += 1
+        # 50 creds possible to decrypt each rec
+        max_score += 50
+        # 10 creds for correct boarding
+        max_score += 10
+
+        if c.PSNGR_LIST[i].record_decrypted is True:
+            total_decrypts += 1
+            player_score += 50
+
+        if c.PSNGR_LIST[i].threat_level == "none" \
+                and c.PSNGR_LIST[i].boarding_status == "BOARDED":
+            total_boarded_correctly += 1
+            player_score += 10
+
+        if c.PSNGR_LIST[i].threat_level in ["medium", "high"] \
+                and c.PSNGR_LIST[i].boarding_status == "BOARDED":
+            total_boarded_wrongly += 1
+            player_score -= 100
+            max_score += 100
+
+        if c.PSNGR_LIST[i].threat_level in ["medium"] \
+                and c.PSNGR_LIST[i].boarding_status == "REJECTED":
+            total_rejected_correctly += 1
+            player_score += 100
+            max_score += 100
+
+        if c.PSNGR_LIST[i].threat_level in ["none"] \
+                and c.PSNGR_LIST[i].boarding_status == "REJECTED":
+            total_rejected_wrongly += 1
+            player_score -= 100
+
+        if c.PSNGR_LIST[i].threat_level in ["high"] \
+                and c.PSNGR_LIST[i].boarding_status == "ARRESTED":
+            total_arrested_correctly += 1
+            player_score += 100
+            max_score += 100
+
+        if c.PSNGR_LIST[i].threat_level in ["none", "medium"] \
+                and c.PSNGR_LIST[i].boarding_status == "ARRESTED":
+            total_arrested_wrongly += 1
+            player_score -= 200
+
+    results["decrypts"] = str(total_decrypts)
+    results["total_pass"] = str(total_passengers)
+    results["boarded_correctly"] = str(total_boarded_correctly)
+    results["rejected_correctly"] = str(total_rejected_correctly)
+    results["arrested_correctly"] = str(total_arrested_correctly)
+    results["boarded_wrongly"] = str(total_boarded_wrongly)
+    results["rejected_wrongly"] = str(total_rejected_wrongly)
+    results["arrested_wrongly"] = str(total_arrested_wrongly)
+
+    rating = ""
+    if player_score == max_score:
+        rating = "OUTSTANDING"
+    elif player_score >= (max_score * .75):
+        rating = "SOLID PERFORMANCE"
+    elif player_score >= (max_score * .50):
+        rating = "AVERAGE"
+    elif player_score >= (max_score * .25):
+        rating = "POOR"
+    elif player_score >= (max_score * .05):
+        rating = "USELESS"
+    else:
+        rating = "GET READY FOR THE AIRLOCK"
+
+    results["rating"] = rating
+    results["max_score"] = str(max_score)
+    results["player_score"] = str(player_score)
+
+    return results
+
 
 def gate_closure_countdown(scr):
     """
@@ -653,7 +864,6 @@ def player_action_result(action, scr):
     """
         Show dialog based on player action
     """
-    
 
     # Clear dialog area
     for i in range(8):
@@ -737,6 +947,22 @@ def player_action_result(action, scr):
         scr.addstr(2, 56 - len(temp_resp), temp_resp, WHITE)
         scr.refresh()
         time.sleep(3)
+    else:
+        # Clear dialog area
+        for i in range(8):
+            scr.move(1 + i, 1)
+            for i in range(78):
+                scr.addstr(" ")
+        scr.addstr(4, 20, "*GATE CLOSED - NO FURTHER BOARDING*", RED)
+        scr.refresh()
+        time.sleep(1)
+        scr.addstr(2, 56, " - SEC.OFFICER (YOU)", GREEN)
+        temp_resp = c.SO_FINISHED[rand(0, len(c.SO_FINISHED) - 1)]
+        scr.addstr(2, 56 - len(temp_resp), temp_resp, WHITE)
+        scr.refresh()
+        time.sleep(4)
+
+
 
 
 def game_start(scr):
@@ -747,6 +973,7 @@ def game_start(scr):
         take action
     """
     c.DECRYPT_AVAILABLE = True
+    c.ENCRYPT_ON = True
     # Draw main terminal window and panels
     draw_box(0, 0, 79, 51, True, GREEN, scr)
     scr.addstr(0, 3, "[ INFINITUM SECURITY TERMINAL ]", GREEN)
@@ -893,6 +1120,7 @@ def game_start(scr):
     display_manifest_panel(scr)
 
     draw_action_buttons(scr)
+
     # Display Quit option
     scr.addstr(0, 70, "[ ", GREEN)
     scr.addstr("Q", WHITE)
@@ -918,6 +1146,7 @@ def game_start(scr):
             c.PSNGR_LIST[c.CUR_PSNGR_NO].boarding_status = "BOARDED"
             player_action_result("BOARD", scr)
             if not c.GAME_ACT:
+                shift_analysis_report(scr)
                 main_menu(scr)
             c.CUR_PSNGR_NO += 1
             game_start(scr)
@@ -926,6 +1155,7 @@ def game_start(scr):
             c.PSNGR_LIST[c.CUR_PSNGR_NO].boarding_status = "REJECTED"
             player_action_result("REJECT", scr)
             if not c.GAME_ACT:
+                shift_analysis_report(scr)
                 main_menu(scr)
             c.CUR_PSNGR_NO += 1
             game_start(scr)
@@ -934,6 +1164,7 @@ def game_start(scr):
             c.PSNGR_LIST[c.CUR_PSNGR_NO].boarding_status = "ARRESTED"
             player_action_result("ARREST", scr)
             if not c.GAME_ACT:
+                shift_analysis_report(scr)
                 main_menu(scr)
             c.CUR_PSNGR_NO += 1
             # show arrest dialog

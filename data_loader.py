@@ -10,6 +10,14 @@ def gen_data_lists():
         Dialog responses
     """
 
+    c.SO_FINISHED = []
+    f = open('./assets/data/secoff_finished.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        c.SO_FINISHED.append(line)
+    random.shuffle(c.SO_FINISHED)
+
     c.SO_NEXT = []
     f = open('./assets/data/secoff_next.txt')
     data = f.read().splitlines()

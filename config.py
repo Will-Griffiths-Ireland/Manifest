@@ -51,5 +51,6 @@ SECOFF_BOARD_RSP = []
 SECOFF_REJECT_RSP = []
 SECOFF_ARREST_RSP = []
 SO_NEXT = []
+SO_FINISHED = []
 # Debug counters
 DUP_COUNT = 0

@@ -209,6 +209,7 @@ class Passenger():
         """
         self.threat_level = gen_passenger_threat_level()
         self.boarding_status = ""
+        self.record_decrypted = False
         self.m_ticket_token = gen_ticket_token()
         self.i_ticket_token = self.m_ticket_token
         self.m_cabin_id = gen_cabin_id()
