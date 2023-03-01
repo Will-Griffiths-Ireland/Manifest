@@ -356,7 +356,7 @@ def decrypt_record_game(scr):
     row_pos = rand(4, (72 - len(ekey)))
     used_locs = []
     used_locs.append((line_pos, row_pos))
-    drgwin.addstr(line_pos, row_pos, ekey, RED)
+    drgwin.addstr(line_pos, row_pos, ekey, BLUE)
     # insert the invalid keys
     used_keys = []
     for keys in range(dud_keys):
@@ -534,7 +534,7 @@ def main_menu(scr):
             new_r_count = new_r_count + 1
         scr.refresh()
     draw_box(0, 0, 79, 51, False, GREEN, scr)
-    scr.addstr(0, 30, "[ MANIFEST V0.4 ]", GREEN)
+    scr.addstr(0, 30, "[ MANIFEST V0.9 ]", GREEN)
     for i in range(9):
         draw_box(24, 22, 31, i, True, GREEN, scr)
         time.sleep(c.ANI_DLA)
@@ -700,7 +700,7 @@ def calc_performance():
         # 50 creds possible to decrypt each rec
         max_score += 50
         # 10 creds for correct boarding
-        max_score += 10
+        
 
         if c.PSNGR_LIST[i].record_decrypted is True:
             total_decrypts += 1
@@ -710,6 +710,7 @@ def calc_performance():
                 and c.PSNGR_LIST[i].boarding_status == "BOARDED":
             total_boarded_correctly += 1
             player_score += 10
+            max_score += 10
 
         if c.PSNGR_LIST[i].threat_level in ["medium", "high"] \
                 and c.PSNGR_LIST[i].boarding_status == "BOARDED":
@@ -873,7 +874,7 @@ def player_action_result(action, scr):
     scr.refresh()
 
     # fold up panels
-    #clean panel area
+    # clean panel area
     for x in range(35):
         for i in range(39):
             scr.move(9 + i, 1)
