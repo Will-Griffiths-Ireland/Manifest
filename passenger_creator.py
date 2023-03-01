@@ -19,9 +19,9 @@ def gen_passenger_threat_level():
         None are all good passengers
     """
     chance = rand(1, 100)
-    if chance < 1:
+    if chance < 15:
         return "high"
-    if chance > 800:
+    if chance > 80:
         return "medium"
     return "none"
 

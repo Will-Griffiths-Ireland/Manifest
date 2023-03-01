@@ -724,19 +724,17 @@ def player_action_result(action, scr):
             time.sleep(3)
 
     if c.GAME_ACT:
-        scr.addstr(6, 56, " - SEC.OFFICER (YOU)", GREEN)
-        temp_resp = c.SO_NEXT[rand(0, len(c.SO_NEXT) - 1)]
-        scr.addstr(6, 56 - len(temp_resp), temp_resp, WHITE)
-        scr.refresh()
-        time.sleep(2)
-
-    if c.GAME_ACT:
         # Clear dialog area
         for i in range(8):
             scr.move(1 + i, 1)
             for i in range(78):
                 scr.addstr(" ")
         scr.addstr(4, 20, "*PASSENGER APPROACH SIGN ILUMINATES*", YELLOW)
+        scr.refresh()
+        time.sleep(1)
+        scr.addstr(2, 56, " - SEC.OFFICER (YOU)", GREEN)
+        temp_resp = c.SO_NEXT[rand(0, len(c.SO_NEXT) - 1)]
+        scr.addstr(2, 56 - len(temp_resp), temp_resp, WHITE)
         scr.refresh()
         time.sleep(3)
 
