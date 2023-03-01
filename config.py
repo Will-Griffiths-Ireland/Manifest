@@ -7,12 +7,12 @@ PSNGR_LIST = []
 # Game active flag
 GAME_ACT = False
 GAME_ENDED = False
-ENCRYPT_ON = False
+ENCRYPT_ON = True
 DSP_GAME_TMR = False
 CUR_PSNGR_NO = 0
 # Decryption game active flag
 DRG_ACT = False
-TIME_LIMIT = 300
+TIME_LIMIT = 600
 # Confirm action flag
 CONFIRM_ACTION = False
 # Decrption available flag
@@ -44,7 +44,11 @@ P_REJECT_RESP = []
 BP_REJECT_RESP = []
 P_ARREST_RESP = []
 BP_ARREST_RESP = []
+P_BOARD_RSP = []
 SO_WELC = []
 SO_SCAN_REQ = []
+SECOFF_BOARD_RSP = []
+SECOFF_REJECT_RSP = []
+SECOFF_ARREST_RSP = []
 # Debug counters
 DUP_COUNT = 0

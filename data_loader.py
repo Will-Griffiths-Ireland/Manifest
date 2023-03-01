@@ -1,6 +1,7 @@
 import random
 import config as c
 
+
 def gen_data_lists():
     """
         Build lists from stored data files
@@ -9,6 +10,37 @@ def gen_data_lists():
         Dialog responses
     """
 
+    c.P_BOARD_RSP = []
+    f = open('./assets/data/passenger_board_response.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        c.P_BOARD_RSP.append(line)
+    random.shuffle(c.P_BOARD_RSP)
+
+    c.SECOFF_ARREST_RSP = []
+    f = open('./assets/data/secoff_arrest.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        c.SECOFF_ARREST_RSP.append(line)
+    random.shuffle(c.SECOFF_ARREST_RSP)
+
+    c.SECOFF_REJECT_RSP = []
+    f = open('./assets/data/secoff_reject.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        c.SECOFF_REJECT_RSP.append(line)
+    random.shuffle(c.SECOFF_REJECT_RSP)
+
+    c.SECOFF_BOARD_RSP = []
+    f = open('./assets/data/secoff_board.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        c.SECOFF_BOARD_RSP.append(line)
+    random.shuffle(c.SECOFF_BOARD_RSP)
 
     c.ALLERGIES = []
     f = open('./assets/data/allergies.txt')
@@ -32,7 +64,7 @@ def gen_data_lists():
     f.close()
     for ch in data:
         c.VALID_KEYS.append(ch)
-    
+
     c.MARITAL_STATUS = []
     f = open('./assets/data/marital_status.txt')
     data = f.read().splitlines()
@@ -104,7 +136,7 @@ def gen_data_lists():
     for line in data:
         c.FEMALE_NAMES.append(line.upper())
     random.shuffle(c.FEMALE_NAMES)
-    
+
     c.COUNTRY_NAMES = []
     f = open('./assets/data/country_names.txt')
     data = f.read().splitlines()

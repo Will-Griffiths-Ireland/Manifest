@@ -19,8 +19,9 @@ YELLOW = ""
 
 def choose_difficulty(scr):
     """
-        Player selects difficulty
+        Player selects difficulty and time duration
     """
+
     draw_box(19, 17, 40, 14, True, GREEN, scr)
     scr.addstr(19, 27, "[ CHOOSE DIFFICULTY ]", GREEN)
     draw_box(21, 20, 34, 2, True, BLUE, scr)
@@ -48,6 +49,50 @@ def choose_difficulty(scr):
         if key == '3':
             c.DIFFICULTY = "CHAOS"
             break
+
+    draw_box(19, 17, 40, 14, True, GREEN, scr)
+    scr.addstr(19, 28, "[ CHOOSE DURATION ]", GREEN)
+
+    scr.addstr(22, 31, "(", BLUE)
+    scr.addstr("1", WHITE)
+    scr.addstr(") 3 MINUTES", BLUE)
+
+    scr.addstr(24, 31, "(", BLUE)
+    scr.addstr("2", WHITE)
+    scr.addstr(") 5 MINUTES", BLUE)
+
+    scr.addstr(26, 31, "(", BLUE)
+    scr.addstr("3", WHITE)
+    scr.addstr(") 10 MINUTES", BLUE)
+
+    scr.addstr(28, 31, "(", BLUE)
+    scr.addstr("4", WHITE)
+    scr.addstr(") 15 MINUTES", BLUE)
+
+    scr.addstr(30, 31, "(", BLUE)
+    scr.addstr("5", WHITE)
+    scr.addstr(") 30 MINUTES", BLUE)
+    
+    scr.addstr(42, 16, "TYPE THE NUMBER OF THE DURATION YOU WANT  ", WHITE)
+    curses.flushinp()
+    while True:
+        key = scr.getkey()
+        if key == '1':
+            c.TIME_LIMIT = 180
+            break
+        if key == '2':
+            c.TIME_LIMIT = 300
+            break
+        if key == '3':
+            c.TIME_LIMIT = 600
+            break
+        if key == '4':
+            c.TIME_LIMIT = 900
+            break
+        if key == '5':
+            c.TIME_LIMIT = 1800
+            break
+    
     game_start(scr)
 
 
@@ -159,6 +204,8 @@ def draw_box(line, col, width, height, fill, style, scr):
 def get_input(echo_style, max_size, scr):
     """
         Gather input from the user and echo in selected style
+        Only allows keys in valid keys list to be typed.
+        Warning given for invalid key or too many characters.
         Escape is 27
         Backspace is 127
         Space is 32
@@ -167,40 +214,41 @@ def get_input(echo_style, max_size, scr):
     ms = max_size
     user_input = ""
     while c.DRG_ACT:
-        try:
-            key = scr.getch()
-            #key_as_char = str(chr(key))
-            #scr.addstr(0,0, str(key), RED)
-            if c.DRG_ACT is False:
-                break
-            if key == ord('\n') or key == ord('\r'):
-                user_input = user_input.upper()
-                return user_input
-            if key == 127 or key == ord('\b'):
-                if len(user_input) >= 1:
-                    if c.DRG_ACT:
-                        (y, x) = c.G_CUR_YX
-                        c.G_CUR_YX = (y, x - 1)
-                    else:
-                        (y, x) = curses.getsyx()
-                    scr.move(y, x - 1)
-                    scr.addstr(" ", s)
-                    scr.move(y, x - 1)
-                    user_input = user_input[:-1]
-            elif len(user_input) == max_size:
-                warn_msg("INPUT LIMIT REACHED", W_ON_R , scr)
-            elif chr(key).upper() in c.VALID_KEYS:
+
+        key = scr.getch()
+
+        if c.DRG_ACT is False:
+            # The time has run out while waiting so we exit
+            break
+        if key == ord('\n') or key == ord('\r'):
+            user_input = user_input.upper()
+            return user_input
+
+        if key == 127 or key == ord('\b'):
+            if len(user_input) >= 1:
                 if c.DRG_ACT:
                     (y, x) = c.G_CUR_YX
-                    c.G_CUR_YX = (y, x + 1)
-                user_input += chr(key)
-                screen_key = chr(key)
-                screen_key = screen_key.upper()
-                scr.addstr(screen_key, s)
-            else:
-                warn_msg("    INVALID KEY", W_ON_R , scr)
-        except:
-            pass
+                    c.G_CUR_YX = (y, x - 1)
+                else:
+                    (y, x) = curses.getsyx()
+                scr.move(y, x - 1)
+                scr.addstr(" ", s)
+                scr.move(y, x - 1)
+                user_input = user_input[:-1]
+        elif len(user_input) == max_size:
+            warn_msg("INPUT LIMIT REACHED", W_ON_R , scr)
+        elif chr(key).upper() in c.VALID_KEYS:
+            if c.DRG_ACT:
+                (y, x) = c.G_CUR_YX
+                c.G_CUR_YX = (y, x + 1)
+            user_input += chr(key)
+            screen_key = chr(key)
+            screen_key = screen_key.upper()
+            scr.addstr(screen_key, s)
+        else:
+            warn_msg("    INVALID KEY", W_ON_R , scr)
+
+
 def warn_msg(msg, style, scr):
     """
         Display warning to user
@@ -221,9 +269,10 @@ def warn_msg(msg, style, scr):
 
 def countdown(scr):
     """
-        Countdown timer
+        Countdown timer for DRG
+        Displays decresing bar with time at center
     """
-    timelimit = 60
+    timelimit = 5
     blank_line = ""
     indent = 0
     for i in range(timelimit):
@@ -240,7 +289,7 @@ def countdown(scr):
             scr.addstr(3, 4, blank_line, GREEN)
             scr.addstr(4, 4, blank_line, GREEN)
             scr.addstr(2, 4, blank_line, GREEN)
-            scr.addstr(3, 26, "CPU CYCLE TIME EXHAUSTED", RED)
+            scr.addstr(3, 28, "CPU CYCLE TIME EXHAUSTED", RED)
             scr.addstr(4, 29, "HIT ANY KEY TO RETURN", RED)
             scr.refresh()
             c.DRG_ACT = False
@@ -505,6 +554,11 @@ def main_menu(scr):
             exit()
 
 
+def shift_analysis_report(scr):
+    """
+        Display results of game
+    """
+
 def gate_closure_countdown(scr):
     """
         Display gate closure countdown
@@ -513,8 +567,10 @@ def gate_closure_countdown(scr):
     """
     time_left = c.TIME_LIMIT
     while c.GAME_ACT and time_left > 0:
+
         mins = trunc(time_left / 60)
         sec = time_left % 60
+
         if time_left < (c.TIME_LIMIT * .15):
             time_col = RED
         elif time_left < (c.TIME_LIMIT * .30):
@@ -537,11 +593,16 @@ def gate_closure_countdown(scr):
             else:
                 scr.addstr(str(sec), time_col)
                 scr.addstr(" SECS ]", GREEN)
+
         scr.refresh()
         time.sleep(1)
         time_left -= 1
+
     if time_left == 0:
+        while c.DRG_ACT or not c.DSP_GAME_TMR:
+            pass
         scr.addstr(0, 35, "[  GATE CLOSED - LAST PASSENGER  ]", RED)
+        c.GAME_ACT = False
     scr.refresh()
 
 
@@ -589,9 +650,42 @@ def encrypt(field):
     return field
 
 
-    # inject random hashes
-    # stop once threshold reached
+def player_action_result(action, scr):
+    """
+        Show dialog based on player action
+    """
+    # Clear dialog area
+    for i in range(8):
+        scr.move(1 + i, 1)
+        for i in range(78):
+            scr.addstr(" ")
+    scr.refresh()
 
+    if action == "BOARD":
+        scr.addstr(2, 56, " - SEC.OFFICER (YOU)", GREEN)
+        temp_resp = c.SECOFF_BOARD_RSP[rand(0, len(c.SECOFF_BOARD_RSP) - 1)]
+        scr.addstr(2, 56 - len(temp_resp), temp_resp, WHITE)
+        scr.refresh()
+        time.sleep(2)
+
+        scr.addstr(4, 3, "PASSENGER - ", GREEN)
+        scr.addstr(c.P_BOARD_RSP[rand(0, len(c.P_BOARD_RSP) - 1)], WHITE)
+        scr.refresh()
+        time.sleep(2)
+
+    if action == "REJECT":
+        scr.addstr(2, 56, " - SEC.OFFICER (YOU)", GREEN)
+        temp_resp = c.SECOFF_REJECT_RSP[rand(0, len(c.SECOFF_REJECT_RSP) - 1)]
+        scr.addstr(2, 56 - len(temp_resp), temp_resp, YELLOW)
+        scr.refresh()
+        time.sleep(2)
+
+    if action == "ARREST":
+        scr.addstr(2, 56, " - SEC.OFFICER (YOU)", GREEN)
+        temp_resp = c.SECOFF_ARREST_RSP[rand(0, len(c.SECOFF_ARREST_RSP) - 1)]
+        scr.addstr(2, 56 - len(temp_resp), temp_resp, RED)
+        scr.refresh()
+        time.sleep(2)
 
 def game_start(scr):
     """
@@ -600,7 +694,8 @@ def game_start(scr):
         display data
         take action
     """
-
+    c.DECRYPT_AVAILABLE = True
+    # Draw main terminal window and panels
     draw_box(0, 0, 79, 51, True, GREEN, scr)
     scr.addstr(0, 3, "[ INFINITUM SECURITY TERMINAL ]", GREEN)
     for i in range(4):
@@ -613,11 +708,12 @@ def game_start(scr):
     scr.refresh()
 
     if not c.GAME_ACT:
-        # clear out the passenger list
+        # Start a new game, reset passenger list and raise shutter
         c.PSNGR_LIST = []
+        c.CUR_PSNGR_NO = 0
         c.GAME_ACT = True
         c.DSP_GAME_TMR = True
-        # Launch countodown timer in a thread
+        # Launch game countdown timer in a thread
         threading.Thread(
             target=gate_closure_countdown, daemon=True, args=(scr,)).start()
         time.sleep(.1)
@@ -740,39 +836,50 @@ def game_start(scr):
     scr.addstr("Q", WHITE)
     scr.addstr("UIT ]", GREEN)
     curses.flushinp()
+
     while True:
         key = scr.getkey()
+
         if c.DECRYPT_AVAILABLE:
             if key == 'd' or key == 'D':
                 c.DSP_GAME_TMR = False
                 time.sleep(.1)
                 decrypt_record_game(scr)
+
         if key == 'q' or key == 'Q':
             if confirm_action("END GAME", GREEN, scr):
                 c.GAME_ACT = False
                 c.DECRYPT_AVAILABLE = True
                 main_menu(scr)
+
         if key == 'b' or key == 'B':
-            c.GAME_ACT = True
-            c.DECRYPT_AVAILABLE = True
             c.PSNGR_LIST[c.CUR_PSNGR_NO].boarding_status = "BOARDED"
+            player_action_result("BOARD", scr)
+            scr.getch()
+            if not c.GAME_ACT:
+                main_menu(scr)
             c.CUR_PSNGR_NO += 1
-            # show boarding dialog
             game_start(scr)
+
         if key == 'r' or key == 'R':
-            c.GAME_ACT = True
-            c.DECRYPT_AVAILABLE = True
             c.PSNGR_LIST[c.CUR_PSNGR_NO].boarding_status = "REJECTED"
+            player_action_result("REJECT", scr)
+            scr.getch()
+            if not c.GAME_ACT:
+                main_menu(scr)
             c.CUR_PSNGR_NO += 1
-            # show reject dialog
             game_start(scr)
+
         if key == 'a' or key == 'A':
-            c.GAME_ACT = True
-            c.DECRYPT_AVAILABLE = True
             c.PSNGR_LIST[c.CUR_PSNGR_NO].boarding_status = "ARRESTED"
+            player_action_result("ARREST", scr)
+            scr.getch()
+            if not c.GAME_ACT:
+                main_menu(scr)
             c.CUR_PSNGR_NO += 1
             # show arrest dialog
             game_start(scr)
+
 
 def display_manifest_panel(scr):
     """
