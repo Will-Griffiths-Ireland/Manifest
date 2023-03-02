@@ -478,23 +478,23 @@ def main(scr):
     curses.init_pair(8, curses.COLOR_CYAN, -1)
     curses.init_pair(9, curses.COLOR_MAGENTA, -1)
     global WHITE
-    WHITE = curses.color_pair(1)
+    WHITE = curses.color_pair(1) | curses.A_BOLD
     global RED
-    RED = curses.color_pair(2)
+    RED = curses.color_pair(2) | curses.A_BOLD
     global GREEN
     GREEN = curses.color_pair(3) | curses.A_NORMAL
     global BLUE
-    BLUE = curses.color_pair(4)
+    BLUE = curses.color_pair(4) | curses.A_BOLD
     global W_ON_B
-    W_ON_B = curses.color_pair(5)
+    W_ON_B = curses.color_pair(5) | curses.A_BOLD
     global W_ON_R
     W_ON_R = curses.color_pair(6) | curses.A_BOLD
     global YELLOW
-    YELLOW = curses.color_pair(7)
+    YELLOW = curses.color_pair(7) | curses.A_BOLD
     global CYAN
-    CYAN = curses.color_pair(8)
+    CYAN = curses.color_pair(8) | curses.A_BOLD
     global MAGENTA
-    MAGENTA = curses.color_pair(9)
+    MAGENTA = curses.color_pair(9) | curses.A_BOLD
     
     #pull all data from files in lists
     dl.gen_data_lists()
