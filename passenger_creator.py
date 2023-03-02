@@ -196,6 +196,7 @@ def anom_injection(field):
 
     return field
 
+
 class Passenger():
     """
         Create a new passsenger
@@ -363,4 +364,3 @@ class Passenger():
                     self.i_mentak_alignment = temp
             if rs == 18:
                 self.i_dna_fingerprint = gen_dna_fingerprint()
-

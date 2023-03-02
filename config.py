@@ -1,27 +1,28 @@
-""" Global variables. Lists and flags """
-
+""" Global variables """
+WHITE = ""
+RED = ""
+GREEN = ""
+BLUE = ""
+W_ON_B = ""
+W_ON_R = ""
+YELLOW = ""
 # Animation base delay on initial menu load
 ANI_DLA = 0.1
 DIFFICULTY = "MINOR"
 PSNGR_LIST = []
 TUTORIAL = []
-# Game active flag
 GAME_ACT = False
 GAME_ENDED = False
 ENCRYPT_ON = True
 DSP_GAME_TMR = False
 CUR_PSNGR_NO = 0
-# Decryption game active flag
 DRG_ACT = False
 TIME_LIMIT = 600
-# Confirm action flag
 CONFIRM_ACTION = False
-# Decrption available flag
 DECRYPT_AVAILABLE = True
 DECRYPT_SUCCESS = False
 # Cursor postion used for threading screen updates
 G_CUR_YX = (0, 0)
-# Valid input keys alphanum
 VALID_KEYS = []
 # Passenger data lists
 CABIN_CLASS = []
@@ -53,5 +54,3 @@ SECOFF_REJECT_RSP = []
 SECOFF_ARREST_RSP = []
 SO_NEXT = []
 SO_FINISHED = []
-# Debug counters
-DUP_COUNT = 0
