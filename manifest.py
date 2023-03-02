@@ -482,7 +482,7 @@ def main(scr):
     global RED
     RED = curses.color_pair(2)
     global GREEN
-    GREEN = curses.color_pair(3) | curses.A_STANDOUT
+    GREEN = curses.color_pair(3) | curses.A_NORMAL
     global BLUE
     BLUE = curses.color_pair(4)
     global W_ON_B
