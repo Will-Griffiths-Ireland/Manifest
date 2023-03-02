@@ -337,15 +337,15 @@ def decrypt_record_game(scr):
     drgwin.refresh()
     ekey = ""
     if c.DIFFICULTY == "MINOR":
-        dud_keys = 15
-        for i in range(12):
+        dud_keys = 10
+        for i in range(3):
             ekey += c.VALID_KEYS[rand(0, (len(c.VALID_KEYS) - 1))]
     if c.DIFFICULTY == "MAJOR":
-        dud_keys = 30
-        for i in range(8):
+        dud_keys = 15
+        for i in range(4):
             ekey += c.VALID_KEYS[rand(0, (len(c.VALID_KEYS) - 1))]
     if c.DIFFICULTY == "CHAOS":
-        dud_keys = 45
+        dud_keys = 30
         for i in range(5):
             ekey += c.VALID_KEYS[rand(0, (len(c.VALID_KEYS) - 1))]
     for i in range(35):
