@@ -108,7 +108,7 @@ def gen_data_lists():
     random.shuffle(c.BLOOD_TYPES)
 
     c.VALID_KEYS = []
-    f = open("./assets/data/alfanum.txt", "r")
+    f = open("./assets/data/alfanum.txt")
     data = f.read()
     f.close()
     for ch in data:
@@ -147,7 +147,7 @@ def gen_data_lists():
     random.shuffle(c.P_SCAN_RESP)
 
     c.SO_SCAN_REQ = []
-    f = open('./assets/data/secoff_scan_request')
+    f = open('./assets/data/secoff_scan_request.txt')
     data = f.read().splitlines()
     f.close()
     for line in data:
