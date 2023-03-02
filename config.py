@@ -4,6 +4,7 @@
 ANI_DLA = 0.1
 DIFFICULTY = "MINOR"
 PSNGR_LIST = []
+TUTORIAL = []
 # Game active flag
 GAME_ACT = False
 GAME_ENDED = False

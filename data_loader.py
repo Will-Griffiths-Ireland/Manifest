@@ -11,6 +11,19 @@ def gen_data_lists():
         Dialog responses
     """
 
+    c.TUTORIAL = []
+    f = open('./assets/data/tutorial.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        c.TUTORIAL.append(line.upper())
+    c.TUTORIAL2 = []
+    f = open('./assets/data/tutorial2.txt')
+    data = f.read().splitlines()
+    f.close()
+    for line in data:
+        c.TUTORIAL2.append(line.upper())
+
     c.SO_FINISHED = []
     f = open('./assets/data/secoff_finished.txt')
     data = f.read().splitlines()

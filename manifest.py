@@ -99,6 +99,7 @@ def choose_difficulty(scr):
 def confirm_action(msg, style, scr):
     """
         Get player to confirm the action / key
+        Used to avoid accidental quit during game
     """
     conf_win = curses.newpad(6, 30)
     draw_box(0, 0, 28, 4, True, style, conf_win)
@@ -255,7 +256,7 @@ def warn_msg(msg, style, scr):
     """
         Display warning to user
     """
-    box = curses.newpad(6,30)
+    box = curses.newpad(6, 30)
     draw_box(0, 0, 28, 4, True, style, box)
     box.addstr(2, 5, msg, style)
     box.addstr(0, 9, "[ WARNING ]", style)
@@ -336,15 +337,15 @@ def decrypt_record_game(scr):
     drgwin.refresh()
     ekey = ""
     if c.DIFFICULTY == "MINOR":
-        dud_keys = 60
+        dud_keys = 15
         for i in range(12):
             ekey += c.VALID_KEYS[rand(0, (len(c.VALID_KEYS) - 1))]
     if c.DIFFICULTY == "MAJOR":
-        dud_keys = 100
+        dud_keys = 30
         for i in range(8):
             ekey += c.VALID_KEYS[rand(0, (len(c.VALID_KEYS) - 1))]
     if c.DIFFICULTY == "CHAOS":
-        dud_keys = 120
+        dud_keys = 45
         for i in range(5):
             ekey += c.VALID_KEYS[rand(0, (len(c.VALID_KEYS) - 1))]
     for i in range(35):
@@ -478,25 +479,25 @@ def main(scr):
     curses.init_pair(8, curses.COLOR_CYAN, -1)
     curses.init_pair(9, curses.COLOR_MAGENTA, -1)
     global WHITE
-    WHITE = curses.color_pair(1) | curses.A_BOLD
+    WHITE = curses.color_pair(1)
     global RED
-    RED = curses.color_pair(2) | curses.A_BOLD
+    RED = curses.color_pair(2)
     global GREEN
-    GREEN = curses.color_pair(3) | curses.A_NORMAL
+    GREEN = curses.color_pair(3)
     global BLUE
-    BLUE = curses.color_pair(4) | curses.A_BOLD
+    BLUE = curses.color_pair(4)
     global W_ON_B
-    W_ON_B = curses.color_pair(5) | curses.A_BOLD
+    W_ON_B = curses.color_pair(5)
     global W_ON_R
-    W_ON_R = curses.color_pair(6) | curses.A_BOLD
+    W_ON_R = curses.color_pair(6)
     global YELLOW
-    YELLOW = curses.color_pair(7) | curses.A_BOLD
+    YELLOW = curses.color_pair(7)
     global CYAN
-    CYAN = curses.color_pair(8) | curses.A_BOLD
+    CYAN = curses.color_pair(8)
     global MAGENTA
-    MAGENTA = curses.color_pair(9) | curses.A_BOLD
+    MAGENTA = curses.color_pair(9)
     
-    #pull all data from files in lists
+    # Pull all data from files in lists
     dl.gen_data_lists()
     # Display main menu
     main_menu(scr)
@@ -561,7 +562,11 @@ def main_menu(scr):
             choose_difficulty(scr)
             #game_loop(scr)
             break
-        elif key == 'Q' or key == 'q':
+
+        if key == 'T' or key == 't':
+            display_tutorial(scr)
+        
+        if key == 'Q' or key == 'q':
             exit()
 
 
@@ -570,7 +575,7 @@ def shift_analysis_report(scr):
         Display results of game
     """
     draw_box(0, 0, 79, 51, True, CYAN, scr)
-    scr.addstr(0, 3, "[ INFINITUM EMPLOYEE TERMINAL ]", CYAN)
+    scr.addstr(0, 3, "[ FRACTI EMPLOYEE TERMINAL ]", CYAN)
     scr.refresh()
 
     col_list = [GREEN, RED, BLUE, WHITE, MAGENTA, CYAN, YELLOW]
@@ -604,11 +609,12 @@ def shift_analysis_report(scr):
     scr.refresh()
     time.sleep(1)
     scr.addstr(25, 26, "[ HIT ANY KEY TO PROCEED ]", WHITE)
+    curses.flushinp()
     scr.getch()
 
     for i in range(52):
         draw_box(0, 0, 79, i, True, CYAN, scr)
-        scr.addstr(0, 3, "[ INFINITUM EMPLOYEE TERMINAL ]", CYAN)
+        scr.addstr(0, 3, "[ FRACTI EMPLOYEE TERMINAL ]", CYAN)
         scr.refresh()
         time.sleep(.01)
 
@@ -670,6 +676,8 @@ def shift_analysis_report(scr):
     scr.addstr(38, 17, "YOURS DIGITALLY,", WHITE)
     scr.addstr(39, 17, "A.I SEC-CHIEF 1012", WHITE)
 
+    time.sleep(1)
+    curses.flushinp()
     scr.addstr(45, 23, "HIT ANY KEY TO RETURN TO MAIN MENU", WHITE)
     scr.getch()
 
@@ -964,6 +972,25 @@ def player_action_result(action, scr):
         time.sleep(4)
 
 
+def display_tutorial(scr):
+    """
+        Display games tutorial
+    """
+    draw_box(4, 5, 69, 45, True, GREEN, scr)
+    for i, val in enumerate(c.TUTORIAL):
+        scr.move(6 + i, 7)
+        scr.addstr(val, WHITE)
+    scr.refresh()
+    scr.getch()
+
+    draw_box(4, 5, 69, 45, True, GREEN, scr)
+    for i, val in enumerate(c.TUTORIAL2):
+        scr.move(6 + i, 7)
+        scr.addstr(val, WHITE)
+    scr.refresh()
+    scr.getch()
+    main_menu(scr)
+
 
 
 def game_start(scr):
@@ -977,7 +1004,7 @@ def game_start(scr):
     c.ENCRYPT_ON = True
     # Draw main terminal window and panels
     draw_box(0, 0, 79, 51, True, GREEN, scr)
-    scr.addstr(0, 3, "[ INFINITUM SECURITY TERMINAL ]", GREEN)
+    scr.addstr(0, 3, "[ FRACTI SECURITY TERMINAL ]", GREEN)
     for i in range(4):
         draw_box(9, 1, 38, 1 + i, True, GREEN, scr)
         draw_box(9, 40, 38, 1 + i, True, GREEN, scr)
@@ -1011,9 +1038,9 @@ def game_start(scr):
             for i in range(loop):
                 scr.move(1 + i, 1)
                 for i in range(78):
-                    scr.addstr("░", GREEN)
+                    scr.addstr("░", WHITE)
             if h_loop > 0:
-                scr.addstr(h_loop, 20, "*SECURITY HATCH SHUTTERING RAISES*")
+                scr.addstr(h_loop, 20, "*SECURITY HATCH SHUTTERING RAISES*", GREEN)
             if h_loop < 2:
                 scr.addstr(
                     5, 20, "*PASSENGER APPROACH SIGN ILUMINATES*", YELLOW)

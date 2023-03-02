@@ -1,0 +1,46 @@
+[ New game options ]
+
+Difficulty level effects how heavily encrpyted manifest records 
+are and how challenging it is to recover them.
+
+Duration sets how long till the security gate is closed.
+
+[ GAMEPLAY ]
+
+the gate closure timer displays how long you have left. once
+the gate is closed you can finish with the current passenger.
+
+Watch the dialog box carefully for clues on which passengers
+need to be arrested.
+
+The main screen has the passenger implant data on the left
+and the manifest data on the right.
+
+the ticket tokens always match as they are the primary key.
+
+You need to verify implant and manifest data are a 100% match.
+
+due to the hack some fields are encrypted and in red.
+The ship has limited compute resources and you are restricted to
+60 seconds per passenger and 1 decryption attempt.
+
+Hit the 'D' key to enter the decryption mini-game.
+- you have 5 chances to guess the unlock key
+- each attempt will display a result in the feed
+- green letters are an exact match of character and location
+- yellow are matches in the character but not the location
+- red are not a character in the key
+
+Once you have reviewed the records you pick an action.
+
+Hit the 'B' key to board the passenger
+Hit the 'R' key to reject them
+Hit the 'A' key to arrest them
+
+Your work will be audited so take care not to arrest innocents
+or board one of those sneaky hackers!
+
+          [ HIT ANY KEY TO RETURN TO THE MAIN MENU ]
+
+
+
