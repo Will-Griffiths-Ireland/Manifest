@@ -534,7 +534,7 @@ def main_menu(scr):
             new_r_count = new_r_count + 1
         scr.refresh()
     draw_box(0, 0, 79, 51, False, GREEN, scr)
-    scr.addstr(0, 30, "[ MANIFEST V0.9 ]", GREEN)
+    scr.addstr(0, 32, "[ MANIFEST V0.9 ]", GREEN)
     for i in range(9):
         draw_box(24, 22, 31, i, True, GREEN, scr)
         time.sleep(c.ANI_DLA)
