@@ -475,15 +475,15 @@ def main(scr):
     curses.init_pair(8, curses.COLOR_CYAN, -1)
     curses.init_pair(9, curses.COLOR_MAGENTA, -1)
 
-    c.WHITE = curses.color_pair(1)
-    c.RED = curses.color_pair(2)
-    c.GREEN = curses.color_pair(3)
-    c.BLUE = curses.color_pair(4)
-    c.W_ON_B = curses.color_pair(5)
-    c.W_ON_R = curses.color_pair(6)
-    c.YELLOW = curses.color_pair(7)
-    c.CYAN = curses.color_pair(8)
-    c.MAGENTA = curses.color_pair(9)
+    c.WHITE = curses.color_pair(1) | curses.A_BOLD
+    c.RED = curses.color_pair(2) | curses.A_BOLD
+    c.GREEN = curses.color_pair(3) | curses.A_BOLD
+    c.BLUE = curses.color_pair(4) | curses.A_BOLD
+    c.W_ON_B = curses.color_pair(5) | curses.A_BOLD
+    c.W_ON_R = curses.color_pair(6) | curses.A_BOLD
+    c.YELLOW = curses.color_pair(7) | curses.A_BOLD
+    c.CYAN = curses.color_pair(8) | curses.A_BOLD
+    c.MAGENTA = curses.color_pair(9) | curses.A_BOLD
 
     # Pull all data from files in lists
     dl.gen_data_lists()
