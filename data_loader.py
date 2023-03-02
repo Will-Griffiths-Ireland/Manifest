@@ -1,3 +1,4 @@
+""" Import random and global vards in config"""
 import random
 import config as c
 
