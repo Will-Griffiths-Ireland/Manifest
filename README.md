@@ -81,7 +81,7 @@ My core aims for the project
 
 * As a player, I want a game with clear objectives
 * As a player, I want simple inputs that provide responses
-* As a player, I want an engaging experience
+* As a player, I want an engaging fun experience
 * As a player, I want to know how to play
 * As a player, I want see a score / result
 
@@ -91,7 +91,10 @@ My core aims for the project
 * The game should, provide a tutorial
 * The game should, provide a main menu
 * The game should, provide difficulty settings
-
+* The game should, be easy to learn
+* The game should, make the player laugh
+* The game should, have a defined time limit
+* The game should, provide clear feedback to the player
 
 ---
 
@@ -328,11 +331,21 @@ Testing documentation is [here](./TESTING.md)
 ## **Deployment**
 
 I deployed the program on heroku and used automatic deployment so I could verify all features as I committed code
-​
-
-​
-
-
+- Fork the repo as per below
+- In Heroku 'Create new app' from the 'New' menu at the top right
+- Follow the instructions
+- In 'Config Vars' section select 'Reveal Config Vars'
+- Enter PORT for the key and 8000 for the value
+- There are no requirements since all imports are from the PSL
+- Scroll down to the 'Buildpacks' section
+- Select 'Add' and add the `Python' buildpack
+- Select 'Add' again and add the 'NodeJS' buildpack (this must be after adding the Python buildpack)
+- Select 'Deploy' from the menu at the top
+- Select 'GitHub' and confirm you wish to deploy using GitHub. You may be asked to enter your GitHub password
+- Find the 'Connect to GitHub' section and use the search box to the repo with the game
+- Connect to it and deploy
+Your site will shortly be deployed and you will be given a link to the deployed site when the process is complete.
+Enjoy the game and try to get an OUTSTANDING on the 30 min Chaos game.
 
 ### **To fork the repository on GitHub** 
   
@@ -343,18 +356,25 @@ To make a copy of this GitHub repository that allows you to view the content and
 3. Click on the <b>Fork</b> button to create a copy of the repository in your GitHub account.
 4. Enjoy yourself and be creative, I welcome feedback if you have any to give!
 
+### ** Local Deployment **
+
+If you are in the mood you can pull down the files and install python on your local machine
+
+Here is an example of installing on windows https://www.digitalocean.com/community/tutorials/install-python-windows-10
+
 ---
 ​
 ## **Technology and Applications**
 ​
 These are the technologies used for this project.
 
-- Python
-- Python - [Curses Lib](https://docs.python.org/3/howto/curses.html)
+- Python 3.8.11
+- Python PSL Imports (Curses, time, random, math, threading) 
 - Gitpod
 - Github
 - draw.io 
 - Heroku
+- CI Mock termnial (CSS HTML JS)
 
 ----
 
@@ -363,24 +383,24 @@ These are the technologies used for this project.
 
 ### **User Enhancements**
 
-* decrypt game uses letters as identifiers so the player just hits the relevant key
-* enhance dialog and add player interaction / qustioniung
+* Enhance dialog and add player interaction / questioning elements
 * Build interactive tutorial that runs with game
+* Some retro MIDIs
 
 ### **Internal Enhancements**
 
-* Upgrade from WILLTxtDB to a better method of storing data :)
-* Refactor code to be shorter and cleaner
+* Upgrade from WILLTxtDB to a better method of storing data such as basically anything :)
+* Refactor code to be shorter, cleaner, better, faster
+* Shift the whole thing into C# / Unity as Python isn't really for this type of game
 
 ## **Credits**
 ### **Honorable mentions**
 ​
 Thanks to my mentor Richard who provided valuable input as always
-
 ​
 ### **Content:**
 ​
-I created all the content for the game myself. Inspiration for this game was taken from the game [Papers Please](https://en.wikipedia.org/wiki/Papers,_Please)​by Lucas Pope
+I created all the content for the game myself. Inspiration for this game was taken from the game [Papers Please](https://en.wikipedia.org/wiki/Papers,_Please) ​by Lucas Pope
   
 ### **Media:**
 ​
