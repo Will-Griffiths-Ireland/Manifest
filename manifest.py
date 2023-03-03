@@ -608,11 +608,10 @@ def shift_analysis_report(scr):
 
     time.sleep(.5)
     draw_box(6, 12, 55, 35, True, c.CYAN, scr)
-    scr.addstr(6, 14, "[ SECOFF PERFORMACE SUMMARY - EMPLOYEE GR5T4 ]", c.CYAN)
+    scr.addstr(6, 14, "[ SECOFF PERFORMANCE SUMMARY - EMPLOYEE E5T4 ]", c.CYAN)
     scr.addstr(8, 17, "TODAY'S SYSTEM BREACH HAS NOW BEEN RESOLVED.", c.WHITE)
     scr.addstr(9, 17, "PASSENGERS YOU PROCESSED MANUALLY HAVE BEEN", c.WHITE)
     scr.addstr(10, 17, "FULLY AUDITED.", c.WHITE)
-    scr.refresh()
 
     results = calc_performance()
 
@@ -662,6 +661,7 @@ def shift_analysis_report(scr):
 
     scr.addstr(38, 17, "YOURS DIGITALLY,", c.WHITE)
     scr.addstr(39, 17, "A.I SEC-CHIEF 1012", c.WHITE)
+    scr.refresh()
 
     time.sleep(1)
     curses.flushinp()

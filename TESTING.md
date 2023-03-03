@@ -41,38 +41,33 @@ All of my files had zero issues reported in CI Linter
     1 - Main menu displays correctly  
 
     Result - PASS
-
 ---
-    2 - Main menu key selection and progression works  
-
-    Result - PASS
----
-    3 - Main menu key selection and progression works  
-
-    Result - PASS
----
-    4 - Tutorial screen triggered by 't' key and displays tutorial text, progresses to page 2 on key press and then returns to main menu after next key press
+    2 - 
+    - Tutorial screen triggered by 't' key
+    - Displays tutorial text 
+    - Progresses to page 2 on key press
+    - Returns to main menu after next key press
 
     Result - PASS
 ---
-    5 - Quit triggered by 'q' key and exits the program
+    3 - Quit triggered by 'q' key and exits the program
 
     Result - PASS
 ---
-    6 - New game triggered by 'n' key
+    4 - New game triggered by 'n' key
 
     Result - PASS
 ---
-    7 - Game difficulty selection displays and allows selection with keys '1','2', and '3'. Stores selection in global var.
+    5 - Game difficulty selection displays and allows selection with keys '1','2', and '3'. Stores selection in global var.
     Selection triggers progression to duration selection
 
     Result - PASS
 ---
-    8 - Duration selection displays and triggers with keys 1 to 5. Stores result in global var. Initiates main game display.
+    6 - Duration selection displays and triggers with keys 1 to 5. Stores result in global var. Initiates main game display.
 
     Result - PASS
 ---
-    9 -
+    7 -
     - Main game screen draws
     - Timer displays correct countdown and updates each second
     - Shutter 'animation' runs. 
@@ -85,7 +80,7 @@ All of my files had zero issues reported in CI Linter
 
     Result - PASS
 ---
-    10 - 
+    8 - 
     - Hitting relevant key triggers correct action
     - Q triggers quit game confirm
     - B triggers boarding passenger
@@ -95,14 +90,14 @@ All of my files had zero issues reported in CI Linter
 
     Result - PASS
 ---
-    11 - 
+    9 - 
     - Q triggers quit confirmation
     - N triggers confirmation closure and play continues
     - Y triggers the game to end and the main menu to display
 
     Result - PASS
 ---
-    12 - 
+    10 - 
     - D triggers decryption game to run
     - New window displays
     - Countdown starts
@@ -120,7 +115,7 @@ All of my files had zero issues reported in CI Linter
 
     Result - PASS
 ---
-    13 - 
+    11 - 
     - Decryption game ending results in main game displaying.
     - If gate closure time expires while in mini game show the gate closed message in timer location
     - action buttons redrawn without decrypt option
