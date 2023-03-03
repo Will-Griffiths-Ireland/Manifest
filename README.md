@@ -42,7 +42,7 @@ You play the role of a spaceship security officer responsible for passenger boar
 
 ### **Planning Overview:**
 
-For this project I wanted to emulate an 80's scfi experience.
+For this project I wanted to emulate an 80's sci-fi experience.
 I explored what would be possible just using python and a terminal being emulated in xterm.js.
 I decided to create record matching game with a decryption mini-game inside it that had elements of a text adventure in the mix.
 
@@ -64,6 +64,7 @@ My core aims for the project
 * People that like text games
 * People that like games with humor
 * People that like Python 
+* People that like retro sci-fi
 
 ### **User Stories:**
 
@@ -155,16 +156,15 @@ Testing documentation is [here](./TESTING.md)
 ## **Deployment**
 I deployed the page on GitHub pages via the following the standard procedure: -
 ​
-1. From the project's [repository](https://github.com/Will-Griffiths-Ireland/Memoria), go to the **Settings** tab.
+1. From the project's [repository](https://github.com/Will-Griffiths-Ireland/Manifest), go to the **Settings** tab.
 2. From the left-hand menu, select the **Pages** tab.
 3. Under the **Source** section, select the **Main** branch from the drop-down menu and click **Save**.
 4. A message will be displayed to indicate a successful deployment to GitHub pages and provide the live link.
 ​
-You can find the live site via the following URL - [live webpage](https://will-griffiths-ireland.github.io/Memoria/)
 
 Deployment to another host is also possible
 
-1. From the project's [repository](https://github.com/Will-Griffiths-Ireland/Memoria), click **Code**.
+1. From the project's [repository](https://github.com/Will-Griffiths-Ireland/Manifest), click **Code**.
 2. Under the local tab click *Download Zip*.
 3. Extract the files and copy them over to a webserver of your choice.
 
@@ -183,7 +183,11 @@ To make a copy of this GitHub repository that allows you to view the content and
 ​
 These are the technologies used for this project.
 
-- Python 
+- Python
+- Python - [Curses Lib](https://docs.python.org/3/howto/curses.html)
+- Gitpod
+- Github
+- Heroku
 
 ----
 
@@ -192,11 +196,12 @@ These are the technologies used for this project.
 
 ### **User Enhancements**
 
-* ?
+* decrypt game uses letters as identifiers so the player just hits the relevant key
+* enhance dialog and add player interaction / qustioniung
 
 ### **Internal Enhancements**
 
-* ?
+* Upgrade from WILLTxtDB to a better method of storing data :)
 
 ## **Credits**
 ### **Honorable mentions**
@@ -206,10 +211,10 @@ Thanks to my mentor Richard who provided valuable input as always
 ​
 ### **Content:**
 ​
-I created all the content for the game myself
+I created all the content for the game myself. Inspiration for this game was taken from the game [Papers Please](https://en.wikipedia.org/wiki/Papers,_Please)​ by Lucas Pope
   
 ### **Media:**
 ​
-* The manifest logo was created via https://manytools.org/hacker-tools/ascii-banner/
+* The manifest logo was created with https://manytools.org/hacker-tools/ascii-banner/
 
 
