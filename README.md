@@ -4,10 +4,10 @@
 
 Manifest is a retro, text based, observation and decryption game built purely in Python that runs in an emaulated terminal(xterm.js) and is deployed via Heroku.
 
-You play the role of a spaceship security officer responsible for passenger boarding.
+You play the role of a spaceship security officer responsible for passenger boarding during a security breach of the ships systems.
 ​
 ![Menu](./assets/docs/main_menu.webp)
-![Game Screen](./assets/docs/main_game.png)
+![Game Screen](./assets/docs/main_game.webp)
 
 #### [The deployed website is here on Heroku](https://manifest.herokuapp.com/)​
 
@@ -44,15 +44,18 @@ You play the role of a spaceship security officer responsible for passenger boar
 
 For this project I wanted to emulate an 80's scfi experience.
 I explored what would be possible just using python and a terminal being emulated in xterm.js.
-I decided to create record matching game with a decryption mini-game inside it
+I decided to create record matching game with a decryption mini-game inside it that had elements of a text adventure in the mix.
 
 My core aims for the project
 
 * Do as much as possible visually with a text terminal
+* Provide a fluid experience 
 * Have a static screen-space without scrolling
-* 
-* Add an element of procedural / random generation
-* Provide
+* Include dialog as a nod to classic text adventure games
+* Add an element of procedural / random generation of content
+* Provide a fun challenge with rewards
+* Limit users text entry
+* Generate a feeling of pressure and being 'against the clock'
 
 
 ### **Target Audiences:**
@@ -60,12 +63,15 @@ My core aims for the project
 * People that like puzzle games
 * People that like text games
 * People that like games with humor
+* People that like Python 
 
 ### **User Stories:**
 
 * As a player, I want a game with clear objectives
 * As a player, I want simple inputs that provide responses
 * As a player, I want an engaging experience
+* As a player, I want to know how to play
+* As a player, I want see a score / result
 
 
 ### **Game Aims:**
@@ -75,38 +81,61 @@ My core aims for the project
 * The game should, provide difficulty settings
 
 
-
+---
 
 ### **Wireframes:**
 
-I did produce an initial wireframe but didn't want to commit to a complex vision when design options would be limited in a terminal.
+I produced an initial wireframe but didn't want to commit to a complex vision when design options would be limited in a terminal. My game grew from that
 
 ![Wireframe 1](./assets/docs/wireframe.JPG)
 
+---
+
 ### **Logic Flow:**
 
-I created a high level flowchart for the core game loop
+I built out the high level logic flow in draw.io.
+
+![logic Flow](./assets/docs/manifest_flow.jpg)
+
+---
 ​
 ### **Color Scheme:**
 
-Working in a terminal, which in the case of xterm.js is limited to 8 colors did play a factor in my choices.
+Working in a terminal, which in the case of xterm.js is limited to 8 colors did play a factor in my choices. Luckily I had the main colours I wanted for the game.
 
 Core elements of the interface are green which is a nod to classic green monochrome terminals.
-I used white for dialog text and
+I used white for dialog text and most of the fields with changing data.
+
+Yellow is used occasionally for a bit of variation and to emulate system interactions such as the scanner reading an implant.
+
+Red is used for encrypted fields and arrest dialog.
+
+Blue is used in the decryption game system to separate it from the core game.
 
 ### **Design Choices**
 ​
 Maximizing the use of screen-space
 
+#### **Defensive Design**
+
+An important element of any program is defending from user generated issues. Any time we get input from a user we are exposed.
+
+From the outset a decided to limit user input as much as I could.
+I capture key press events in loops and then check for valid keys in relation to player actions.
+
+I clear input buffers to avoid unintended progression.
+
+I built a function to take input from the user during the decryption
+
+
+
 ---
 ​
 ## **Game Features**
 
-### **Intro**
+### **Main Menu**
 
-The intro screen gives the player a feel for the game. I have a stacking animation that uses 16 random cards and slows down on the final card that is back face up and shows the Memoria logo.
-
-The click to continue button drops in quickly so that a returning player can skip the animation.
+The main menu builds the games logo up from a file and randomly uses 3
 
 #### *Desktop @1080p Example*
 
@@ -121,19 +150,7 @@ The click to continue button drops in quickly so that a returning player can ski
 ---
 ## **Testing**
 
-Throughout development I thoroughly tested each piece of code from a core logic perspective and a visual one, before commits.
-My approach to testing is to do everything I can, from an end user perspective, to break the application. Always expect the unexpected click!
-Please note all testing code & comments were removed from final production code.
-The general dev cycle testing procedure was..
-
-## **Defects**
-
-
-
-### **Unresolved**
-
-threading and curses seems to trigger vary rare screen coruption.
-
+Testing documentation is [here](./TESTING.md)
 
 ## **Deployment**
 I deployed the page on GitHub pages via the following the standard procedure: -

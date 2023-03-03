@@ -527,7 +527,7 @@ def main_menu(scr):
     scr.addstr(0, 32, "[ MANIFEST V0.9 ]", c.GREEN)
     for i in range(9):
         draw_box(24, 22, 31, i, True, c.GREEN, scr)
-        time.sleep(c.ANI_DLA)
+        time.sleep(0.05)
         scr.refresh()
 
     scr.addstr(24, 31, "[ MAIN MENU ]", c.GREEN)

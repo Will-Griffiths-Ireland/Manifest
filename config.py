@@ -7,7 +7,7 @@ W_ON_B = ""
 W_ON_R = ""
 YELLOW = ""
 # Animation base delay on initial menu load
-ANI_DLA = 0.1
+ANI_DLA = 0.15
 DIFFICULTY = "MINOR"
 PSNGR_LIST = []
 TUTORIAL = []
