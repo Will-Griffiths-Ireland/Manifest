@@ -446,6 +446,7 @@ def decrypt_record_game(scr):
     c.DECRYPT_AVAILABLE = False
     time.sleep(1)
     c.DRG_ACT = False
+    time.sleep(.1)
     c.DSP_GAME_TMR = True
     time.sleep(.1)
     curses.flushinp()
