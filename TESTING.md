@@ -51,6 +51,80 @@ All of my files had zero issues reported in CI Linter
 
     Result - PASS
 ---
-    4 - Tutorial screen displays tutorial text, progresses to page 2 on key press and then returns to main menu after next key press
+    4 - Tutorial screen triggered by 't' key and displays tutorial text, progresses to page 2 on key press and then returns to main menu after next key press
+
+    Result - PASS
+---
+    5 - Quit triggered by 'q' key and exits the program
+
+    Result - PASS
+---
+    6 - New game triggered by 'n' key
+
+    Result - PASS
+---
+    7 - Game difficulty selection displays and allows selection with keys '1','2', and '3'. Stores selection in global var.
+    Selection triggers progression to duration selection
+
+    Result - PASS
+---
+    8 - Duration selection displays and triggers with keys 1 to 5. Stores result in global var. Initiates main game display.
+
+    Result - PASS
+---
+    9 -
+    - Main game screen draws
+    - Timer displays correct countdown and updates each second
+    - Shutter 'animation' runs. 
+    - Dialog starts. 
+    - Implant read sequence runs
+    - Implant data displays with correct delay to emulate data transfer
+    - Manifest match sequence runs
+    - Manifest data has been randomly encrypted and displays with in red with hashes
+    - Action 'buttons' display - Quit / Board / Reject / Arrest / Decrypt
+
+    Result - PASS
+---
+    10 - 
+    - Hitting relevant key triggers correct action
+    - Q triggers quit game confirm
+    - B triggers boarding passenger
+    - R triggers rejecting passenger
+    - D triggers decryption game
+    - not other keys trigger an actions or errors
+
+    Result - PASS
+---
+    11 - 
+    - Q triggers quit confirmation
+    - N triggers confirmation closure and play continues
+    - Y triggers the game to end and the main menu to display
+
+    Result - PASS
+---
+    12 - 
+    - D triggers decryption game to run
+    - New window displays
+    - Countdown starts
+    - Random fake keys listed with 1 correct key
+    - User input only allows valid alpha numeric characters
+    - Backspace deletes and enter submits the current pattern
+    - Empty input is valid (easy way to skip game)
+    - Input limited to current key length and user gets warning
+    - Feed displays last entered key
+    - Correct characters in green, yellow partial match, red not in string
+    -Entering the correct key displays valid key record recovered
+    - Use up all 5 chances and failure message displays.
+    - Countdown reaches 0 and failure message displays along with timeout message
+    - Fail/Win/Countdown expires results in switch back to main game
+
+    Result - PASS
+---
+    13 - 
+    - Decryption game ending results in main game displaying.
+    - If gate closure time expires while in mini game show the gate closed message in timer location
+    - action buttons redrawn without decrypt option
+    - If game was failed then screen remains unchanged
+    - If game was won then
 
     Result - PASS

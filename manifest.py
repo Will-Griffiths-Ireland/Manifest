@@ -613,7 +613,6 @@ def shift_analysis_report(scr):
     scr.addstr(9, 17, "PASSENGERS YOU PROCESSED MANUALLY HAVE BEEN", c.WHITE)
     scr.addstr(10, 17, "FULLY AUDITED.", c.WHITE)
     scr.refresh()
-    time.sleep(1)
 
     results = calc_performance()
 
