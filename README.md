@@ -172,7 +172,9 @@ After the first load of the game the animation time is changed for the main menu
 
 ### **Tutorial**
 
-The tutorial section explains the setup for the game and the core objective.
+The tutorial section explains the setup for the game and the core objectives.
+
+A second page explains the difficulty options and settings
 
 I did have plans to build an interactive tutorial that would be part of the game but time constraints did not allow for this and its a possible future enhancement.
 
@@ -218,9 +220,33 @@ The policy is simple. It has to match the ships stored data in the manifest or t
 
 - Their is a passenger class that generates random passengers and their details
 - Fields that are alpha numeric strings are randomly generated when the passenger is but the function checks the existing passenger list for any passenger that already had the number/key generated for them.
+- Other attributes which are not expected to be unique to the character are randomly assigned from lists.
+- During the passengers creation they have a weighted random chance at getting a threat level of medium or high
+- Passengers being created with a medium or high threat level have their implant data modified and this is what the player must spot.
+- Medium threat passengers are treated an innocent but still not be boarded and need to be rejected
+- Medium threat passengers have a random field completely changed
+- High threat passengers are less common and get generated with only a single character that is different in one field
+- The exception to this is the DNA fingerprint which seemed too punishing to have a single character to spot, so in this case multiple characters are flipped
+
+The animation timings are ever so slightly delayed when drawing the panel. This is to simulate the transfer of data from the implant chip
+
+![logo](./assets/docs/implant.gif)
+
 
 ---
 ### **Ship Manifest Data Panel**
+
+- The ticket token is the primary key and never encrypted or suspect
+-The manifest data is also part of the passenger object and is the source of truth within the game.
+- The only catch is its getting encrypted by an ongoing hack
+- The manifest data is randomly encrypted (obfuscated) before it is drawn to screen.
+- The games difficulty determines how many fields are encrypted and how much of the field is still shown
+- There is a very rare chance at the lowest difficulty that no fields will be encrypted
+- At the hardest difficulty almost all the fields are totally covered
+- If the player beats the decryption game then the manifest record is fully recovered and displayed.
+
+![logo](./assets/docs/manifest.gif)
+
 
 ---
 ### **Action Buttons**
