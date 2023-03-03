@@ -2,9 +2,11 @@
 # Manifest
 ## **Game Overview**
 
-Manifest is a retro, text based, observation and decryption game built purely in Python that runs in an emaulated terminal(xterm.js) and is deployed via Heroku.
+Manifest is a retro, text based, observation and decryption game built purely in Python that runs in an emulated terminal(xterm.js) and is deployed via Heroku.
 
 You play the role of a spaceship security officer responsible for passenger boarding during a security breach of the ships systems.
+
+---
 ​
 ![Menu](./assets/docs/main_menu.webp)
 ![Game Screen](./assets/docs/main_game.webp)
@@ -29,11 +31,11 @@ You play the role of a spaceship security officer responsible for passenger boar
     * [***Dialog Area***](#dialog-area)
     * [***Passenger Implant Data Panel***](#passenger-implant-data-panel)
     * [***Ship Manifest Data Panel***](#ship-manifest-data-panel)
+    * [***Decryption Game***](#decryption-game)
     * [***Action Buttons***](#action-buttons)
     * [***Gate Closure***](#gate-closure)
     * [***Performance Summary***](#perfomrance-summary)
 1. [**Testing**](#testing)
-    * [***linter***](#linter)
 1. [**Deployment**](#deployment)
 1. [**Technology and Applications**](#technology-and-applications)
 1. [**Future-Enhancements**](#future-enhancements)
@@ -114,7 +116,7 @@ I built out the high level logic flow in draw.io.
 Working in a terminal, which in the case of xterm.js is limited to 8 colors did play a factor in my choices. Luckily I had the main colours I wanted for the game.
 
 - Core elements of the interface are green which is a nod to classic green monochrome terminals.
-I used white for dialog text and most of the fields with changing data.
+- I used white for dialog text and most of the fields with changing data.
 
 - Yellow is used occasionally for a bit of variation and to emulate system interactions such as the scanner reading an implant.
 
@@ -133,11 +135,12 @@ I felt it was essential to have a very static layout for as much of the game are
 A somewhat dystopian aesthetic is threaded through the dialog interactions but with a edge towards dark humor.
 
 
+
 #### **Defensive Design**
 
 An important element of any program is defending from user generated issues. Any time we get input from a user we are exposed.
 
-From the outset a decided to limit user input as much as I could.
+From the outset I decided to limit user input as much as I could.
 
 - I capture key press events in loops and then check for valid keys in relation to player actions.
 - I clear input buffers to avoid unintended progression.
@@ -237,7 +240,7 @@ The animation timings are ever so slightly delayed when drawing the panel. This 
 ### **Ship Manifest Data Panel**
 
 - The ticket token is the primary key and never encrypted or suspect
--The manifest data is also part of the passenger object and is the source of truth within the game.
+- The manifest data is also part of the passenger object and is the source of truth within the game.
 - The only catch is its getting encrypted by an ongoing hack
 - The manifest data is randomly encrypted (obfuscated) before it is drawn to screen.
 - The games difficulty determines how many fields are encrypted and how much of the field is still shown
@@ -251,32 +254,85 @@ The animation timings are ever so slightly delayed when drawing the panel. This 
 ---
 ### **Action Buttons**
 
+- The action buttons are a visual que to the player on what they can do next
+- Only displayed when they can hit a key
+- Hidden during dialog, panel drawing and in the decryption game
+- All of them follow the same approach as the menu items and have the letter of the key assigned to the action in a contrasting color
+- Once a decrypt attempt has been run that button is no longer shown
+- Board / Reject / Arrest all trigger different dialog responses based on multiple variables
+- Player actions are stored in the passenger object for later use
+
+![logo](./assets/docs/actions.JPG)
+
+---
+### **Decryption Game**
+
+The decryption game took considerable work to get functioning but I think was worth it and add another level to the game.
+
+- Based on the difficulty the key changes in size
+- The number of fake keys also changes with difficulty
+- The screen is filled with junk data
+- The key is injected randomly
+- The fake keys are then spread out randomly across lines and then if all lines are taken it looks for a space that doesn't overlap other injected keys
+- This caused me great pains back at the start when I had 120+ fakes but after play testing the feedback was the game was too hard with just 5 chances in 60 seconds and I scaled back the numbers greatly.
+- There is also a 60 second bar countdown that reduces to the center and changes in colour as the time runs out
+
+I built a custom function to handle the player input and echo it back to the screen
+- Validates the key against a list
+- Calls another function to warn the user if the input is too long
+- Handles backspace so the play can remove characters 
+- I needed to check the screen position of the cursor due to a conflict with the thread that is drawing the countdown. This was required or there were strange results with the printing of player key presses.I used a global var to store the player key entry area and had the countdown timers thread set the cursor position back to that once it had done its update.
+
+Once the player hits enter to check their entered characters then get visual feedback
+- Green is an exact character match
+- Red is a character not in the key at all
+- Yellow means the character is in the key at least once but not in that location
+
+Once the time is up the player fails and cannot unlock the record. If they win/fail they get a message and then after hitting a key get taken back to the main game screen
+If they won the game then the manifest record is unlocked and displayed in full
+
+![logo](./assets/docs/decrypt_game.webp)
+
+
 ---
 ### **Gate Closure**
+
+- When the run comes to an end the gate counter closure timer reaches zero and the player gets to handle the last passenger
+- Once that last passenger has been actioned the gate fully closes
+- Gate closure message shows along with last line of dialog from the officer
+
+![logo](./assets/docs/gateclosed.webp)
 
 ---
 ### **Performance Summary**
 
----
+I thought hard about how to build a result or score into the game.
+So this section of the game is simulating a jump cut to later in the day when the officer is 'relaxing' with 'hypno box' on their personal terminal. The reference here is to Hypnotoad in Futurama.
+
+- The officers terminal is being populated with hundreds of colours boxes in a hypnotic pattern
+- These are randomly generated in a function
+- They are quickly closed because of an message from the officers boss.
+- The player then gets their performance stats because the hack has been resolved and all of their work was automatically audited
+- All of the details are calculated from the objects in the passenger list
+- Credits are based on how well they processed passengers.
+- The max credits are what they could have made by unlocking every record and performing the correct action on each passenger.
+- The penalties are high and can result in minus credits and a very poor rating.
+
+![logo](./assets/docs/performance.gif)
+
 ---
 ## **Testing**
 
 Testing documentation is [here](./TESTING.md)
 
 ## **Deployment**
-I deployed the page on GitHub pages via the following the standard procedure: -
-​
-1. From the project's [repository](https://github.com/Will-Griffiths-Ireland/Manifest), go to the **Settings** tab.
-2. From the left-hand menu, select the **Pages** tab.
-3. Under the **Source** section, select the **Main** branch from the drop-down menu and click **Save**.
-4. A message will be displayed to indicate a successful deployment to GitHub pages and provide the live link.
+
+I deployed the program on heroku and used automatic deployment so I could verify all features as I committed code
 ​
 
-Deployment to another host is also possible
+​
 
-1. From the project's [repository](https://github.com/Will-Griffiths-Ireland/Manifest), click **Code**.
-2. Under the local tab click *Download Zip*.
-3. Extract the files and copy them over to a webserver of your choice.
+
 
 ### **To fork the repository on GitHub** 
   
@@ -297,6 +353,7 @@ These are the technologies used for this project.
 - Python - [Curses Lib](https://docs.python.org/3/howto/curses.html)
 - Gitpod
 - Github
+- draw.io 
 - Heroku
 
 ----

@@ -30,7 +30,10 @@ All of my files had zero issues reported in CI Linter
 ![logic Flow](./assets/docs/data_loader_linter.JPG)
 ![logic Flow](./assets/docs/passenger_creator_linter.JPG)
 
-
+I'm aware that the CI Linter is forgiving to some things such as line count for example.
+I did intend to put more of the functions from manifest.py into the other files since I went over the 1k rec line count but I ran into issues with circular imports and was just running out of time for the cleanup.
+I decided to leave the code alone for fear of introducing errors after testing.
+PEP8 has been a regular reference point.
 
 ---
 
@@ -120,6 +123,54 @@ All of my files had zero issues reported in CI Linter
     - If gate closure time expires while in mini game show the gate closed message in timer location
     - action buttons redrawn without decrypt option
     - If game was failed then screen remains unchanged
-    - If game was won then
+    - If game was won then redraw panel with all data showing
 
     Result - PASS
+---
+    12 - 
+    - Player can take action to board / reject / arrest any passenger they see fit to
+    - Correct dialogs show when action is taken
+    - New passenger is loaded if gate still open
+
+    Result - PASS
+---
+    13 - 
+    - Countdown timer shows gate closed when time is up
+    - Player get chance to finish handling of last passenger
+    - Gate closure message displays and final office dialog
+    - Screen cuts to officers personal terminal
+
+    Result - PASS
+---
+    14 - 
+    - Hypno box runs
+    - Info message displays
+    - Performance message comes up
+    - Results reflect players actions
+    - Hitting a key takes player back to main menu
+
+    Result - PASS
+---
+#### ***Testing Feedback***
+
+From the people that were kind enough to test the game they did not have any issues to report.
+
+The main piece of feedback I got was regarding the decryption mini game being too tough. I've tried to balance it better by having shorter keys and less fake keys.
+
+### **Know Issues**
+
+Nothing came from my additional testers but I have logged what I can only guess is 20 or more hours of game time and thats probably grossly underestimating it.
+
+I have observed 1 very rare issue that I was unable to catch or reproduce.
+
+It involves screen corruption with characters that are not even part of the program. No errors or crashes, just a weird character where it shouldn't be.
+
+What I believe is causing this is the way that I'm threading and using curses to write to multiple locations at the same time. This is how the timers were implemented. There seems to be a very rare condition where calls at the exact same time trigger screen corruption.
+
+To remediate I introduced time.sleep() of .1 to points where we trigger draws at the same time.
+
+It's a complex issue and very difficult to debug or find information on as I'm doing something so niche with this game.
+
+My stage 2 remediation, if this application was released publicly and had adoption, would be to revert to full screen draws to include the timer. Stage 3 would be a removal of the countdown entirely and have updates as each new passenger came along.
+
+I felt that the issue was so rare, and quickly corrected in the next refresh of the wider screen area that it was worth leaving in the submitted project as it took me a lot of work to get threading to work (after asyncio was a bust)
