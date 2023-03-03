@@ -133,7 +133,7 @@ def rand(start, stop):
 def draw_action_buttons(scr):
     """
         Draw 'buttons' with actions the player can take
-        Draw with only 3 if decrpyt that been used
+        Draw with only 3 if decrypt that been used
     """
     scr.move(48, 1)
     for i in range(3):
@@ -317,7 +317,7 @@ def drg_countdown(scr):
 def decrypt_record_game(scr):
     """
         Player gets 5 chances to work out the encryption key.
-        Random key gerneated and displayed with mix of fakes.
+        Random key generated and displayed with mix of fakes.
         Player gets feedback on entered string
 
     """
@@ -486,7 +486,7 @@ def main(scr):
     c.CYAN = curses.color_pair(8) | curses.A_BOLD
     c.MAGENTA = curses.color_pair(9) | curses.A_BOLD
 
-    # Pull all data from files in lists
+    # Pull all data from files to lists
     dl.gen_data_lists()
     # Display main menu
     main_menu(scr)
@@ -524,7 +524,7 @@ def main_menu(scr):
             new_r_count = new_r_count + 1
         scr.refresh()
     draw_box(0, 0, 79, 51, False, c.GREEN, scr)
-    scr.addstr(0, 32, "[ MANIFEST V0.9 ]", c.GREEN)
+    scr.addstr(0, 32, "[ MANIFEST V1.0 ]", c.GREEN)
     for i in range(9):
         draw_box(24, 22, 31, i, True, c.GREEN, scr)
         time.sleep(0.05)

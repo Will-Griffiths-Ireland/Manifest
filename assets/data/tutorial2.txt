@@ -1,6 +1,6 @@
 [ New game options ]
 
-Difficulty level effects how heavily encrpyted manifest records 
+Difficulty level effects how heavily encrypted manifest records 
 are and how challenging it is to recover them.
 
 Duration sets how long till the security gate is closed.

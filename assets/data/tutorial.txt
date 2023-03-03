@@ -1,25 +1,26 @@
 Thank you for playing 'Manifest'
 
-This is a game about keen observation and spotting things.
-
 You work as a security officer boarding passengers to the
 interstellar spaceship Fracti.
+
+Your job is to check passengers implant data and confirm it
+matches the ships manifest data, before they can board.
 
 Today the system has been hacked and manual passenger processing
 is required.
 
-You need to board, reject, or arrest as many passengers as you 
-can before the gate closes and your shift ends.
+You need to correctly board, reject, or arrest as many passengers
+as you can before the gate closes and your shift ends.
 
-Passengers with implant data that exactly matches the manifest 
-record should be boarded.
+Only passengers with implant data that exactly matches the
+ship manifest record should be boarded.
 
 Passengers with an entire field that is totally different should
 be rejected.
 
 Passengers acting suspiciously (there are clues in what they say
 or do) will have an almost undetectable error in their implant 
-data. Look out for a single digit difference in any field
+data. Look out for a single character difference in any field
 except the dna fingerprint which will have a few more.
 These are agents of the group that has hacked the Fracti and
 must be caught!
